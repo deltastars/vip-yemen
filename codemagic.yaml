@@ -46,6 +46,19 @@ workflows:
           set -euo pipefail
           echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/capacitor-app/android/local.properties"
           npx cap sync android
+      - name: Reject rollback against Google Play
+        script: |
+          set -euo pipefail
+          VERSION="${CM_TAG#v}"
+          if [[ -n "$CM_TAG" && "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] && command -v google-play >/dev/null 2>&1; then
+            IFS=. read -r MAJOR MINOR PATCH <<< "$VERSION"
+            CANDIDATE_CODE=$((MAJOR * 1000000 + MINOR * 1000 + PATCH))
+            LATEST_CODE=$(google-play get-latest-build-number --package-name "$PACKAGE_NAME" 2>/dev/null || true)
+            if [[ "$LATEST_CODE" =~ ^[0-9]+$ ]] && (( CANDIDATE_CODE <= LATEST_CODE )); then
+              echo "Release versionCode $CANDIDATE_CODE is not newer than Google Play versionCode $LATEST_CODE" >&2
+              exit 1
+            fi
+          fi
       - name: Build debug APK and signed release AAB
         script: |
           set -euo pipefail

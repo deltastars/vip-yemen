@@ -39,3 +39,7 @@
 ## بوابة الجودة والإصدار
 
 يجب أن يمر Pull Request بفحوصات TypeScript وVitest وVite وnpm audit وبناء Capacitor وGradle وExpo. كما يتحقق سير Android من `applicationId` و`versionName` وتوقيع APK وسلامة APK/AAB وSHA-256 قبل إنشاء Release. أما iOS فيُبنى على macOS داخل GitHub Actions للتحقق من مشروع Xcode دون تخزين شهادات Apple في المستودع؛ ويظل توقيع IPA النهائي مسؤولية حساب Apple Developer المملوك للناشر.
+
+## التحقق من آخر إصدار منشور
+
+عند توفر بيانات Google Play في مجموعة Codemagic، يستدعي سير Android أداة `google-play get-latest-build-number` للحزمة `com.vipyemen.app`، ويفشل قبل البناء إذا كان `versionCode` الجديد مساويًا أو أقل من الرقم المنشور. هذا يمنع نشر تحديث رجعي على Google Play. في التشغيل اليدوي دون بيانات Google Play، يبقى فحص وسوم Git فعالًا، ويجب على الناشر عدم تجاوز الرقم المنشور.
