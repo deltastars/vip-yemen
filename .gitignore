@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+build/
+.expo/
+release/
+
+# Secrets and signing material
+.env
+.env.*
+*.keystore
+*.jks
+*.p12
+*.mobileprovision
+
+# Tooling
+coverage/
+.manus-logs/
+.DS_Store
