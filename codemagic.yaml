@@ -25,6 +25,13 @@ workflows:
       - name: Check and build web bundle
         script: |
           npm run build
+      - name: Reject version rollback
+        script: |
+          set -euo pipefail
+          VERSION="${CM_TAG#v}"
+          if [[ -n "$CM_TAG" && "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            node ../scripts/assert-release-version.mjs "$VERSION"
+          fi
       - name: Set release version
         script: |
           set -euo pipefail
