@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-import { readFile, writeFile } from "node:fs/promises";
+import { access, readFile, writeFile } from "node:fs/promises";
+import { join } from "node:path";
 
 const version = process.argv[2];
 if (!version || !/^\d+\.\d+\.\d+$/.test(version)) {
@@ -15,7 +16,10 @@ if (!Number.isSafeInteger(versionCode) || versionCode <= 0) {
   throw new Error(`Invalid Android versionCode derived from ${version}`);
 }
 
-const gradlePath = "capacitor-app/android/app/build.gradle";
+const rootPrefix = await access("capacitor-app/android/app/build.gradle")
+  .then(() => ".")
+  .catch(() => "..");
+const gradlePath = join(rootPrefix, "capacitor-app/android/app/build.gradle");
 const source = await readFile(gradlePath, "utf8");
 const updated = source
   .replace(/versionCode\s+\d+/, `versionCode ${versionCode}`)

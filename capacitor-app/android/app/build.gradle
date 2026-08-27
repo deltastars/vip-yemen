@@ -2,6 +2,8 @@ apply plugin: 'com.android.application'
 
 def keystoreProperties = new Properties()
 def keystorePropertiesFile = rootProject.file("keystore.properties")
+def codemagicKeystorePath = System.getenv("CM_KEYSTORE_PATH")
+def hasCodemagicSigning = codemagicKeystorePath != null && !codemagicKeystorePath.isEmpty()
 if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
@@ -24,7 +26,12 @@ android {
     }
     signingConfigs {
         release {
-            if (keystorePropertiesFile.exists()) {
+            if (hasCodemagicSigning) {
+                storeFile file(codemagicKeystorePath)
+                storePassword System.getenv("CM_KEYSTORE_PASSWORD")
+                keyAlias System.getenv("CM_KEY_ALIAS")
+                keyPassword System.getenv("CM_KEY_PASSWORD")
+            } else if (keystorePropertiesFile.exists()) {
                 storeFile file(keystoreProperties['storeFile'])
                 storePassword keystoreProperties['storePassword']
                 keyAlias keystoreProperties['keyAlias']
@@ -35,7 +42,7 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            if (keystorePropertiesFile.exists()) {
+            if (hasCodemagicSigning || keystorePropertiesFile.exists()) {
                 signingConfig signingConfigs.release
             }
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'

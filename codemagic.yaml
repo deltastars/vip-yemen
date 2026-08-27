@@ -1,0 +1,147 @@
+workflows:
+  vipyemen-android:
+    name: ViP Yemen Android
+    working_directory: capacitor-app
+    max_build_duration: 120
+    instance_type: linux_x2
+    environment:
+      node: 22.13.0
+      groups:
+        - vipyemen_android
+      android_signing:
+        - vipyemen_release_keystore
+      vars:
+        PACKAGE_NAME: com.vipyemen.app
+    triggering:
+      events:
+        - push
+        - tag
+      tag_patterns:
+        - pattern: "v[0-9]+\\.[0-9]+\\.[0-9]+"
+          include: true
+    scripts:
+      - name: Install locked JavaScript dependencies
+        script: npm ci --ignore-scripts
+      - name: Check and build web bundle
+        script: |
+          npm run build
+      - name: Set release version
+        script: |
+          set -euo pipefail
+          VERSION="${CM_TAG#v}"
+          if [[ -z "$CM_TAG" || ! "$VERSION" =~ ^[0-9]+\\.[0-9]+\\.[0-9]+$ ]]; then
+            VERSION="1.0.${BUILD_NUMBER}"
+          fi
+          node ../scripts/set-android-version.mjs "$VERSION"
+          echo "VERSION_NAME=$VERSION" >> "$CM_ENV"
+      - name: Sync Capacitor Android project
+        script: |
+          set -euo pipefail
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/capacitor-app/android/local.properties"
+          npx cap sync android
+      - name: Build debug APK and signed release AAB
+        script: |
+          set -euo pipefail
+          cd android
+          ./gradlew clean assembleDebug bundleRelease --no-daemon --stacktrace
+      - name: Verify Android artifacts
+        script: |
+          set -euo pipefail
+          APK="android/app/build/outputs/apk/debug/app-debug.apk"
+          AAB="android/app/build/outputs/bundle/release/app-release.aab"
+          BUILD_TOOLS="$ANDROID_HOME/build-tools/$(ls "$ANDROID_HOME/build-tools" | sort -V | tail -1)"
+          "$BUILD_TOOLS/apksigner" verify --verbose "$APK"
+          "$BUILD_TOOLS/aapt2" dump badging "$APK" | grep -q "package: name='$PACKAGE_NAME'"
+          unzip -t "$APK" >/dev/null
+          unzip -t "$AAB" >/dev/null
+    artifacts:
+      - android/app/build/outputs/apk/debug/app-debug.apk
+      - android/app/build/outputs/bundle/release/app-release.aab
+    publishing:
+      google_play:
+        credentials: $GOOGLE_PLAY_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal
+        submit_as_draft: true
+
+  vipyemen-ios:
+    name: ViP Yemen iOS
+    working_directory: capacitor-app
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+    environment:
+      node: 22.13.0
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.vipyemen.app
+      groups:
+        - vipyemen_ios
+      xcode: latest
+    triggering:
+      events:
+        - push
+        - tag
+      tag_patterns:
+        - pattern: "v[0-9]+\\.[0-9]+\\.[0-9]+"
+          include: true
+    scripts:
+      - name: Install locked JavaScript dependencies
+        script: npm ci --ignore-scripts
+      - name: Build web bundle and sync iOS
+        script: |
+          set -euo pipefail
+          npm run build
+          npx cap sync ios
+      - name: Set up iOS signing profiles
+        script: xcode-project use-profiles
+      - name: Set iOS marketing and build versions
+        script: |
+          set -euo pipefail
+          VERSION="${CM_TAG#v}"
+          if [[ -z "$CM_TAG" || ! "$VERSION" =~ ^[0-9]+\\.[0-9]+\\.[0-9]+$ ]]; then
+            VERSION="1.0.${BUILD_NUMBER}"
+          fi
+          cd ios/App
+          agvtool new-marketing-version "$VERSION"
+          agvtool new-version -all "$BUILD_NUMBER"
+      - name: Build signed iOS IPA
+        script: |
+          set -euo pipefail
+          xcode-project build-ipa \
+            --project "ios/App/App.xcodeproj" \
+            --scheme "App"
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+
+  vipyemen-quality:
+    name: ViP Yemen Quality Gates
+    working_directory: capacitor-app
+    max_build_duration: 60
+    instance_type: linux_x2
+    environment:
+      node: 22.13.0
+    triggering:
+      events:
+        - pull_request
+        - push
+      cancel_previous_builds: true
+    scripts:
+      - name: Install locked JavaScript dependencies
+        script: npm ci --ignore-scripts
+      - name: Build web bundle
+        script: npm run build
+      - name: Check native project configuration
+        script: |
+          set -euo pipefail
+          test -f android/app/build.gradle
+          test -f ios/App/App.xcodeproj/project.pbxproj
+          grep -q 'applicationId "com.vipyemen.app"' android/app/build.gradle
+          grep -q 'versionCode' android/app/build.gradle
+      - name: Audit dependencies
+        script: npm audit --audit-level=high
+    artifacts:
+      - dist/**
