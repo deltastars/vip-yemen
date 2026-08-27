@@ -1,0 +1,23 @@
+{
+  "name": "vipyemen",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "audit": "npm audit --audit-level=moderate"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.5.0",
+    "@capacitor/cli": "^8.5.0",
+    "@capacitor/core": "^8.5.0",
+    "@capacitor/ios": "^8.5.0",
+    "@vitejs/plugin-react": "latest",
+    "lucide-react": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "vite": "latest"
+  }
+}

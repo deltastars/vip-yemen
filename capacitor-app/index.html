@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/icon-192.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+    <meta name="theme-color" content="#d4af37" />
+    <meta name="description" content="منصة متكاملة للتسويق الإلكتروني والخدمات العامة في اليمن" />
+    <meta name="keywords" content="تسويق, خدمات, عقارات, توظيف, يمن, vipyemen" />
+    <meta name="author" content="vipyemen" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="Arabic" />
+    <meta name="geo.region" content="YE" />
+    <meta name="geo.country" content="Yemen" />
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="vipyemen - منصة التسويق والخدمات" />
+    <meta property="og:description" content="منصة متكاملة للتسويق الإلكتروني والخدمات العامة في اليمن" />
+    <meta property="og:image" content="/icon-512.png" />
+    <meta property="og:url" content="https://vipyemen.com" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ar_YE" />
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="vipyemen - منصة التسويق والخدمات" />
+    <meta name="twitter:description" content="منصة متكاملة للتسويق الإلكتروني والخدمات العامة في اليمن" />
+    <meta name="twitter:image" content="/icon-512.png" />
+    
+    <!-- PWA Meta Tags -->
+    <meta name="application-name" content="vipyemen" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="vipyemen" />
+    <meta name="msapplication-TileColor" content="#d4af37" />
+    <meta name="msapplication-TileImage" content="/icon-192.png" />
+    
+    <!-- Security Headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-Frame-Options" content="DENY" />
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+    
+    <!-- Manifest and Icons -->
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
+    <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png" />
+    <link rel="apple-touch-icon" sizes="512x512" href="/icon-512.png" />
+    <link rel="shortcut icon" href="/icon-192.png" />
+    
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="/icon-192.png" as="image" />
+    <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+    
+    <title>vipyemen</title>
+    
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+              console.log('SW registered: ', registration);
+            })
+            .catch((registrationError) => {
+              console.log('SW registration failed: ', registrationError);
+            });
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "vipyemen",
+      "description": "منصة متكاملة للتسويق الإلكتروني والخدمات العامة في اليمن",
+      "url": "https://vipyemen.com",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "YER"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "vipyemen"
+      }
+    }
+    </script>
+  </body>
+</html>
