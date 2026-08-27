@@ -23,6 +23,7 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
+          cache-dependency-path: mobile/pnpm-lock.yaml
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -30,36 +31,42 @@ jobs:
           version: 10
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        working-directory: mobile
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Validate Expo project
+        working-directory: mobile
         run: pnpm exec expo config --type public
 
       - name: Install EAS CLI
+        working-directory: mobile
         run: pnpm exec eas --version
 
       - name: Build APK
+        working-directory: mobile
         run: pnpm exec eas build --platform android --profile preview --non-interactive --wait
 
       - name: Download APK artifact
-        run: pnpm exec eas build:download --platform android --latest --output ./release/vipyemen.apk
+        working-directory: mobile
+        run: mkdir -p release && pnpm exec eas build:download --platform android --latest --output ./release/vipyemen.apk
 
       - name: Build AAB
+        working-directory: mobile
         run: pnpm exec eas build --platform android --profile production --non-interactive --wait
 
       - name: Download AAB artifact
+        working-directory: mobile
         run: pnpm exec eas build:download --platform android --latest --output ./release/vipyemen.aab
 
       - name: Create release archive
         run: |
-          mkdir -p release
-          zip -qr ./release/vipyemen-source.zip . -x 'node_modules/*' '.expo/*' '.git/*' '*.keystore' '*.jks' '.env*' 'release/*'
+          zip -qr ./mobile/release/vipyemen-source.zip . -x 'node_modules/*' '.expo/*' '.git/*' '*.keystore' '*.jks' '.env*' 'mobile/release/*'
 
       - name: Publish GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p release
-          gh release create "${GITHUB_REF_NAME}" ./release/vipyemen.apk ./release/vipyemen.aab ./release/vipyemen-source.zip \
+          gh release create "${GITHUB_REF_NAME}" ./mobile/release/vipyemen.apk ./mobile/release/vipyemen.aab ./mobile/release/vipyemen-source.zip \
             --title "vipyemen ${GITHUB_REF_NAME}" \
             --notes "Automated Android release for vipyemen. APK and AAB were built by EAS. Signing credentials remain managed by Expo/EAS and are not stored in the repository."
