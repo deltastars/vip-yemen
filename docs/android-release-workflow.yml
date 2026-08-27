@@ -1,62 +1,150 @@
-name: vipyemen Android Release
+name: ViP Yemen Android Release
 
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version without v, for example 1.0.4"
+        required: true
+        type: string
   push:
     tags:
-      - 'v*'
+      - "v[0-9]+.[0-9]+.[0-9]+"
 
 permissions:
   contents: write
 
+concurrency:
+  group: android-release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: "22"
+  JAVA_VERSION: "17"
+  APP_DIR: capacitor-app
+
 jobs:
-  android-release:
+  validate-and-build:
+    name: Validate and build Android artifacts
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Setup Java 17
+      - name: Resolve release version
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            VERSION="${{ inputs.version }}"
+          else
+            VERSION="${GITHUB_REF_NAME#v}"
+          fi
+          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: gradle
 
-      - name: Setup Node.js 22
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: ${{ env.NODE_VERSION }}
           cache: npm
-          cache-dependency-path: capacitor-app/package-lock.json
+          cache-dependency-path: ${{ env.APP_DIR }}/package-lock.json
 
       - name: Install web dependencies
-        working-directory: capacitor-app
-        run: npm ci
+        working-directory: ${{ env.APP_DIR }}
+        run: npm ci --ignore-scripts
 
-      - name: Build web app
-        working-directory: capacitor-app
+      - name: Build web bundle
+        working-directory: ${{ env.APP_DIR }}
         run: npm run build
 
-      - name: Sync Capacitor Android project
-        working-directory: capacitor-app
+      - name: Set monotonic Android version
+        run: node scripts/set-android-version.mjs "${{ steps.version.outputs.version }}"
+
+      - name: Sync Capacitor Android
+        working-directory: ${{ env.APP_DIR }}
         run: npx cap sync android
 
-      - name: Build debug APK and release AAB
-        working-directory: capacitor-app/android
-        run: ./gradlew assembleDebug bundleRelease --no-daemon
-
-      - name: Prepare release assets
+      - name: Restore production signing key when configured
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
-          mkdir -p release
-          cp capacitor-app/android/app/build/outputs/apk/debug/app-debug.apk release/vipyemen.apk
-          cp capacitor-app/android/app/build/outputs/bundle/release/app-release.aab release/vipyemen.aab
-          zip -qr release/vipyemen-source.zip . -x 'node_modules/*' '.git/*' '.manus-logs/*' 'release/*' '*.keystore' '*.jks' '.env*' 'capacitor-app/android/build/*' 'capacitor-app/android/app/build/*'
-          sha256sum release/vipyemen.apk release/vipyemen.aab release/vipyemen-source.zip > release/SHA256SUMS.txt
+          set -euo pipefail
+          if [[ -z "${ANDROID_KEYSTORE_BASE64:-}" ]]; then
+            echo "Production signing secrets are not configured; release AAB will remain unsigned."
+            exit 0
+          fi
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/vipyemen-release.keystore"
+          cat > "$APP_DIR/android/keystore.properties" <<EOF
+          storeFile=$RUNNER_TEMP/vipyemen-release.keystore
+          storePassword=$ANDROID_KEYSTORE_PASSWORD
+          keyAlias=$ANDROID_KEY_ALIAS
+          keyPassword=$ANDROID_KEY_PASSWORD
+          EOF
 
-      - name: Publish GitHub Release
+      - name: Build debug APK and release AAB
+        working-directory: ${{ env.APP_DIR }}/android
+        run: ./gradlew clean assembleDebug bundleRelease --no-daemon --stacktrace
+
+      - name: Verify artifact integrity and metadata
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          APK="$APP_DIR/android/app/build/outputs/apk/debug/app-debug.apk"
+          AAB="$APP_DIR/android/app/build/outputs/bundle/release/app-release.aab"
+          "$ANDROID_HOME/build-tools/$(ls "$ANDROID_HOME/build-tools" | sort -V | tail -1)/apksigner" verify --verbose "$APK"
+          "$ANDROID_HOME/build-tools/$(ls "$ANDROID_HOME/build-tools" | sort -V | tail -1)/aapt2" dump badging "$APK" | grep -q "versionName='$VERSION'"
+          unzip -t "$APK" >/dev/null
+          unzip -t "$AAB" >/dev/null
+          mkdir -p release
+          cp "$APK" "release/vipyemen-v$VERSION.apk"
+          cp "$AAB" "release/vipyemen-v$VERSION.aab"
+          zip -qr "release/vipyemen-v$VERSION-source.zip" . -x '.git/*' 'capacitor-app/node_modules/*' 'capacitor-app/dist/*' 'capacitor-app/android/.gradle/*' 'capacitor-app/android/**/build/*' 'release/*' '*.keystore' '*.jks' '*.p12' '.env*'
+          sha256sum release/* > release/SHA256SUMS.txt
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: vipyemen-android-${{ steps.version.outputs.version }}
+          path: release/
+          if-no-files-found: error
+          retention-days: 30
+
+  publish:
+    name: Publish GitHub Release
+    needs: validate-and-build
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' }}
+    steps:
+      - name: Download validated artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: vipyemen-android-${{ needs.validate-and-build.outputs.version }}
+          path: release
+
+      - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.validate-and-build.outputs.version }}
         run: |
-          gh release create "${GITHUB_REF_NAME}" release/vipyemen.apk release/vipyemen.aab release/vipyemen-source.zip release/SHA256SUMS.txt \
-            --title "vipyemen ${GITHUB_REF_NAME}" \
-            --notes "APK is debug-signed for direct testing. AAB is generated from the production variant; configure the owner's release keystore before Google Play publication. Source, policy files, official icon, and checksums are included."
+          set -euo pipefail
+          gh release create "v$VERSION" release/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "ViP Yemen v$VERSION" \
+            --notes "تم بناء الإصدار بعد فحوصات TypeScript/Vite وGradle وسلامة APK/AAB. تحافظ النسخة على applicationId com.vipyemen.app وversionCode متزايد، ما يسمح بالترقية فوق النسخ السابقة عند استخدام توقيع الإنتاج نفسه."
