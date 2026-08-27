@@ -1,4 +1,4 @@
-name: vipyemen Android Release
+name: vipyemen Native Android Release
 
 on:
   workflow_dispatch:
@@ -12,61 +12,38 @@ permissions:
 jobs:
   android-release:
     runs-on: ubuntu-latest
-    env:
-      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
         with:
-          node-version: 22
-          cache: pnpm
-          cache-dependency-path: mobile/pnpm-lock.yaml
+          distribution: temurin
+          java-version: '17'
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
 
-      - name: Install dependencies
-        working-directory: mobile
-        run: pnpm install --frozen-lockfile --ignore-scripts
+      - name: Generate Gradle wrapper
+        working-directory: android-native
+        run: gradle wrapper --gradle-version 8.10.2
 
-      - name: Validate Expo project
-        working-directory: mobile
-        run: pnpm exec expo config --type public
+      - name: Build debug APK and release AAB
+        working-directory: android-native
+        run: ./gradlew assembleDebug bundleRelease --no-daemon
 
-      - name: Install EAS CLI
-        working-directory: mobile
-        run: pnpm exec eas --version
-
-      - name: Build APK
-        working-directory: mobile
-        run: pnpm exec eas build --platform android --profile preview --non-interactive --wait
-
-      - name: Download APK artifact
-        working-directory: mobile
-        run: mkdir -p release && pnpm exec eas build:download --platform android --latest --output ./release/vipyemen.apk
-
-      - name: Build AAB
-        working-directory: mobile
-        run: pnpm exec eas build --platform android --profile production --non-interactive --wait
-
-      - name: Download AAB artifact
-        working-directory: mobile
-        run: pnpm exec eas build:download --platform android --latest --output ./release/vipyemen.aab
-
-      - name: Create release archive
+      - name: Prepare release files
         run: |
-          zip -qr ./mobile/release/vipyemen-source.zip . -x 'node_modules/*' '.expo/*' '.git/*' '*.keystore' '*.jks' '.env*' 'mobile/release/*'
+          mkdir -p release
+          cp android-native/app/build/outputs/apk/debug/app-debug.apk release/vipyemen.apk
+          cp android-native/app/build/outputs/bundle/release/app-release.aab release/vipyemen.aab
+          zip -qr release/vipyemen-source.zip . -x 'node_modules/*' '.git/*' '.manus-logs/*' 'release/*' '*.keystore' '*.jks' '.env*'
 
       - name: Publish GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          mkdir -p release
-          gh release create "${GITHUB_REF_NAME}" ./mobile/release/vipyemen.apk ./mobile/release/vipyemen.aab ./mobile/release/vipyemen-source.zip \
+          gh release create "${GITHUB_REF_NAME}" release/vipyemen.apk release/vipyemen.aab release/vipyemen-source.zip \
             --title "vipyemen ${GITHUB_REF_NAME}" \
-            --notes "Automated Android release for vipyemen. APK and AAB were built by EAS. Signing credentials remain managed by Expo/EAS and are not stored in the repository."
+            --notes "Native Android build. APK is debug-signed for direct testing. AAB is built for Play submission but requires owner-managed production signing before store publication."
