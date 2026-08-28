@@ -1,9 +1,8 @@
-name: ViP Yemen CI/CD
+name: ViP Yemen CI
 
 on:
   push:
     branches: [main, master]
-    tags: ['v*']
   pull_request:
     branches: [main, master]
 
@@ -28,77 +27,3 @@ jobs:
       - run: pnpm install --frozen-lockfile || pnpm install
       - run: npx tsc --noEmit
       - run: pnpm run build
-
-  android-build:
-    name: Android Build (APK + AAB)
-    needs: web-check
-    if: startsWith(github.ref, 'refs/tags/v')
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: capacitor-app
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10
-      - run: npm ci || npm install
-      - run: npm run build
-      - name: Sync Capacitor Android
-        run: npx cap sync android
-      - name: Build debug APK and release AAB
-        working-directory: capacitor-app/android
-        run: ./gradlew assembleDebug bundleRelease --no-daemon --stacktrace
-      - name: Verify package name
-        run: |
-          APK_PATH="capacitor-app/android/app/build/outputs/apk/debug/app-debug.apk"
-          if [ -f "$APK_PATH" ]; then
-            $ANDROID_HOME/build-tools/*/aapt2 dump badging "$APK_PATH" | grep -q "package: name='${{ env.PACKAGE_NAME }}'" && echo "✅ Package name verified" || echo "⚠️ Could not verify"
-          fi
-      - name: Rename builds with version
-        run: |
-          VERSION=${GITHUB_REF#refs/tags/v}
-          APK="capacitor-app/android/app/build/outputs/apk/debug"
-          AAB="capacitor-app/android/app/build/outputs/bundle/release"
-          [ -f "$APK/app-debug.apk" ] && mv "$APK/app-debug.apk" "$APK/ViP-Yemen-${VERSION}-debug.apk"
-          [ -f "$AAB/app-release.aab" ] && mv "$AAB/app-release.aab" "$AAB/ViP-Yemen-${VERSION}-release.aab"
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            capacitor-app/android/app/build/outputs/apk/debug/*.apk
-            capacitor-app/android/app/build/outputs/bundle/release/*.aab
-          generate_release_notes: true
-
-  ios-build:
-    name: iOS Build
-    needs: web-check
-    if: startsWith(github.ref, 'refs/tags/v')
-    runs-on: macos-latest
-    defaults:
-      run:
-        working-directory: capacitor-app
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10
-      - run: npm ci || npm install
-      - run: npm run build
-      - name: Sync Capacitor iOS
-        run: npx cap sync ios
-      - name: Build iOS
-        working-directory: capacitor-app/ios
-        run: |
-          xcodebuild -workspace App.xcworkspace -scheme App -configuration Release -archivePath build/App.xcarchive archive || echo "iOS build skipped - may need provisioning profile"
-          xcodebuild -exportArchive -archivePath build/App.xcarchive -exportOptionsPlist ExportOptions.plist -exportPath build/output || true
