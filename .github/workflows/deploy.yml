@@ -21,9 +21,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - uses: pnpm/action-setup@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          version: 10
-      - run: pnpm install --frozen-lockfile || pnpm install
-      - run: npx tsc --noEmit
-      - run: pnpm run build
+          bun-version: latest
+      - run: bun install --frozen-lockfile || bun install
+      - run: bun tsc -b --noEmit
+      - run: bun run build
