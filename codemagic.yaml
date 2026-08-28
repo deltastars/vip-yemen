@@ -11,7 +11,7 @@ workflows:
       android_signing:
         - vipyemen_release_keystore
       vars:
-        PACKAGE_NAME: com.vipyemen.app
+        PACKAGE_NAME: com.vip.yemen
     triggering:
       events:
         - push
@@ -92,7 +92,7 @@ workflows:
       node: 22.13.0
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.vipyemen.app
+        bundle_identifier: com.vip.yemen
       groups:
         - vipyemen_ios
       xcode: latest
@@ -159,7 +159,7 @@ workflows:
           set -euo pipefail
           test -f android/app/build.gradle
           test -f ios/App/App.xcodeproj/project.pbxproj
-          grep -q 'applicationId "com.vipyemen.app"' android/app/build.gradle
+          grep -q 'applicationId "com.vip.yemen"' android/app/build.gradle
           grep -q 'versionCode' android/app/build.gradle
       - name: Audit dependencies
         script: npm audit --audit-level=high

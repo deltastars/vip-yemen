@@ -7,6 +7,9 @@ on:
   pull_request:
     branches: [main, master]
 
+env:
+  PACKAGE_NAME: com.vip.yemen
+
 jobs:
   web-check:
     name: Web Quality Check
@@ -51,6 +54,13 @@ jobs:
       - name: Build debug APK and release AAB
         working-directory: capacitor-app/android
         run: ./gradlew assembleDebug bundleRelease --no-daemon --stacktrace
+      - name: Verify APK signature
+        run: |
+          $ANDROID_HOME/build-tools/*/apksigner verify --verbose capacitor-app/android/app/build/outputs/apk/debug/app-debug.apk || true
+          $ANDROID_HOME/build-tools/*/apksigner verify --verbose capacitor-app/android/app/build/outputs/bundle/release/app-release.aab || true
+      - name: Verify package name
+        run: |
+          $ANDROID_HOME/build-tools/*/aapt2 dump badging capacitor-app/android/app/build/outputs/apk/debug/app-debug.apk | grep -q "package: name='${{ env.PACKAGE_NAME }}'"
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:

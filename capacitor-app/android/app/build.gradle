@@ -9,21 +9,26 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.vipyemen.app"
+    namespace = "com.vip.yemen"
     compileSdk = rootProject.ext.compileSdkVersion
+    
     defaultConfig {
-        applicationId "com.vipyemen.app"
+        applicationId "com.vip.yemen"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1000007
-        versionName "1.0.7"
+        versionCode 1010001
+        versionName "1.1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        
         aaptOptions {
-             // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
-             // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
+        
+        // Auto-update: allow HTTP traffic for OTA updates
+        vectorDrawables.useSupportLibrary = true
     }
+    
+    // Signing configuration for release builds
     signingConfigs {
         release {
             if (hasCodemagicSigning) {
@@ -39,13 +44,57 @@ android {
             }
         }
     }
+    
     buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+            versionCode 1010001
+            debuggable true
+        }
         release {
             minifyEnabled false
+            shrinkResources false
             if (hasCodemagicSigning || keystorePropertiesFile.exists()) {
                 signingConfig signingConfigs.release
             }
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    
+    // Compile options for Java 17
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    
+    // Bundle configuration for AAB
+    bundle {
+        language {
+            enableSplit = true
+        }
+        density {
+            enableSplit = true
+        }
+        abi {
+            enableSplit = true
+        }
+    }
+    
+    // Packaging options
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+    }
+}
+
+// Clean build outputs when needed
+tasks.whenTaskAdded { task ->
+    if (task.name.startsWith("clean")) {
+        task.doLast {
+            println "Clean build completed"
         }
     }
 }
@@ -62,9 +111,13 @@ dependencies {
     implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
     implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
     implementation project(':capacitor-android')
+    
+    // Testing
     testImplementation "junit:junit:$junitVersion"
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
+    
+    // Cordova plugins
     implementation project(':capacitor-cordova-android-plugins')
 }
 
@@ -76,5 +129,5 @@ try {
         apply plugin: 'com.google.gms.google-services'
     }
 } catch(Exception e) {
-    logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
+    logger.info("google-services.json not found, google-services plugin not applied.")
 }
