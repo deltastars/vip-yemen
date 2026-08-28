@@ -1139,3 +1139,103 @@ select:focus-visible {
     display: none;
   }
 }
+
+/* ═══════════════════════════════════════════════════
+   FIX: Hero Image Overlay Issue
+   ═══════════════════════════════════════════════════ */
+
+/* Ensure hero image doesn't overlap other elements */
+.hero-visual {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.hero-image-wrap {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 150px;
+  overflow: hidden;
+  background: #173B59;
+  z-index: 0;
+}
+
+.hero-note {
+  position: absolute;
+  left: 16px;
+  top: 86px;
+  width: 130px;
+  z-index: 2;
+}
+
+.hero-stat {
+  position: absolute;
+  inset-inline-end: -28px;
+  bottom: 35px;
+  width: 130px;
+  z-index: 2;
+}
+
+/* Ensure Yemen map glass doesn't overlap */
+.yemen-map-glass {
+  z-index: 0;
+}
+
+.hero-visual > :not(.yemen-map-glass) {
+  z-index: 1;
+}
+
+/* Fix mobile layout to prevent overlap */
+@media (max-width: 850px) {
+  .hero-visual {
+    min-height: 400px;
+    margin-bottom: 40px;
+  }
+  
+  .hero-image-wrap {
+    left: 100px;
+  }
+  
+  .hero-note {
+    left: 10px;
+    top: 20px;
+    width: 120px;
+    z-index: 3;
+  }
+  
+  .hero-stat {
+    inset-inline-end: 10px;
+    bottom: 15px;
+    z-index: 3;
+  }
+  
+  .yemen-map-glass {
+    display: none;
+  }
+}
+
+/* Ensure proper stacking context */
+.hero-section {
+  position: relative;
+  z-index: 1;
+}
+
+.site-header {
+  position: relative;
+  z-index: 10;
+}
+
+/* Fix announcement bar z-index */
+.announcement-bar {
+  position: relative;
+  z-index: 20;
+}
+
+/* Fix department nav z-index */
+.dept-nav-wrapper {
+  position: sticky;
+  z-index: 15;
+  top: 0;
+}
