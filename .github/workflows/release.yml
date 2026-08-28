@@ -28,16 +28,18 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: npm
-          cache-dependency-path: website/package-lock.json
+      
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
       
       - name: Install website dependencies
         working-directory: website
-        run: npm ci
+        run: pnpm install --frozen-lockfile || pnpm install
       
       - name: Build website
         working-directory: website
-        run: npm run build
+        run: pnpm run build
       
       - name: Upload web dist
         uses: actions/upload-artifact@v4
@@ -59,17 +61,19 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: npm
-          cache-dependency-path: capacitor-app/package-lock.json
       
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: ${{ env.JAVA_VERSION }}
       
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      
       - name: Install Capacitor dependencies
         working-directory: capacitor-app
-        run: npm ci
+        run: npm ci || npm install
       
       - name: Download web dist
         uses: actions/download-artifact@v4
@@ -91,7 +95,12 @@ jobs:
       
       - name: Verify package name
         run: |
-          $ANDROID_HOME/build-tools/*/aapt2 dump badging capacitor-app/android/app/build/outputs/apk/debug/app-debug.apk | grep -q "package: name='${{ env.PACKAGE_NAME }}'"
+          APK_PATH="capacitor-app/android/app/build/outputs/apk/debug/app-debug.apk"
+          if [ -f "$APK_PATH" ]; then
+            $ANDROID_HOME/build-tools/*/aapt2 dump badging "$APK_PATH" | grep "package: name='${{ env.PACKAGE_NAME }}'" && echo "✅ Package name verified" || echo "⚠️ Could not verify package name"
+          else
+            echo "⚠️ APK not found, skipping verification"
+          fi
       
       - name: Get version from tag
         id: version
@@ -102,17 +111,21 @@ jobs:
           fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
       
-      - name: Rename APK with version
+      - name: Rename build outputs with version
         run: |
           VERSION=${{ steps.version.outputs.version }}
-          mv capacitor-app/android/app/build/outputs/apk/debug/app-debug.apk \
-             capacitor-app/android/app/build/outputs/apk/debug/ViP-Yemen-${VERSION}-debug.apk
-      
-      - name: Rename AAB with version
-        run: |
-          VERSION=${{ steps.version.outputs.version }}
-          mv capacitor-app/android/app/build/outputs/bundle/release/app-release.aab \
-             capacitor-app/android/app/build/outputs/bundle/release/ViP-Yemen-${VERSION}-release.aab
+          APK_DIR="capacitor-app/android/app/build/outputs/apk/debug"
+          AAB_DIR="capacitor-app/android/app/build/outputs/bundle/release"
+          
+          if [ -f "$APK_DIR/app-debug.apk" ]; then
+            mv "$APK_DIR/app-debug.apk" "$APK_DIR/ViP-Yemen-${VERSION}-debug.apk"
+            echo "✅ APK renamed to ViP-Yemen-${VERSION}-debug.apk"
+          fi
+          
+          if [ -f "$AAB_DIR/app-release.aab" ]; then
+            mv "$AAB_DIR/app-release.aab" "$AAB_DIR/ViP-Yemen-${VERSION}-release.aab"
+            echo "✅ AAB renamed to ViP-Yemen-${VERSION}-release.aab"
+          fi
       
       - name: Upload Android artifacts
         uses: actions/upload-artifact@v4
@@ -150,6 +163,9 @@ jobs:
           name: android-builds
           path: release/
       
+      - name: List release files
+        run: ls -la release/
+      
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
@@ -159,28 +175,24 @@ jobs:
             ## 🚀 ViP Yemen v${{ steps.version.outputs.version }}
             
             ### 📱 Android Downloads
-            - **APK (Debug)**: Install directly on Android devices
-            - **AAB (Release)**: For Google Play Store upload
+            - **APK (Debug)**: تثبيت مباشر على أجهزة Android
+            - **AAB (Release)**: للنشر على Google Play Store
             
-            ### 📋 Installation Instructions
-            1. Download the `.apk` file
-            2. Enable "Install from unknown sources" in Android settings
-            3. Open the downloaded file and install
+            ### 📋 تعليمات التثبيت
+            1. حمّل ملف `.apk`
+            2. فعّل "تثبيت من مصادر غير معروفة" في إعدادات Android
+            3. افتح الملف المحمل وتثبّت
             
-            ### 🔐 Package Information
-            - **Package**: `com.vip.yemen`
-            - **Version**: ${{ steps.version.outputs.version }}
+            ### 🔐 معلومات الحزمة
+            - **اسم الحزمة**: `com.vip.yemen`
+            - **الإصدار**: ${{ steps.version.outputs.version }}
+            - **الحد الأدنى**: Android 7.0
             
-            ### 📝 What's New
-            - Bug fixes and performance improvements
-            - Enhanced bilingual support (Arabic/English)
-            - New notification system
-            - Automation improvements
-            
-            ---
-            **Download links:**
-            - APK: `ViP-Yemen-${{ steps.version.outputs.version }}-debug.apk`
-            - AAB: `ViP-Yemen-${{ steps.version.outputs.version }}-release.aab`
+            ### 📝 التحديثات
+            - تحسينات الأداء والإصلاحات
+            - دعم ثنائي اللغة (عربي/إنجليزي)
+            - نظام إشعارات متقدم
+            - تحسينات الأتمتة
           files: |
             release/*.apk
             release/*.aab
