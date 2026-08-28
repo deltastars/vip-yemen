@@ -763,3 +763,379 @@ body img:not(.brand img) { transform:scale(var(--access-image-scale,1)); transfo
 .automation-status { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: rgba(22,163,74,.08); color: #16a34a; font-size: 10px; font-weight: 600; }
 .automation-status::before { content: ''; width: 6px; height: 6px; background: #16a34a; border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
+
+/* ═══════════════════════════════════════════════════
+   UI/UX IMPROVEMENTS - DESIGN HARMONY
+   ═══════════════════════════════════════════════════ */
+
+/* Improved Card Consistency */
+.service-card,
+.software-card,
+.listing-card,
+.offer-card,
+.dept-form-card,
+.submission-card,
+.stat-card {
+  border-radius: 2px;
+  transition: all .3s var(--ease-out);
+}
+
+.service-card:hover,
+.software-card:hover,
+.listing-card:hover,
+.offer-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Consistent Section Spacing */
+.section-pad {
+  padding: 100px 0;
+}
+
+/* Improved Typography Hierarchy */
+h1, h2, h3, h4 {
+  font-family: 'Noto Kufi Arabic', sans-serif;
+  letter-spacing: -0.03em;
+  line-height: 1.35;
+}
+
+/* Better Button Consistency */
+.button,
+.filter-btn,
+.action-btn,
+.offer-contact {
+  border-radius: 2px;
+  font-weight: 600;
+  transition: all .2s ease;
+}
+
+.button:hover,
+.filter-btn:hover,
+.action-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,.1);
+}
+
+/* Improved Form Elements */
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--yellow) !important;
+  box-shadow: 0 0 0 3px rgba(243,183,27,.15);
+  outline: none;
+}
+
+/* Better Image Handling */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+.service-image img,
+.visual-gallery img,
+.offer-image img,
+.dept-hero-visual img {
+  object-fit: cover;
+  transition: transform .4s var(--ease-out);
+}
+
+.service-card:hover .service-image img,
+.visual-gallery figure:hover img,
+.offer-card:hover .offer-image img {
+  transform: scale(1.03);
+}
+
+/* Consistent Color Accents */
+.eyebrow,
+.category-badge,
+.listing-category,
+.offer-category,
+.dept-tab.active {
+  color: var(--yellow);
+}
+
+/* Better Spacing for Forms */
+.dept-form-card form,
+.submit-card form,
+.contact-card form,
+.admin-form {
+  gap: 18px;
+}
+
+/* Improved Footer Design */
+.site-footer {
+  background: linear-gradient(180deg, #0B2034 0%, #071522 100%);
+}
+
+.footer-brand p {
+  line-height: 1.8;
+  color: rgba(255,255,255,.65);
+}
+
+/* Better Mobile Experience */
+@media (max-width: 850px) {
+  .section-pad {
+    padding: 70px 0;
+  }
+  
+  .hero-grid {
+    padding-top: 40px;
+  }
+  
+  .hero-copy h1 {
+    font-size: 38px;
+  }
+  
+  .dept-hero h2 {
+    font-size: 32px;
+  }
+  
+  .dept-nav-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .dept-nav-links {
+    padding-bottom: 8px;
+  }
+}
+
+/* Smooth Scroll Behavior */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+}
+
+/* Better Focus States for Accessibility */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--yellow);
+  outline-offset: 2px;
+}
+
+/* Consistent Card Borders */
+.admin-panel,
+.developer-grid > div,
+.revision-panel,
+.stat-card,
+.submission-card {
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--yellow);
+}
+
+/* Improved Hover States */
+.social-hub-link:hover,
+.footer-links a:hover,
+.dept-nav-links a:hover {
+  color: var(--yellow);
+}
+
+/* Better Visual Hierarchy */
+.section-heading h2 {
+  color: var(--navy);
+  margin-bottom: 0;
+}
+
+.section-heading h2 span {
+  color: var(--yellow);
+}
+
+/* Consistent Padding for Cards */
+.dept-form-card,
+.submit-card,
+.contact-card,
+.admin-panel {
+  padding: 28px;
+}
+
+/* Better Mobile Navigation */
+@media (max-width: 850px) {
+  .main-nav {
+    background: var(--navy);
+    color: white;
+    border-bottom: 1px solid rgba(243,183,27,.3);
+  }
+  
+  .main-nav a {
+    color: rgba(255,255,255,.85);
+    border-bottom-color: rgba(255,255,255,.1);
+  }
+  
+  .main-nav a:hover {
+    color: var(--yellow);
+  }
+}
+
+/* Consistent Image Aspect Ratios */
+.offer-image,
+.visual-gallery figure,
+.service-image {
+  aspect-ratio: 16/10;
+  overflow: hidden;
+}
+
+/* Better Loading States */
+.admin-loading {
+  min-height: 200px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* Consistent Border Radius */
+.stat-card,
+.submission-card,
+.listing-card,
+.offer-card,
+.dept-form-card {
+  border-radius: 2px;
+}
+
+/* Improved Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--cream);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+/* Better Text Selection */
+::selection {
+  background: var(--yellow);
+  color: var(--navy);
+}
+
+/* Consistent Card Shadows */
+.admin-panel,
+.developer-grid > div,
+.revision-panel {
+  box-shadow: 0 8px 24px rgba(16,42,67,.06);
+}
+
+/* Improved Animation Timing */
+* {
+  animation-timing-function: var(--ease-out);
+}
+
+/* Better Visual Separators */
+.dept-hero {
+  border-bottom: 1px solid var(--line);
+}
+
+.service-card {
+  border-top: 1px solid var(--line);
+}
+
+/* Consistent Typography Scale */
+.stat-number {
+  font-size: 28px;
+}
+
+.stat-label {
+  font-size: 11px;
+}
+
+/* Better Mobile Touch Targets */
+@media (max-width: 850px) {
+  .button,
+  .filter-btn,
+  .action-btn {
+    min-height: 44px;
+    padding: 12px 20px;
+  }
+  
+  .dept-tab {
+    min-height: 40px;
+  }
+}
+
+/* Improved Focus Visibility */
+:focus-visible {
+  outline: 2px solid var(--yellow);
+  outline-offset: 2px;
+}
+
+/* Consistent Transition Timing */
+.transition-all {
+  transition: all .2s ease;
+}
+
+/* Better Card Interaction States */
+.listing-card:active,
+.offer-card:active,
+.service-card:active {
+  transform: translateY(-1px);
+}
+
+/* Consistent Typography for Arabic */
+[dir="rtl"] {
+  font-family: 'IBM Plex Sans Arabic', 'Noto Kufi Arabic', sans-serif;
+}
+
+/* Improved Section Headers */
+.dept-hero h2,
+.listings-header h2,
+.offers-header h2 {
+  font-family: 'Noto Kufi Arabic';
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+/* Better Mobile Layout */
+@media (max-width: 850px) {
+  .hero-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+  
+  .hero-copy {
+    padding: 20px 0 40px;
+  }
+  
+  .hero-visual {
+    min-height: 350px;
+    margin-bottom: 40px;
+  }
+}
+
+/* Consistent Card Heights */
+.listings-grid,
+.offers-grid,
+.dept-content-grid {
+  grid-auto-rows: min-content;
+}
+
+/* Better Visual Balance */
+.dept-hero {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 50px;
+  align-items: center;
+}
+
+/* Improved Mobile Experience */
+@media (max-width: 850px) {
+  .dept-hero {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  
+  .dept-hero-visual {
+    display: none;
+  }
+}
