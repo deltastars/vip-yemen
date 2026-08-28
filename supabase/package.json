@@ -1,0 +1,19 @@
+{
+  "name": "vipyemen-supabase",
+  "version": "1.1.0",
+  "private": true,
+  "description": "ViP Yemen Supabase Backend Configuration",
+  "scripts": {
+    "db:push": "supabase db push",
+    "db:reset": "supabase db reset",
+    "db:seed": "supabase db seed",
+    "db:diff": "supabase db diff",
+    "types:generate": "supabase gen types typescript --local > types.ts",
+    "studio": "supabase studio",
+    "start": "supabase start",
+    "stop": "supabase stop"
+  },
+  "devDependencies": {
+    "supabase": "^2.0.0"
+  }
+}
