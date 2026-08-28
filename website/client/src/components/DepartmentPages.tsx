@@ -458,12 +458,17 @@ export function OffersSection() {
           {offers.map((offer: any) => (
             <article className={`offer-card ${offer.isFeatured ? "offer-featured" : ""}`} key={offer.id}>
               {offer.isFeatured ? <div className="offer-badge"><Star size={12} /> عرض مميز</div> : null}
-              {offer.imageUrl && (
+              {offer.videoUrl ? (
+                <div className="offer-video">
+                  <video src={offer.videoUrl} controls preload="metadata" poster={offer.imageUrl || undefined} />
+                  {offer.discountPercent ? <div className="offer-discount"><Percent size={14} /> {offer.discountPercent}%</div> : null}
+                </div>
+              ) : offer.imageUrl ? (
                 <div className="offer-image">
                   <img src={offer.imageUrl} alt={offer.title} loading="lazy" />
                   {offer.discountPercent ? <div className="offer-discount"><Percent size={14} /> {offer.discountPercent}%</div> : null}
                 </div>
-              )}
+              ) : null}
               <div className="offer-content">
                 <span className="offer-category">{offer.category || "عرض عام"}</span>
                 <h3>{offer.title}</h3>
