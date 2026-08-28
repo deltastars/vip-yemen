@@ -20,3 +20,20 @@ release/
 coverage/
 .manus-logs/
 .DS_Store
+
+# =============================================================================
+# 🔐 ملفات حساسة - لا ترفعها إلى GitHub
+# =============================================================================
+
+# Android Keystore files
+*.jks
+*.keystore
+keystore.properties
+
+# Capacitor keystore
+capacitor-app/keystore.properties
+capacitor-app/*.jks
+capacitor-app/*.keystore
+
+# Credentials files (keep local only)
+CREDENTIALS-AND-SIGNING.md
