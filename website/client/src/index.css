@@ -3,15 +3,15 @@
 @import "tw-animate-css";
 
 :root {
-  --navy:#1A1A1A;
-  --ink:#2A2A2A;
+  --navy:#0B1D32;
+  --ink:#1A2D42;
   --yellow:#D4AF37;
   --yellow-light:#E8D48B;
   --yellow-dark:#B8960F;
-  --cream:#1E1E1E;
-  --paper:#121212;
-  --muted:#888888;
-  --line:#333333;
+  --cream:#141E28;
+  --paper:#0A1520;
+  --muted:#8899AA;
+  --line:#2A3A4A;
   --coral:#E76F51;
   --gold:#D4AF37;
   --gold-light:#E8D48B;
@@ -38,7 +38,7 @@
   --gradient-navy:linear-gradient(135deg, #102A43 0%, #17324D 50%, #0B2034 100%);
 }
 @theme inline { --color-background:var(--background); --color-foreground:var(--foreground); --color-card:var(--card); --color-card-foreground:var(--card-foreground); --color-primary:var(--primary); --color-primary-foreground:var(--primary-foreground); --color-secondary:var(--secondary); --color-secondary-foreground:var(--secondary-foreground); --color-muted-foreground:var(--muted-foreground); --color-border:var(--border); --color-input:var(--input); --color-ring:var(--ring); }
-@layer base { * { @apply border-border; } html { scroll-behavior:smooth; } body { margin:0; background:var(--paper); color:#E0E0E0; font-family:'IBM Plex Sans Arabic',sans-serif; } button,a,input,textarea { font:inherit; } button,a { cursor:pointer; } a { color:inherit; text-decoration:none; } ::selection { background:var(--yellow); color:var(--navy); } }
+@layer base { * { @apply border-border; } html { scroll-behavior:smooth; } body { margin:0; background:var(--paper); color:#FFFFFF; font-family:'IBM Plex Sans Arabic',sans-serif; } button,a,input,textarea { font:inherit; } button,a { cursor:pointer; } a { color:inherit; text-decoration:none; } ::selection { background:var(--yellow); color:var(--navy); } }
 * { box-sizing:border-box; }
 .container { width:min(1180px,calc(100% - 48px)); margin-inline:auto; }
 .site-header { position:absolute; z-index:10; inset-inline:0; top:0; color:white; }
@@ -1528,5 +1528,150 @@ body {
   background: rgba(26,26,26,0.95) !important;
   color: #E0E0E0 !important;
   border-color: #444 !important;
+}
+
+
+/* Manus Design - Dark Navy Theme */
+body {
+  background: #0A1520 !important;
+  color: #FFFFFF !important;
+}
+
+.site-header {
+  background: transparent !important;
+}
+
+.hero-section {
+  background: linear-gradient(135deg, #0B1D32 0%, #1A2D42 100%) !important;
+}
+
+.services-section {
+  background: #0F1E2D !important;
+}
+
+.software-section {
+  background: linear-gradient(135deg, #0B1D32 0%, #1A2D42 100%) !important;
+}
+
+.why-section {
+  background: #0B1D32 !important;
+}
+
+.contact-section {
+  background: #0A1520 !important;
+}
+
+.site-footer {
+  background: #060E16 !important;
+}
+
+.footer-financial {
+  background: #0F1E2D !important;
+  border-top: 1px solid #2A3A4A !important;
+}
+
+.service-card {
+  background: #141E28 !important;
+  border-color: #2A3A4A !important;
+}
+
+.software-card {
+  background: #141E28 !important;
+  border-color: #2A3A4A !important;
+}
+
+.financial-account-card {
+  background: #1A2D42 !important;
+  border-color: #2A3A4A !important;
+}
+
+.financial-qr-img {
+  border-color: #2A3A4A !important;
+  background: #fff !important;
+}
+
+.section-heading h2,
+.section-heading span {
+  color: #FFFFFF !important;
+}
+
+.eyebrow {
+  color: var(--yellow) !important;
+}
+
+.button-primary {
+  background: var(--yellow) !important;
+  color: #0B1D32 !important;
+}
+
+.button-primary:hover {
+  background: var(--yellow-dark) !important;
+}
+
+.brand {
+  color: #fff !important;
+}
+
+.brand b {
+  color: var(--yellow) !important;
+}
+
+.nav-cta {
+  background: var(--yellow) !important;
+  color: #0B1D32 !important;
+}
+
+.hero-copy h1 {
+  color: #FFFFFF !important;
+}
+
+.hero-lead {
+  color: #AABBCC !important;
+}
+
+.footer-brand p {
+  color: #8899AA !important;
+}
+
+.footer-links span {
+  color: var(--yellow) !important;
+}
+
+.footer-links a {
+  color: #CCDDEE !important;
+}
+
+.footer-social span {
+  color: var(--yellow) !important;
+}
+
+.footer-bottom {
+  border-top: 1px solid #2A3A4A !important;
+}
+
+.developer-credit {
+  color: #8899AA !important;
+}
+
+.admin-shortcut {
+  background: rgba(212,175,55,0.2) !important;
+  color: var(--yellow) !important;
+  border: 1px solid var(--yellow) !important;
+}
+
+.announcement-bar {
+  background: var(--yellow) !important;
+  color: #0B1D32 !important;
+}
+
+.calendar-bar {
+  background: #0B1D32 !important;
+  color: #CCDDEE !important;
+}
+
+.accessibility-tools {
+  background: rgba(11,29,50,0.95) !important;
+  color: #FFFFFF !important;
+  border-color: #2A3A4A !important;
 }
 
