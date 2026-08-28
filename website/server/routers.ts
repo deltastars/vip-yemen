@@ -8,6 +8,7 @@ import { ENV } from "./_core/env";
 import { createSubmissionAttachment } from "./db";
 import {
   createAdvertisement,
+  decorateAdvertisement,
   createSubmission,
   deleteAdvertisement,
   listActiveAdvertisements,
@@ -79,7 +80,7 @@ export const appRouter = router({
   }),
   advertisements: router({
     active: publicProcedure.query(() => listActiveAdvertisements()),
-    adminList: adminProcedure.query(() => listAdminAdvertisements()),
+    adminList: adminProcedure.query(async () => (await listAdminAdvertisements()).map(ad => decorateAdvertisement(ad))),
     create: adminProcedure.input(z.object({
       title: z.string().trim().min(2).max(220),
       message: z.string().trim().min(2).max(500),

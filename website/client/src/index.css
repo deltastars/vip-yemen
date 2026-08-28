@@ -141,3 +141,48 @@
 
 .asset-row { display:flex; align-items:center; gap:9px; min-width:0; }
 .asset-preview { width:42px; height:34px; flex:0 0 42px; object-fit:cover; border:1px solid #e8e2d5; background:#eef2f4; }
+
+/* Multilingual header, Islamic calendar, accessible scaling, and Yemen glass map. */
+:root { --access-scale: 1; }
+body { font-size: calc(16px * var(--access-scale)); }
+body img { transition: transform 180ms var(--ease-out, cubic-bezier(.23,1,.32,1)); }
+body img:not(.brand img) { max-width:100%; }
+.calendar-bar { position:relative; z-index:20; display:flex; align-items:center; justify-content:center; gap:10px; min-height:32px; padding:6px 16px; background:rgba(8,31,52,.96); color:rgba(255,255,255,.82); font-size:11px; letter-spacing:.02em; }
+.calendar-bar i { width:4px; height:4px; border-radius:999px; background:var(--yellow); }
+.language-toggle { position:absolute; inset-inline-start:0; top:50%; transform:translateY(-50%); display:inline-flex; align-items:center; gap:7px; min-height:32px; padding:0 10px; border:1px solid rgba(255,255,255,.34); background:rgba(255,255,255,.06); color:#fff; cursor:pointer; font:inherit; font-size:10px; transition:background 160ms ease, transform 160ms ease; }
+.language-toggle:hover { background:rgba(246,183,25,.18); }
+.language-toggle:active { transform:translateY(-50%) scale(.97); }
+.accessibility-tools { position:fixed; z-index:40; inset-inline-start:14px; bottom:14px; display:flex; align-items:center; gap:6px; padding:6px; border:1px solid rgba(8,31,52,.14); border-radius:999px; background:rgba(255,255,255,.9); box-shadow:0 10px 24px rgba(8,31,52,.14); color:var(--navy); backdrop-filter:blur(12px); }
+.accessibility-tools button { display:grid; place-items:center; width:30px; height:30px; border:0; border-radius:50%; background:var(--navy); color:#fff; cursor:pointer; }
+.accessibility-tools span { min-width:38px; text-align:center; font-size:10px; font-weight:700; }
+.yemen-map-glass { position:absolute; z-index:0; inset:8% 3% 4% 7%; display:grid; place-items:center; overflow:hidden; border:1px solid rgba(255,255,255,.14); border-radius:42% 58% 55% 45% / 42% 44% 56% 58%; background:rgba(255,255,255,.04); box-shadow:inset 0 0 55px rgba(255,255,255,.06), 0 20px 80px rgba(0,0,0,.12); opacity:.42; backdrop-filter:blur(3px); pointer-events:none; }
+.yemen-map-glass::after { content:"الجمهورية اليمنية"; position:absolute; bottom:12%; inset-inline:0; color:rgba(246,183,25,.65); text-align:center; font-family:'Noto Kufi Arabic'; font-size:10px; letter-spacing:.16em; }
+.yemen-map-glass img { width:88%; height:72%; object-fit:contain; mix-blend-mode:screen; filter:grayscale(1) sepia(.7) hue-rotate(165deg) saturate(2) contrast(1.05); opacity:.48; }
+.hero-visual > :not(.yemen-map-glass) { z-index:1; }
+.social-hub-link { display:inline-flex; align-items:center; gap:5px; color:var(--yellow); font-size:10px; }
+@media (max-width:850px) { .calendar-bar { justify-content:flex-end; padding-inline-start:122px; font-size:9px; white-space:nowrap; overflow:hidden; } .language-toggle { inset-inline-start:8px; } .yemen-map-glass { inset:7% 0 8% 2%; opacity:.25; } }
+@media (prefers-reduced-motion:reduce) { body img, .language-toggle { transition:none; } .announcement-track { animation:none !important; } }
+
+/* Keep the language control visible below the date strip on both directions. */
+.site-header { top:32px; z-index:30; }
+.site-header .language-toggle { z-index:31; }
+@media (max-width:850px) { .site-header { top:32px; } .site-header .language-toggle { top:16px; } }
+
+/* The date strip and announcement are in normal flow; the header follows them instead of covering them. */
+.site-header { position:relative; top:auto; }
+.site-header .language-toggle { top:50%; }
+@media (max-width:850px) { .site-header { top:auto; } .site-header .language-toggle { top:50%; } .hero-grid { padding-top:32px; } }
+
+.site-header { background:var(--navy); }
+.site-header .nav-wrap { position:relative; }
+@media (max-width:850px) { .site-header { background:var(--navy); } }
+
+.site-header .language-toggle { position:fixed; left:16px; right:auto; top:48px; inset-inline-start:auto; inset-inline-end:auto; transform:none; }
+@media (max-width:850px) { .site-header .language-toggle { left:8px; top:48px; } }
+
+.site-header .language-toggle { left:16px !important; right:auto !important; inset-inline-start:auto !important; inset-inline-end:auto !important; }
+@media (max-width:850px) { .site-header .language-toggle { left:8px !important; right:auto !important; } }
+
+:root { --access-image-scale:1; }
+body img:not(.brand img) { transform:scale(var(--access-image-scale,1)); transform-origin:center; }
+.accessibility-tools button:last-child { min-width:30px; padding:0 7px; font-size:9px; }

@@ -2,11 +2,11 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("./db", async importOriginal => {
   const actual = await importOriginal<typeof import("./db")>();
-  return { ...actual, updateAdvertisement: vi.fn().mockResolvedValue(undefined) };
+  return { ...actual, updateAdvertisement: vi.fn().mockResolvedValue(undefined), listAdminAdvertisements: vi.fn().mockResolvedValue([]) };
 });
 
 import { appRouter } from "./routers";
-import { decorateAdvertisement, updateAdvertisement } from "./db";
+import { decorateAdvertisement, listAdminAdvertisements, updateAdvertisement } from "./db";
 
 const adminContext = {
   req: { headers: {}, protocol: "https", get: () => "test" },
@@ -15,7 +15,7 @@ const adminContext = {
 } as never;
 
 describe("advertisement update workflow", () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => { vi.clearAllMocks(); vi.mocked(listAdminAdvertisements).mockResolvedValue([]); });
   it("persists a complete edit for an existing advertisement", async () => {
     const caller = appRouter.createCaller(adminContext);
     await caller.advertisements.update({
@@ -40,6 +40,13 @@ describe("advertisement update workflow", () => {
   it("returns updated values with the computed current status for admin reads", () => {
     const updated = decorateAdvertisement({ id: 42, title: "تطبيق ViP الجديد", message: "رسالة محدثة", linkUrl: null, priority: 9, status: "scheduled" as const, startsAt: new Date("2026-09-01T10:00:00Z"), endsAt: new Date("2026-09-15T10:00:00Z") }, new Date("2026-09-05T10:00:00Z"));
     expect(updated).toMatchObject({ id: 42, title: "تطبيق ViP الجديد", message: "رسالة محدثة", priority: 9, currentStatus: "published" });
+  });
+
+  it("reads the updated advertisement from adminList with computed currentStatus", async () => {
+    vi.mocked(listAdminAdvertisements).mockResolvedValue([{ id: 42, title: "تطبيق محدث", message: "رسالة جديدة", linkUrl: null, priority: 9, status: "scheduled", startsAt: new Date("2026-09-01T10:00:00Z"), endsAt: new Date("2026-09-15T10:00:00Z") } as never]);
+    const caller = appRouter.createCaller(adminContext);
+    const rows = await caller.advertisements.adminList();
+    expect(rows[0]).toMatchObject({ id: 42, title: "تطبيق محدث", currentStatus: "scheduled" });
   });
 
   it("supports pause then resume through the same protected route", async () => {
