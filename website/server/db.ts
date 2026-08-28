@@ -1,6 +1,6 @@
 import { and, desc, eq, gt, inArray, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { advertisements, InsertAdvertisement, InsertSiteAsset, InsertSiteSection, InsertSiteTheme, InsertSubmission, InsertUser, siteAssets, siteContentRevisions, siteSections, siteThemes, submissionAttachments, submissions, users } from "../drizzle/schema";
+import { advertisements, InsertAdvertisement, InsertSiteAsset, InsertSiteSection, InsertSiteTheme, InsertSubmission, InsertUser, offers, offerAttachments, siteAssets, siteContentRevisions, siteSections, siteThemes, submissionAttachments, submissions, users } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -260,4 +260,43 @@ export async function restoreSiteRevision(id: number) {
   if (revision.entityType === "asset") await db.update(siteAssets).set({ name: String(snapshot.name), url: String(snapshot.url), altText: String(snapshot.altText), isPublished: Number(snapshot.isPublished) }).where(eq(siteAssets.id, revision.entityId));
   if (revision.entityType === "theme") await db.update(siteThemes).set({ name: String(snapshot.name), config: snapshot.config, isActive: Number(snapshot.isActive) }).where(eq(siteThemes.id, revision.entityId));
   if (revision.entityType === "section") await db.update(siteSections).set({ slug: String(snapshot.slug), title: String(snapshot.title), description: snapshot.description ? String(snapshot.description) : null, sortOrder: Number(snapshot.sortOrder), isPublished: Number(snapshot.isPublished) }).where(eq(siteSections.id, revision.entityId));
+}
+
+/* ─── Offers CRUD ─── */
+
+export async function listPublishedOffers() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(offers).where(eq(offers.status, "published")).orderBy(desc(offers.isFeatured), desc(offers.priority), desc(offers.createdAt));
+}
+
+export async function listAdminOffers() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(offers).orderBy(desc(offers.createdAt));
+}
+
+export async function createOffer(input: { title: string; description: string; imageUrl?: string; videoUrl?: string; category?: string; originalPrice?: string; offerPrice?: string; discountPercent?: number; status: "draft" | "scheduled" | "published" | "paused" | "expired"; startsAt?: Date; endsAt?: Date; priority?: number; isFeatured?: number; contactPhone?: string; createdBy: number }) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not configured");
+  const result = await db.insert(offers).values(input);
+  return Number(result[0].insertId);
+}
+
+export async function updateOffer(id: number, input: Partial<typeof offers.$inferInsert>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not configured");
+  await db.update(offers).set(input).where(eq(offers.id, id));
+}
+
+export async function deleteOffer(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not configured");
+  await db.delete(offers).where(eq(offers.id, id));
+}
+
+export async function createOfferAttachment(input: { offerId: number; storageKey: string; storageUrl: string; originalName: string; mimeType: string }) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not configured");
+  await db.insert(offerAttachments).values(input);
 }

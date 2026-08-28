@@ -132,3 +132,44 @@ export const siteContentRevisions = mysqlTable("site_content_revisions", {
 }, (table) => ({ entityIdx: index("site_content_revisions_entity_idx").on(table.entityType, table.entityId), createdIdx: index("site_content_revisions_created_idx").on(table.createdAt) }));
 export type SiteContentRevision = typeof siteContentRevisions.$inferSelect;
 export type InsertSiteContentRevision = typeof siteContentRevisions.$inferInsert;
+
+export const offers = mysqlTable("offers", {
+  id: int("id").autoincrement().primaryKey(),
+  title: varchar("title", { length: 220 }).notNull(),
+  description: text("description").notNull(),
+  imageUrl: varchar("imageUrl", { length: 1000 }),
+  videoUrl: varchar("videoUrl", { length: 1000 }),
+  category: varchar("category", { length: 100 }),
+  originalPrice: varchar("originalPrice", { length: 80 }),
+  offerPrice: varchar("offerPrice", { length: 80 }),
+  discountPercent: int("discountPercent"),
+  status: mysqlEnum("status", ["draft", "scheduled", "published", "paused", "expired"]).default("draft").notNull(),
+  startsAt: timestamp("startsAt"),
+  endsAt: timestamp("endsAt"),
+  priority: int("priority").default(0).notNull(),
+  isFeatured: int("isFeatured").default(0).notNull(),
+  contactPhone: varchar("contactPhone", { length: 32 }),
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  statusIdx: index("offers_status_idx").on(table.status),
+  featuredIdx: index("offers_featured_idx").on(table.isFeatured),
+  priorityIdx: index("offers_priority_idx").on(table.priority),
+}));
+export type Offer = typeof offers.$inferSelect;
+export type InsertOffer = typeof offers.$inferInsert;
+
+export const offerAttachments = mysqlTable("offer_attachments", {
+  id: int("id").autoincrement().primaryKey(),
+  offerId: int("offerId").notNull(),
+  storageKey: varchar("storageKey", { length: 500 }).notNull(),
+  storageUrl: varchar("storageUrl", { length: 1000 }).notNull(),
+  originalName: varchar("originalName", { length: 255 }).notNull(),
+  mimeType: varchar("mimeType", { length: 120 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  offerIdx: index("offer_attachments_offer_idx").on(table.offerId),
+}));
+export type OfferAttachment = typeof offerAttachments.$inferSelect;
+export type InsertOfferAttachment = typeof offerAttachments.$inferInsert;

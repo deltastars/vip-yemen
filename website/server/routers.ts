@@ -32,6 +32,11 @@ import {
   recordSiteRevision,
   listSiteRevisions,
   restoreSiteRevision,
+  listPublishedOffers,
+  listAdminOffers,
+  createOffer,
+  updateOffer,
+  deleteOffer,
 } from "./db";
 
 const categorySchema = z.enum(["employment", "realEstateOffer", "realEstateRequest", "productOffer", "productRequest", "software"]);
@@ -130,6 +135,62 @@ export const appRouter = router({
     adminSections: ownerProcedure.query(() => listAdminSiteSections()),
     createSection: ownerProcedure.input(z.object({ slug: z.string().trim().regex(/^[a-z0-9-]{2,100}$/), title: z.string().trim().min(2).max(160), description: z.string().trim().max(2000).optional(), sortOrder: z.number().int().min(0).max(10000).default(0), isPublished: z.boolean().default(true) })).mutation(async ({ input, ctx }) => { const id = await createSiteSection({ ...input, isPublished: input.isPublished ? 1 : 0, createdBy: ctx.user.id }); await recordSiteRevision({ entityType: "section", entityId: id, action: input.isPublished ? "publish" : "create", snapshot: { slug: input.slug, title: input.title, description: input.description || null, sortOrder: input.sortOrder, isPublished: input.isPublished ? 1 : 0 }, createdBy: ctx.user.id }); return id; }),
     updateSection: ownerProcedure.input(z.object({ id: z.number().int().positive(), slug: z.string().trim().regex(/^[a-z0-9-]{2,100}$/).optional(), title: z.string().trim().min(2).max(160).optional(), description: z.string().trim().max(2000).optional(), sortOrder: z.number().int().min(0).max(10000).optional(), isPublished: z.boolean().optional() })).mutation(async ({ input, ctx }) => { const current = (await listAdminSiteSections()).find(row => row.id === input.id); if (!current) throw new TRPCError({ code: "NOT_FOUND", message: "القسم غير موجود" }); const { id, isPublished, ...rest } = input; await updateSiteSection(id, { ...rest, ...(isPublished === undefined ? {} : { isPublished: isPublished ? 1 : 0 }) }); await recordSiteRevision({ entityType: "section", entityId: id, action: isPublished === undefined ? "update" : "publish", snapshot: { slug: rest.slug ?? current.slug, title: rest.title ?? current.title, description: rest.description ?? current.description, sortOrder: rest.sortOrder ?? current.sortOrder, isPublished: isPublished === undefined ? current.isPublished : (isPublished ? 1 : 0) }, createdBy: ctx.user.id }); return { success: true }; }),
+  }),
+  offers: router({
+    list: publicProcedure.query(() => listPublishedOffers()),
+    adminList: adminProcedure.query(() => listAdminOffers()),
+    create: adminProcedure.input(z.object({
+      title: z.string().trim().min(2).max(220),
+      description: z.string().trim().min(5).max(10000),
+      imageUrl: z.string().max(1000).optional(),
+      videoUrl: z.string().max(1000).optional(),
+      category: z.string().max(100).optional(),
+      originalPrice: z.string().max(80).optional(),
+      offerPrice: z.string().max(80).optional(),
+      discountPercent: z.number().int().min(0).max(100).optional(),
+      status: z.enum(["draft", "scheduled", "published", "paused", "expired"]).default("draft"),
+      startsAt: dateInput.optional(),
+      endsAt: dateInput.optional(),
+      priority: z.number().int().min(-100).max(100).default(0),
+      isFeatured: z.boolean().default(false),
+      contactPhone: z.string().max(32).optional(),
+    })).mutation(async ({ input, ctx }) => {
+      const id = await createOffer({
+        ...input,
+        isFeatured: input.isFeatured ? 1 : 0,
+        startsAt: input.startsAt || undefined,
+        endsAt: input.endsAt || undefined,
+        createdBy: ctx.user.id,
+      });
+      return { id };
+    }),
+    update: adminProcedure.input(z.object({
+      id: z.number().int().positive(),
+      title: z.string().trim().min(2).max(220).optional(),
+      description: z.string().trim().min(5).max(10000).optional(),
+      imageUrl: z.string().max(1000).optional(),
+      videoUrl: z.string().max(1000).optional(),
+      category: z.string().max(100).optional(),
+      originalPrice: z.string().max(80).optional(),
+      offerPrice: z.string().max(80).optional(),
+      discountPercent: z.number().int().min(0).max(100).optional(),
+      status: z.enum(["draft", "scheduled", "published", "paused", "expired"]).optional(),
+      startsAt: dateInput.optional(),
+      endsAt: dateInput.optional(),
+      priority: z.number().int().min(-100).max(100).optional(),
+      isFeatured: z.boolean().optional(),
+      contactPhone: z.string().max(32).optional(),
+    })).mutation(async ({ input }) => {
+      const { id, isFeatured, ...patch } = input;
+      const updateData: Record<string, unknown> = { ...patch };
+      if (isFeatured !== undefined) updateData.isFeatured = isFeatured ? 1 : 0;
+      await updateOffer(id, updateData as any);
+      return { success: true } as const;
+    }),
+    remove: adminProcedure.input(z.object({ id: z.number().int().positive() })).mutation(async ({ input }) => {
+      await deleteOffer(input.id);
+      return { success: true } as const;
+    }),
   }),
   submissions: router({
     create: publicProcedure.input(submissionInput).mutation(async ({ input }) => {

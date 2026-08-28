@@ -1,0 +1,29 @@
+{
+  "name": "ViP Yemen - للتوظيف والتسويق والخدمات العامة",
+  "short_name": "ViP Yemen",
+  "description": "منصة يمنية للتوظيف والتسويق الإلكتروني والعقاري والبرمجيات والخدمات العامة",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#102A43",
+  "theme_color": "#102A43",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/manus-storage/official-mark_82d4d013.webp",
+      "sizes": "192x192",
+      "type": "image/webp",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/manus-storage/official-mark_82d4d013.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "lifestyle", "social"],
+  "lang": "ar",
+  "dir": "rtl",
+  "scope": "/",
+  "prefer_related_applications": false
+}
