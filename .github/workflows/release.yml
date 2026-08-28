@@ -1,0 +1,189 @@
+name: ViP Yemen Release Build
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to build (e.g., 1.1.0)'
+        required: true
+        default: '1.1.0'
+
+env:
+  PACKAGE_NAME: com.vip.yemen
+  NODE_VERSION: 22
+  JAVA_VERSION: 17
+
+jobs:
+  # =============================================================================
+  # Job 1: Build Web Assets
+  # =============================================================================
+  build-web:
+    name: Build Web Assets
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: website/package-lock.json
+      
+      - name: Install website dependencies
+        working-directory: website
+        run: npm ci
+      
+      - name: Build website
+        working-directory: website
+        run: npm run build
+      
+      - name: Upload web dist
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-dist
+          path: website/dist/
+          retention-days: 1
+
+  # =============================================================================
+  # Job 2: Build Android APK and AAB
+  # =============================================================================
+  build-android:
+    name: Build Android (APK + AAB)
+    needs: build-web
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: capacitor-app/package-lock.json
+      
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+      
+      - name: Install Capacitor dependencies
+        working-directory: capacitor-app
+        run: npm ci
+      
+      - name: Download web dist
+        uses: actions/download-artifact@v4
+        with:
+          name: web-dist
+          path: capacitor-app/dist/
+      
+      - name: Sync Capacitor Android
+        working-directory: capacitor-app
+        run: npx cap sync android
+      
+      - name: Build debug APK
+        working-directory: capacitor-app/android
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
+      
+      - name: Build release AAB
+        working-directory: capacitor-app/android
+        run: ./gradlew bundleRelease --no-daemon --stacktrace
+      
+      - name: Verify package name
+        run: |
+          $ANDROID_HOME/build-tools/*/aapt2 dump badging capacitor-app/android/app/build/outputs/apk/debug/app-debug.apk | grep -q "package: name='${{ env.PACKAGE_NAME }}'"
+      
+      - name: Get version from tag
+        id: version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          if [ -z "$VERSION" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+      
+      - name: Rename APK with version
+        run: |
+          VERSION=${{ steps.version.outputs.version }}
+          mv capacitor-app/android/app/build/outputs/apk/debug/app-debug.apk \
+             capacitor-app/android/app/build/outputs/apk/debug/ViP-Yemen-${VERSION}-debug.apk
+      
+      - name: Rename AAB with version
+        run: |
+          VERSION=${{ steps.version.outputs.version }}
+          mv capacitor-app/android/app/build/outputs/bundle/release/app-release.aab \
+             capacitor-app/android/app/build/outputs/bundle/release/ViP-Yemen-${VERSION}-release.aab
+      
+      - name: Upload Android artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-builds
+          path: |
+            capacitor-app/android/app/build/outputs/apk/debug/*.apk
+            capacitor-app/android/app/build/outputs/bundle/release/*.aab
+          retention-days: 90
+
+  # =============================================================================
+  # Job 3: Create GitHub Release
+  # =============================================================================
+  create-release:
+    name: Create GitHub Release
+    needs: build-android
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Get version from tag
+        id: version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          if [ -z "$VERSION" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+      
+      - name: Download Android artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: android-builds
+          path: release/
+      
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: ViP Yemen v${{ steps.version.outputs.version }}
+          body: |
+            ## 🚀 ViP Yemen v${{ steps.version.outputs.version }}
+            
+            ### 📱 Android Downloads
+            - **APK (Debug)**: Install directly on Android devices
+            - **AAB (Release)**: For Google Play Store upload
+            
+            ### 📋 Installation Instructions
+            1. Download the `.apk` file
+            2. Enable "Install from unknown sources" in Android settings
+            3. Open the downloaded file and install
+            
+            ### 🔐 Package Information
+            - **Package**: `com.vip.yemen`
+            - **Version**: ${{ steps.version.outputs.version }}
+            
+            ### 📝 What's New
+            - Bug fixes and performance improvements
+            - Enhanced bilingual support (Arabic/English)
+            - New notification system
+            - Automation improvements
+            
+            ---
+            **Download links:**
+            - APK: `ViP-Yemen-${{ steps.version.outputs.version }}-debug.apk`
+            - AAB: `ViP-Yemen-${{ steps.version.outputs.version }}-release.aab`
+          files: |
+            release/*.apk
+            release/*.aab
+          draft: false
+          prerelease: false
+          generate_release_notes: true
