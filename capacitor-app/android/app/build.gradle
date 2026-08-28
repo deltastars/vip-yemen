@@ -24,11 +24,10 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
         
-        // Auto-update: allow HTTP traffic for OTA updates
         vectorDrawables.useSupportLibrary = true
     }
     
-    // Signing configuration for release builds
+    // Signing configuration - SAME for debug and release
     signingConfigs {
         release {
             if (hasCodemagicSigning) {
@@ -47,9 +46,13 @@ android {
     
     buildTypes {
         debug {
-            applicationIdSuffix ".debug"
+            // NO suffix - same package name as release for auto-update
             versionCode 1010001
             debuggable true
+            // Use same signing as release for consistency
+            if (hasCodemagicSigning || keystorePropertiesFile.exists()) {
+                signingConfig signingConfigs.release
+            }
         }
         release {
             minifyEnabled false
