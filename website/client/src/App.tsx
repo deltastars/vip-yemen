@@ -16,12 +16,16 @@ function AccessibilityTools() { const [scale, setScale] = useState(() => Number(
 function LanguageRuntime({ children }: { children: React.ReactNode }) { const [language, setLanguage] = useState<Language>(() => { const requested = new URLSearchParams(window.location.search).get("lang"); return requested === "en" || requested === "ar" ? requested : (localStorage.getItem("vipyemen-language") as Language) || "ar"; }); useEffect(() => { document.documentElement.lang = language; document.documentElement.dir = language === "ar" ? "rtl" : "ltr"; document.body.dataset.language = language; localStorage.setItem("vipyemen-language", language); }, [language]); const t = (key: keyof typeof languageCopy.ar) => languageCopy[language][key]; return <LanguageContext.Provider value={{ language, setLanguage, t }}><CalendarBar /><AccessibilityTools />{children}</LanguageContext.Provider>; }
 
 const socials = [
+  { label: "الموقع الرسمي", href: "https://vipyemen.com", icon: Globe2 },
+  { label: "الموقع على الخريطة", href: "https://maps.google.com/?q=Sanaa,Yemen", icon: MapPin },
+  { label: "تويتر / X", href: "https://twitter.com/ViPservicesYeme", icon: Twitter },
   { label: "فيسبوك", href: "https://www.facebook.com/ViPservicesYemen/", icon: Facebook },
-  { label: "تويتر", href: "https://twitter.com/ViPservicesYeme?s=09", icon: Twitter },
-  { label: "إنستغرام", href: "https://www.instagram.com/vipservicesyemen?r=nametag", icon: Instagram },
+  { label: "مجموعة فيسبوك", href: "https://www.facebook.com/groups/vipservicesyemen", icon: Facebook },
+  { label: "واتساب 1", href: "https://wa.me/967711780999", icon: MessageCircle },
+  { label: "واتساب 2", href: "https://wa.me/967773597404", icon: MessageCircle },
   { label: "لينكدإن", href: "https://www.linkedin.com/in/ali-aldahan-57b5a2231", icon: Linkedin },
   { label: "يوتيوب", href: "https://youtube.com/channel/UCJGfi4S63-Nm2rSXpBqzHtw", icon: Youtube },
-  { label: "واتساب", href: "https://wa.me/967711780999", icon: MessageCircle },
+  { label: "إنستغرام", href: "https://www.instagram.com/vipservicesyemen", icon: Instagram },
 ];
 const services = [
   { id: "marketing", number: "01", eyebrow: "اعرض. اطلب. اكتشف.", enEyebrow: "Show. Request. Discover.", title: "التسويق الإلكتروني", enTitle: "Digital marketing", text: "مساحة عملية لعرض المنتجات والخدمات والوصول إلى عملاء جدد داخل اليمن.", enText: "A practical space to showcase products and services and reach new customers in Yemen.", image: "/manus-storage/marketing-square_17b95560.webp", icon: Globe2, accent: "أصفر الفرصة", enAccent: "Opportunity yellow" },

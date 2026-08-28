@@ -3,17 +3,17 @@
 @import "tw-animate-css";
 
 :root {
-  --navy:#102A43;
-  --ink:#17324D;
-  --yellow:#F3B71B;
-  --yellow-light:#FFD45C;
-  --yellow-dark:#D4A017;
-  --cream:#F8F5EE;
-  --paper:#FFFDF8;
-  --muted:#6B7B8C;
-  --line:#D9E0E5;
+  --navy:#1A1A1A;
+  --ink:#2A2A2A;
+  --yellow:#D4AF37;
+  --yellow-light:#E8D48B;
+  --yellow-dark:#B8960F;
+  --cream:#1E1E1E;
+  --paper:#121212;
+  --muted:#888888;
+  --line:#333333;
   --coral:#E76F51;
-  --gold:#C9A84C;
+  --gold:#D4AF37;
   --gold-light:#E8D48B;
   --gold-dark:#8B7355;
   --radius:0.25rem;
@@ -38,7 +38,7 @@
   --gradient-navy:linear-gradient(135deg, #102A43 0%, #17324D 50%, #0B2034 100%);
 }
 @theme inline { --color-background:var(--background); --color-foreground:var(--foreground); --color-card:var(--card); --color-card-foreground:var(--card-foreground); --color-primary:var(--primary); --color-primary-foreground:var(--primary-foreground); --color-secondary:var(--secondary); --color-secondary-foreground:var(--secondary-foreground); --color-muted-foreground:var(--muted-foreground); --color-border:var(--border); --color-input:var(--input); --color-ring:var(--ring); }
-@layer base { * { @apply border-border; } html { scroll-behavior:smooth; } body { margin:0; background:var(--paper); color:var(--navy); font-family:'IBM Plex Sans Arabic',sans-serif; } button,a,input,textarea { font:inherit; } button,a { cursor:pointer; } a { color:inherit; text-decoration:none; } ::selection { background:var(--yellow); color:var(--navy); } }
+@layer base { * { @apply border-border; } html { scroll-behavior:smooth; } body { margin:0; background:var(--paper); color:#E0E0E0; font-family:'IBM Plex Sans Arabic',sans-serif; } button,a,input,textarea { font:inherit; } button,a { cursor:pointer; } a { color:inherit; text-decoration:none; } ::selection { background:var(--yellow); color:var(--navy); } }
 * { box-sizing:border-box; }
 .container { width:min(1180px,calc(100% - 48px)); margin-inline:auto; }
 .site-header { position:absolute; z-index:10; inset-inline:0; top:0; color:white; }
@@ -1385,3 +1385,148 @@ select:focus-visible {
     height: 110px !important;
   }
 }
+
+/* Dark Theme - Matching Manus Design */
+body {
+  background: #121212 !important;
+  color: #E0E0E0 !important;
+}
+
+.site-header {
+  background: transparent !important;
+}
+
+.hero-section {
+  background: linear-gradient(135deg, #1A1A1A 0%, #2A2A2A 100%) !important;
+}
+
+.service-card {
+  background: #1E1E1E !important;
+  border-color: #333 !important;
+}
+
+.service-card:hover {
+  background: #2A2A2A !important;
+}
+
+.software-section {
+  background: linear-gradient(135deg, #1A1A1A 0%, #2A2A2A 100%) !important;
+}
+
+.software-card {
+  background: #1E1E1E !important;
+  border-color: #333 !important;
+}
+
+.why-section {
+  background: #1A1A1A !important;
+}
+
+.contact-section {
+  background: #121212 !important;
+}
+
+.site-footer {
+  background: #0A0A0A !important;
+}
+
+.footer-financial {
+  background: #1A1A1A !important;
+  border-top: 1px solid #333 !important;
+}
+
+.financial-account-card {
+  background: #2A2A2A !important;
+  border-color: #444 !important;
+}
+
+.financial-qr-img {
+  border-color: #444 !important;
+  background: #fff !important;
+}
+
+.section-heading h2,
+.section-heading span {
+  color: #E0E0E0 !important;
+}
+
+.eyebrow {
+  color: var(--yellow) !important;
+}
+
+.button-primary {
+  background: var(--yellow) !important;
+  color: #1A1A1A !important;
+}
+
+.button-primary:hover {
+  background: var(--yellow-dark) !important;
+}
+
+.brand {
+  color: #fff !important;
+}
+
+.brand b {
+  color: var(--yellow) !important;
+}
+
+.nav-cta {
+  background: var(--yellow) !important;
+  color: #1A1A1A !important;
+}
+
+.hero-copy h1 {
+  color: #fff !important;
+}
+
+.hero-lead {
+  color: #ccc !important;
+}
+
+.footer-brand p {
+  color: #888 !important;
+}
+
+.footer-links span {
+  color: var(--yellow) !important;
+}
+
+.footer-links a {
+  color: #ccc !important;
+}
+
+.footer-social span {
+  color: var(--yellow) !important;
+}
+
+.footer-bottom {
+  border-top: 1px solid #333 !important;
+}
+
+.developer-credit {
+  color: #888 !important;
+}
+
+.admin-shortcut {
+  background: rgba(212,175,55,0.2) !important;
+  color: var(--yellow) !important;
+  border: 1px solid var(--yellow) !important;
+}
+
+.announcement-bar {
+  background: var(--yellow) !important;
+  color: #1A1A1A !important;
+}
+
+.calendar-bar {
+  background: #1A1A1A !important;
+  color: #ccc !important;
+}
+
+.accessibility-tools {
+  background: rgba(26,26,26,0.95) !important;
+  color: #E0E0E0 !important;
+  border-color: #444 !important;
+}
+
