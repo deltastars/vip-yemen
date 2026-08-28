@@ -35,7 +35,7 @@ const PaymentSection = () => {
     bankName: 'بنك الكريمي',
     beneficiaryName: 'علي درهم محمد الدحان',
     accountNumber: '121147699',
-    verificationNumber: '773597404'
+    verificationNumber: '00967773597404'
   }
 
   // بيانات وهمية للمدفوعات

@@ -34,7 +34,7 @@ async function request(path, options = {}) {
 }
 
 function SocialLinks() {
-  return <section className="social-section"><div className="section-heading"><h2>تواصل معنا</h2><p>ViP Yemen للتوظيف والتسويق الإلكتروني والخدمات العامة</p></div><div className="social-grid">{SOCIAL_LINKS.map(([name, url, Icon]) => <a className="social-link" key={url} href={url} target="_blank" rel="noreferrer"><Icon size={18} /><span>{name}</span><ExternalLink size={14} /></a>)}</div><div className="contact-card"><strong>العنوان:</strong> اليمن، صنعاء، حي شميلة <span>•</span><strong>الهاتف:</strong> <a href="tel:+967773597404">773597404</a> <span>•</span><strong>البريد:</strong> <a href="mailto:ViPservicesYemen@gmail.com">ViPservicesYemen@gmail.com</a></div></section>
+  return <section className="social-section"><div className="section-heading"><h2>تواصل معنا</h2><p>ViP Yemen للتوظيف والتسويق الإلكتروني والخدمات العامة</p></div><div className="social-grid">{SOCIAL_LINKS.map(([name, url, Icon]) => <a className="social-link" key={url} href={url} target="_blank" rel="noreferrer"><Icon size={18} /><span>{name}</span><ExternalLink size={14} /></a>)}</div><div className="contact-card"><strong>العنوان:</strong> اليمن، صنعاء، حي شميلة <span>•</span><strong>الهاتف:</strong> <a href="tel:+967773597404">00967 773 597 404</a> <span>•</span><strong>البريد:</strong> <a href="mailto:ViPservicesYemen@gmail.com">ViPservicesYemen@gmail.com</a></div></section>
 }
 
 function Listings({ section }) {

@@ -8,6 +8,27 @@
       "when": 1787795812702,
       "tag": "0000_large_rhino",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1787875545793,
+      "tag": "0001_lean_wonder_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1787879295953,
+      "tag": "0002_sharp_lorna_dane",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1787879843924,
+      "tag": "0003_marvelous_guardsmen",
+      "breakpoints": true
     }
   ]
 }
