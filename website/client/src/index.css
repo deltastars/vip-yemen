@@ -1386,151 +1386,6 @@ select:focus-visible {
   }
 }
 
-/* Dark Theme - Matching Manus Design */
-body {
-  background: #121212 !important;
-  color: #E0E0E0 !important;
-}
-
-.site-header {
-  background: transparent !important;
-}
-
-.hero-section {
-  background: linear-gradient(135deg, #1A1A1A 0%, #2A2A2A 100%) !important;
-}
-
-.service-card {
-  background: #1E1E1E !important;
-  border-color: #333 !important;
-}
-
-.service-card:hover {
-  background: #2A2A2A !important;
-}
-
-.software-section {
-  background: linear-gradient(135deg, #1A1A1A 0%, #2A2A2A 100%) !important;
-}
-
-.software-card {
-  background: #1E1E1E !important;
-  border-color: #333 !important;
-}
-
-.why-section {
-  background: #1A1A1A !important;
-}
-
-.contact-section {
-  background: #121212 !important;
-}
-
-.site-footer {
-  background: #0A0A0A !important;
-}
-
-.footer-financial {
-  background: #1A1A1A !important;
-  border-top: 1px solid #333 !important;
-}
-
-.financial-account-card {
-  background: #2A2A2A !important;
-  border-color: #444 !important;
-}
-
-.financial-qr-img {
-  border-color: #444 !important;
-  background: #fff !important;
-}
-
-.section-heading h2,
-.section-heading span {
-  color: #E0E0E0 !important;
-}
-
-.eyebrow {
-  color: var(--yellow) !important;
-}
-
-.button-primary {
-  background: var(--yellow) !important;
-  color: #1A1A1A !important;
-}
-
-.button-primary:hover {
-  background: var(--yellow-dark) !important;
-}
-
-.brand {
-  color: #fff !important;
-}
-
-.brand b {
-  color: var(--yellow) !important;
-}
-
-.nav-cta {
-  background: var(--yellow) !important;
-  color: #1A1A1A !important;
-}
-
-.hero-copy h1 {
-  color: #fff !important;
-}
-
-.hero-lead {
-  color: #ccc !important;
-}
-
-.footer-brand p {
-  color: #888 !important;
-}
-
-.footer-links span {
-  color: var(--yellow) !important;
-}
-
-.footer-links a {
-  color: #ccc !important;
-}
-
-.footer-social span {
-  color: var(--yellow) !important;
-}
-
-.footer-bottom {
-  border-top: 1px solid #333 !important;
-}
-
-.developer-credit {
-  color: #888 !important;
-}
-
-.admin-shortcut {
-  background: rgba(212,175,55,0.2) !important;
-  color: var(--yellow) !important;
-  border: 1px solid var(--yellow) !important;
-}
-
-.announcement-bar {
-  background: var(--yellow) !important;
-  color: #1A1A1A !important;
-}
-
-.calendar-bar {
-  background: #1A1A1A !important;
-  color: #ccc !important;
-}
-
-.accessibility-tools {
-  background: rgba(26,26,26,0.95) !important;
-  color: #E0E0E0 !important;
-  border-color: #444 !important;
-}
-
-
 /* Manus Design - Dark Navy Theme */
 body {
   background: #0A1520 !important;
@@ -2533,3 +2388,159 @@ img:not([src]) {
 .announcement-bar {
   background: linear-gradient(90deg, var(--yellow) 0%, #E8D48B 50%, var(--yellow) 100%) !important;
 }
+
+/* ═══════════════════════════════════════════════════
+   TEXT CONTRAST FIXES - Ensure ALL text is visible
+   ═══════════════════════════════════════════════════ */
+h1, h2, h3, h4, h5, h6 { color: #FFFFFF !important; }
+p, span, small, label, div { color: inherit; }
+h1, h2, h3, h4, h5, h6, p, span:not([class*="announcement"]):not(.eyebrow):not(.point span):not(.vertical-label), small, label {
+  text-shadow: none !important;
+}
+
+/* Section headings always white */
+.section-heading h2,
+.section-heading p,
+.department-section h2,
+.department-section h3,
+.offers-section h2,
+.offers-section h3,
+.submission-portal h2,
+.developer-profile h2,
+.developer-profile h3 { color: #FFFFFF !important; }
+
+/* Subtext and descriptions */
+.service-card p,
+.software-card p,
+.point-list p,
+.contact-copy p,
+.why-main p,
+.footer-financial-subtitle,
+.financial-account-card span,
+.financial-qr-item small { color: #B0C4DE !important; }
+
+/* Form elements */
+input, textarea, select {
+  background: #1A2D42 !important;
+  color: #FFFFFF !important;
+  border-color: #2A3A4A !important;
+}
+input::placeholder, textarea::placeholder {
+  color: #6688AA !important;
+}
+label { color: #CCDDEE !important; }
+
+/* Department section text */
+.dept-section-title,
+.dept-section-desc,
+.dept-form label,
+.dept-form input,
+.dept-form textarea,
+.dept-form select,
+.dept-form button,
+.dept-submission-card,
+.dept-submission-card span,
+.dept-submission-card p,
+.dept-submission-card small,
+.dept-submission-card strong {
+  color: #FFFFFF !important;
+}
+
+/* Admin panel text */
+.admin-panel h2,
+.admin-panel h3,
+.admin-panel p,
+.admin-panel span,
+.admin-panel strong,
+.admin-panel small,
+.admin-item strong,
+.admin-item small,
+.admin-item span,
+.revision-row span,
+.revision-panel h3,
+.revision-panel p {
+  color: #FFFFFF !important;
+}
+
+/* Offers section */
+.offer-card h3,
+.offer-card p,
+.offer-card span,
+.offer-card small,
+.offer-card strong,
+.offer-tag,
+.offer-badge {
+  color: #FFFFFF !important;
+}
+
+/* Submission portal */
+.submit-copy h2,
+.submit-copy p,
+.submit-card label,
+.submit-card input,
+.submit-card textarea,
+.submit-card select,
+.submit-card button,
+.submission-form label,
+.submission-form input,
+.submission-form textarea {
+  color: #FFFFFF !important;
+}
+
+/* Why section overrides */
+.why-main h2,
+.why-main p,
+.why-label span,
+.point span,
+.point svg {
+  color: #FFFFFF !important;
+}
+.eyebrow { color: var(--yellow) !important; }
+.point span { color: var(--yellow) !important; }
+.point svg { color: var(--yellow) !important; }
+
+/* Contact section */
+.contact-copy h2,
+.contact-copy p,
+.contact-details a,
+.contact-details span,
+.contact-card label,
+.contact-card input,
+.contact-card textarea,
+.contact-card button,
+.sent-state h3,
+.sent-state p {
+  color: #FFFFFF !important;
+}
+
+/* Developer profile */
+.developer-profile h2,
+.developer-profile h3,
+.developer-profile p,
+.developer-profile span,
+.developer-profile a {
+  color: #FFFFFF !important;
+}
+
+/* Footer overrides */
+.footer-brand p,
+.footer-links a,
+.footer-links span,
+.footer-social span,
+.footer-bottom span,
+.developer-credit,
+.financial-account-card strong,
+.financial-account-card span,
+.financial-qr-item small,
+.footer-financial h4,
+.footer-financial-subtitle {
+  color: #FFFFFF !important;
+}
+.footer-links span,
+.footer-social span,
+.financial-phone {
+  color: var(--yellow) !important;
+}
+
+/* Ensure section padding not overlapping */
+.section-pad { position: relative; z-index: 1; }
