@@ -2912,3 +2912,48 @@ label { color: #CCDDEE !important; }
   color: #FFFFFF;
   cursor: pointer;
 }
+
+/* Fix language toggle position - visible below announcement bar */
+.language-toggle {
+  position: fixed !important;
+  top: 40px !important;
+  left: 16px !important;
+  z-index: 1001 !important;
+  background: rgba(15, 23, 35, 0.95) !important;
+  border: 1px solid var(--gold, #D4AF37) !important;
+  color: var(--gold, #D4AF37) !important;
+  padding: 8px 14px !important;
+  border-radius: 24px !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.25) !important;
+  transition: all 0.3s ease !important;
+}
+.language-toggle:hover {
+  background: var(--gold, #D4AF37) !important;
+  color: #0F1723 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 25px rgba(212, 175, 55, 0.4) !important;
+}
+@media (max-width: 640px) {
+  .language-toggle {
+    top: 36px !important;
+    left: 8px !important;
+    padding: 6px 10px !important;
+    font-size: 12px !important;
+  }
+}
+
+/* Developer profile photo fix */
+.developer-photo-img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 50% !important;
+}
