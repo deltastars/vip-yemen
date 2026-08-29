@@ -2199,3 +2199,152 @@ img:not([src]) {
   .developer-profile-stats { justify-content: center; }
   .developer-profile-contact { justify-content: center; }
 }
+
+/* ═══════════════════════════════════════════════════
+   FINANCIAL SECTION FIXES
+   ═══════════════════════════════════════════════════ */
+
+/* Force single-column account cards on all screens */
+.footer-financial .financial-accounts {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+}
+
+/* Fix account card layout - horizontal with proper spacing */
+.footer-financial .financial-account-card {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 14px !important;
+  padding: 18px 20px !important;
+  width: 100% !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+  background: rgba(255,255,255,.04) !important;
+  box-sizing: border-box !important;
+}
+
+/* Fix account card icon */
+.footer-financial .financial-icon {
+  flex-shrink: 0 !important;
+  width: 48px !important;
+  height: 48px !important;
+  display: grid !important;
+  place-items: center !important;
+  color: var(--yellow) !important;
+  border: 1px solid rgba(243,183,27,.3) !important;
+  background: rgba(243,183,27,.08) !important;
+}
+
+/* Fix account card info - no overflow, no text cut */
+.footer-financial .financial-info {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.footer-financial .financial-info strong {
+  color: white !important;
+  font-family: 'Noto Kufi Arabic' !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  white-space: nowrap !important;
+}
+
+.footer-financial .financial-info span {
+  color: rgba(255,255,255,.6) !important;
+  font-size: 11px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.footer-financial .financial-phone {
+  color: var(--yellow) !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  letter-spacing: .03em !important;
+}
+
+/* Force QR codes to single column on mobile */
+.footer-financial .financial-qr-section {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 16px !important;
+  margin-top: 24px !important;
+  padding-top: 20px !important;
+  border-top: 1px solid rgba(255,255,255,.1) !important;
+}
+
+/* Fix QR code items */
+.footer-financial .financial-qr-item {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 20px !important;
+  background: rgba(255,255,255,.05) !important;
+  border: 1px solid rgba(255,255,255,.1) !important;
+}
+
+/* Fix QR images - proper sizing */
+.footer-financial .financial-qr-img {
+  width: 140px !important;
+  height: 140px !important;
+  border-radius: 12px !important;
+  border: 2px solid rgba(255,255,255,.15) !important;
+  background: #fff !important;
+  padding: 8px !important;
+  object-fit: contain !important;
+}
+
+/* Fix QR labels */
+.footer-financial .financial-qr-item small {
+  color: rgba(255,255,255,.7) !important;
+  font-size: 13px !important;
+  text-align: center !important;
+}
+
+.footer-financial .financial-qr-number {
+  color: var(--yellow) !important;
+  font-weight: 700 !important;
+  font-size: 14px !important;
+  letter-spacing: .5px !important;
+}
+
+/* Fix accessibility tools to not overlap footer */
+.accessibility-tools {
+  position: fixed !important;
+  bottom: 20px !important;
+  inset-inline-start: 20px !important;
+  z-index: 50 !important;
+}
+
+/* Fix footer-bottom padding for accessibility tools */
+.footer-bottom {
+  padding-bottom: 60px !important;
+}
+
+/* Desktop: 3-column QR */
+@media (min-width: 851px) {
+  .footer-financial .financial-qr-section {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+/* Mobile: single column for both */
+@media (max-width: 850px) {
+  .footer-financial .financial-accounts {
+    grid-template-columns: 1fr !important;
+  }
+  .footer-financial .financial-qr-section {
+    grid-template-columns: 1fr !important;
+  }
+  .footer-financial .financial-account-card {
+    padding: 14px 16px !important;
+  }
+}
