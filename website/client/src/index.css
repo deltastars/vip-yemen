@@ -2544,3 +2544,34 @@ label { color: #CCDDEE !important; }
 
 /* Ensure section padding not overlapping */
 .section-pad { position: relative; z-index: 1; }
+
+/* ═══════════════════════════════════════════════════
+   DEVELOPER PHOTO & BRAND ICON FIXES
+   ═══════════════════════════════════════════════════ */
+.developer-photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid var(--yellow);
+  box-shadow: 0 0 30px rgba(212,175,55,0.3);
+}
+.developer-initials {
+  display: none !important;
+}
+.developer-profile-photo {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, var(--yellow), #B8960F);
+}
+.brand-icon-svg {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 6px rgba(212,175,55,0.5));
+}
