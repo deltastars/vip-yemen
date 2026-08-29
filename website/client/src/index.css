@@ -2348,3 +2348,188 @@ img:not([src]) {
     padding: 14px 16px !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════
+   VIP BRANDED SVG LOGO
+   ═══════════════════════════════════════════════════ */
+.brand-icon-svg {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+
+.brand-icon-large-svg {
+  width: 100px;
+  height: 100px;
+  filter: drop-shadow(0 4px 12px rgba(212,175,55,.3));
+}
+
+/* ═══════════════════════════════════════════════════
+   GLASS / LUXURY EFFECTS
+   ═══════════════════════════════════════════════════ */
+.glass-card {
+  background: rgba(255,255,255,.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.12);
+}
+
+.glass-card-light {
+  background: rgba(255,255,255,.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 20px;
+}
+
+.glass-gold {
+  background: linear-gradient(135deg, rgba(212,175,55,.12), rgba(184,150,15,.08));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(212,175,55,.25);
+  border-radius: 16px;
+}
+
+.glass-dark {
+  background: rgba(10,21,32,.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 24px;
+}
+
+/* Luxury gradient overlays */
+.luxury-gradient {
+  background: linear-gradient(135deg, 
+    rgba(11,29,50,.95) 0%, 
+    rgba(16,42,67,.9) 40%, 
+    rgba(212,175,55,.15) 100%);
+}
+
+.luxury-gradient-gold {
+  background: linear-gradient(135deg, 
+    rgba(212,175,55,.08) 0%, 
+    rgba(184,150,15,.04) 50%, 
+    rgba(212,175,55,.08) 100%);
+}
+
+/* Section heading with VIP brand */
+.section-heading-with-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.section-heading-with-brand img {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 8px rgba(212,175,55,.4));
+}
+
+/* Promotional banner */
+.promo-banner {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1px solid rgba(212,175,55,.2);
+}
+
+.promo-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(10,21,32,.9), rgba(16,42,67,.8));
+  z-index: 1;
+}
+
+.promo-banner > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Developer profile with photo reference */
+.developer-photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid var(--yellow);
+}
+
+/* Apply glass to key sections */
+.software-section,
+.why-section,
+.services-section {
+  position: relative;
+}
+
+.software-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 80% 20%, rgba(212,175,55,.06), transparent 60%);
+  pointer-events: none;
+}
+
+/* Gold accent line */
+.gold-accent-line {
+  width: 60px;
+  height: 3px;
+  background: var(--yellow);
+  border-radius: 2px;
+  margin: 16px 0;
+}
+
+/* Hero glass overlay */
+.hero-glass-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, 
+    rgba(11,29,50,.7) 0%, 
+    rgba(10,21,32,.3) 50%, 
+    rgba(212,175,55,.05) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Footer with glass effect */
+.site-footer {
+  position: relative;
+}
+
+.site-footer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, 
+    rgba(11,29,50,.3) 0%, 
+    rgba(10,21,32,.1) 100%);
+  pointer-events: none;
+}
+
+/* Social icons with glass effect */
+.footer-social a {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  transition: all .2s ease;
+}
+
+.footer-social a:hover {
+  background: rgba(212,175,55,.2);
+  border-color: var(--yellow);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(212,175,55,.2);
+}
+
+/* Announcement bar with gold gradient */
+.announcement-bar {
+  background: linear-gradient(90deg, var(--yellow) 0%, #E8D48B 50%, var(--yellow) 100%) !important;
+}
