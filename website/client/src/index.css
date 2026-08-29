@@ -1889,3 +1889,183 @@ img[src*="manus-storage"] {
   height: 300px;
   opacity: 0.25;
 }
+
+/* ═══════════════════════════════════════════════════
+   COMPREHENSIVE MOBILE & RESPONSIVE FIXES
+   ═══════════════════════════════════════════════════ */
+
+/* Service image placeholder replaces broken img */
+.service-image-placeholder {
+  display: grid;
+  place-items: center;
+  min-height: 190px;
+  background: linear-gradient(135deg, rgba(16,42,67,.06), rgba(212,175,55,.08));
+  color: var(--yellow);
+  opacity: 0.6;
+}
+.service-card:hover .service-image-placeholder { opacity: 1; }
+
+/* Ensure no broken images show */
+img[src*="manus-storage"],
+img[src=""],
+img:not([src]) {
+  display: none !important;
+}
+
+/* ═══ MOBILE: Full screen-width layout ═══ */
+@media (max-width: 640px) {
+  .container { width: calc(100% - 24px); }
+  
+  /* Hero: stack vertically, full width */
+  .hero-grid { display: flex; flex-direction: column; gap: 24px; padding-top: 20px; }
+  .hero-copy { padding: 24px 0 32px; }
+  .hero-copy h1 { font-size: 32px; line-height: 1.3; }
+  .hero-lead { font-size: 14px; max-width: 100%; }
+  .hero-actions { flex-direction: column; gap: 14px; align-items: stretch; }
+  .hero-actions .button { width: 100%; justify-content: center; }
+  .hero-proof { margin-top: 32px; }
+  .hero-visual { min-height: 200px; }
+  .yemen-map-glass { display: none; }
+  .hero-note, .hero-stat { display: none; }
+  
+  /* Announcement: smaller text */
+  .announcement-track { gap: 20px; animation-duration: 22s; }
+  .announcement-item { font-size: 10px; }
+  
+  /* Calendar bar: compact */
+  .calendar-bar { font-size: 9px; padding: 4px 12px; gap: 6px; }
+  
+  /* Nav: hamburger only */
+  .nav-wrap { min-height: 64px; }
+  .main-nav { display: none; }
+  .nav-cta { display: none; }
+  .admin-shortcut { display: none; }
+  
+  /* Services: single column */
+  .service-list { display: flex; flex-direction: column; gap: 0; }
+  .service-card { grid-template-columns: 1fr; min-height: auto; padding: 20px 16px; }
+  .service-meta { position: static; display: flex; gap: 12px; align-items: center; margin-bottom: 8px; padding: 0; }
+  .service-meta span:last-child { display: inline; }
+  .service-copy { padding: 0 0 16px; gap: 12px; }
+  .service-image-placeholder { min-height: 120px; margin: 0 16px 16px; }
+  .service-card:after { display: none; }
+  
+  /* Software section: single column */
+  .software-grid { grid-template-columns: 1fr; }
+  .software-intro { grid-template-columns: 1fr; gap: 16px; }
+  .software-tool-strip { grid-template-columns: 1fr; }
+  .software-card { min-height: auto; padding: 20px 16px; }
+  .software-card h3 { margin-top: 16px; }
+  .software-link { position: static; margin-top: 12px; }
+  
+  /* Visual Identity: stack */
+  .visual-hero { flex-direction: column; align-items: flex-start; padding: 30px 20px; min-height: auto; }
+  .visual-hero h2 { font-size: 28px; }
+  .brand-icon-large { width: 80px !important; height: 80px !important; font-size: 20px !important; }
+  .visual-gallery { grid-template-columns: 1fr; }
+  
+  /* Why section */
+  .why-grid { grid-template-columns: 1fr; }
+  .why-label { display: none; }
+  .why-main h2 { font-size: 28px; }
+  .why-side { flex-direction: row; border-top: 1px solid rgba(255,255,255,.16); border-inline-start: 0; padding-top: 20px; margin-top: 32px; }
+  
+  /* Contact section: stack */
+  .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+  .contact-copy h2 { font-size: 28px; }
+  .contact-details { gap: 10px; }
+  .contact-details a, .contact-details span { padding: 10px 14px; font-size: 12px; }
+  
+  /* Submit section: stack */
+  .submit-grid { grid-template-columns: 1fr; gap: 40px; }
+  .submit-copy h2 { font-size: 28px; }
+  .submit-card { padding: 20px 16px; }
+  
+  /* Footer: single column */
+  .footer-top { grid-template-columns: 1fr; gap: 24px; padding: 40px 0 32px; }
+  .footer-brand { grid-column: auto; }
+  .footer-bottom { flex-direction: column; gap: 12px; text-align: center; padding-bottom: 70px; }
+  
+  /* Financial section */
+  .financial-accounts { grid-template-columns: 1fr; }
+  .financial-qr-section { grid-template-columns: 1fr 1fr; }
+  .financial-account-card { padding: 16px; }
+  
+  /* Department sections */
+  .department-section { padding: 60px 0; }
+  .dept-hero { grid-template-columns: 1fr; gap: 24px; padding-bottom: 32px; margin-bottom: 32px; }
+  .dept-hero h2 { font-size: 28px; }
+  .dept-content-grid { grid-template-columns: 1fr; }
+  .dept-form-card { padding: 16px; }
+  
+  /* Dept nav */
+  .dept-nav { padding: 12px 0; gap: 12px; }
+  .dept-nav-links { gap: 14px; font-size: 11px; }
+  
+  /* Department nav: horizontal scroll */
+  .dept-nav-wrapper { overflow-x: auto; }
+  .dept-nav-links { overflow-x: auto; white-space: nowrap; padding-bottom: 4px; }
+}
+
+/* Tablet adjustments */
+@media (min-width: 641px) and (max-width: 850px) {
+  .container { width: calc(100% - 40px); }
+  .hero-grid { padding-top: 40px; }
+  .hero-copy h1 { font-size: 38px; }
+  .financial-accounts { grid-template-columns: 1fr 1fr; }
+  .financial-qr-section { grid-template-columns: 1fr 1fr; }
+}
+
+/* Fix footer QR section: proper grid on desktop */
+@media (min-width: 851px) {
+  .financial-accounts { grid-template-columns: repeat(3, 1fr); }
+  .financial-qr-section { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* Fix financial-qr-item layout */
+.financial-qr-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.03);
+  text-align: center;
+}
+.financial-qr-item small {
+  color: rgba(255,255,255,.7);
+  font-size: 12px;
+}
+.financial-qr-number {
+  color: var(--yellow) !important;
+  font-family: monospace;
+  font-weight: 700;
+  font-size: 14px !important;
+  direction: ltr;
+}
+.financial-qr-img {
+  border-radius: 8px;
+  background: white;
+  padding: 6px;
+}
+
+/* Section headings: ensure visibility and contrast */
+.section-heading h2,
+.dept-hero h2 {
+  color: var(--navy);
+  position: relative;
+  z-index: 1;
+}
+.why-section h2,
+.software-section h2 {
+  color: white;
+  position: relative;
+  z-index: 1;
+}
+
+/* Ensure no z-index overlap between sections */
+.section-pad { position: relative; z-index: 1; }
+.site-header { z-index: 50; }
+.announcement-bar { z-index: 60; }
+.accessibility-tools { z-index: 40; }
