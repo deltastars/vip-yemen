@@ -2575,3 +2575,340 @@ label { color: #CCDDEE !important; }
   object-fit: contain;
   filter: drop-shadow(0 0 6px rgba(212,175,55,0.5));
 }
+
+/* ═══════════════════════════════════════════════════
+   ADMIN LOGIN & DASHBOARD STYLES
+   ═══════════════════════════════════════════════════ */
+.admin-login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0B1D32 0%, #1A2D42 100%);
+  padding: 20px;
+}
+.admin-login-container {
+  width: 100%;
+  max-width: 420px;
+}
+.admin-login-card {
+  background: #141E28;
+  border: 1px solid #2A3A4A;
+  border-radius: 16px;
+  padding: 40px 32px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+.admin-login-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.admin-login-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 16px;
+  background: linear-gradient(135deg, var(--yellow), #B8960F);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0B1D32;
+}
+.admin-login-header h1 {
+  color: #FFFFFF;
+  font-size: 24px;
+  margin: 0 0 8px;
+}
+.admin-login-header p {
+  color: #8899AA;
+  font-size: 14px;
+  margin: 0;
+}
+.admin-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.admin-login-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.3);
+  border-radius: 8px;
+  color: #EF4444;
+  font-size: 14px;
+}
+.admin-form-field label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #CCDDEE;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+.admin-form-field input {
+  width: 100%;
+  padding: 12px 16px;
+  background: #1A2D42;
+  border: 1px solid #2A3A4A;
+  border-radius: 8px;
+  color: #FFFFFF;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.admin-form-field input:focus {
+  border-color: var(--yellow);
+}
+.password-input-wrapper {
+  position: relative;
+}
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #8899AA;
+  cursor: pointer;
+}
+.admin-login-button {
+  width: 100%;
+  padding: 14px;
+  background: var(--yellow);
+  color: #0B1D32;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: opacity 0.2s;
+}
+.admin-login-button:hover {
+  opacity: 0.9;
+}
+.admin-login-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.admin-login-footer {
+  text-align: center;
+  margin-top: 24px;
+  color: #6688AA;
+  font-size: 12px;
+}
+
+/* Admin Dashboard */
+.admin-dashboard {
+  min-height: 100vh;
+  background: #0A1520;
+}
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: #141E28;
+  border-bottom: 1px solid #2A3A4A;
+}
+.admin-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--yellow);
+}
+.admin-header h1 {
+  color: #FFFFFF;
+  font-size: 20px;
+  margin: 0;
+}
+.admin-header p {
+  color: #8899AA;
+  font-size: 12px;
+  margin: 0;
+}
+.admin-logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.3);
+  border-radius: 8px;
+  color: #EF4444;
+  font-size: 14px;
+  cursor: pointer;
+}
+.admin-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 12px 24px;
+  background: #0F1E2D;
+  border-bottom: 1px solid #2A3A4A;
+  overflow-x: auto;
+}
+.admin-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: #8899AA;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.admin-tab:hover {
+  background: rgba(255,255,255,0.05);
+  color: #FFFFFF;
+}
+.admin-tab.active {
+  background: var(--yellow);
+  color: #0B1D32;
+}
+.admin-content {
+  padding: 24px;
+}
+.admin-overview h2,
+.admin-submissions h2,
+.admin-ads h2,
+.admin-offers h2,
+.admin-settings h2 {
+  color: #FFFFFF;
+  font-size: 24px;
+  margin: 0 0 24px;
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: #141E28;
+  border: 1px solid #2A3A4A;
+  border-radius: 12px;
+}
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.stat-value {
+  display: block;
+  font-size: 28px;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+.stat-label {
+  display: block;
+  font-size: 13px;
+  color: #8899AA;
+}
+.admin-section-card {
+  background: #141E28;
+  border: 1px solid #2A3A4A;
+  border-radius: 12px;
+  padding: 24px;
+}
+.admin-section-card h3 {
+  color: #FFFFFF;
+  margin: 0 0 16px;
+}
+.section-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.section-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #1A2D42;
+  border-radius: 8px;
+  color: #CCDDEE;
+}
+.badge {
+  margin-left: auto;
+  background: var(--yellow);
+  color: #0B1D32;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.admin-empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #6688AA;
+}
+.admin-empty-state h3 {
+  color: #FFFFFF;
+  margin: 16px 0 8px;
+}
+.admin-create-btn {
+  padding: 10px 20px;
+  background: var(--yellow);
+  color: #0B1D32;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 24px;
+}
+.admin-filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.admin-filters select {
+  padding: 10px 16px;
+  background: #1A2D42;
+  border: 1px solid #2A3A4A;
+  border-radius: 8px;
+  color: #FFFFFF;
+}
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+}
+.settings-card {
+  background: #141E28;
+  border: 1px solid #2A3A4A;
+  border-radius: 12px;
+  padding: 24px;
+}
+.settings-card h3 {
+  color: #FFFFFF;
+  margin: 0 0 12px;
+}
+.settings-card p {
+  color: #CCDDEE;
+  margin: 0 0 8px;
+}
+.admin-btn {
+  padding: 10px 20px;
+  background: #2A3A4A;
+  border: none;
+  border-radius: 8px;
+  color: #FFFFFF;
+  cursor: pointer;
+}

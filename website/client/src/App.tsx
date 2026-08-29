@@ -4,7 +4,8 @@ import { ArrowLeft, ArrowUpLeft, BriefcaseBusiness, Building2, CalendarDays, Che
 import { useAuth } from "@/_core/hooks/useAuth";
 import { startLogin } from "@/const";
 import { trpc } from "@/lib/trpc";
-import { AdminDashboard } from "@/components/AdminDashboard";
+import AdminLogin from "@/pages/AdminLogin";
+import AdminDashboardPage from "@/pages/AdminDashboard";
 import { EmploymentSection, RealEstateSection, EMarketingSection, SoftwareDeptSection, DepartmentListings, OffersSection } from "@/components/DepartmentPages";
 
 type Language = "ar" | "en";
@@ -162,4 +163,4 @@ function DeveloperControls() {
 }
 
 function NotFound() { return <div className="not-found"><h1>الصفحة غير موجودة</h1><Link href="/">العودة للرئيسية</Link></div>; }
-export default function App() { return <LanguageRuntime><ThemeRuntime><Switch><Route path="/" component={Home} /><Route path="/admin" component={AdminDashboard} /><Route path="/departments/employment" component={EmploymentSection} /><Route path="/departments/real-estate" component={RealEstateSection} /><Route path="/departments/e-marketing" component={EMarketingSection} /><Route path="/departments/software" component={SoftwareDeptSection} /><Route path="/departments/listings" component={DepartmentListings} /><Route component={NotFound} /></Switch></ThemeRuntime></LanguageRuntime>; }
+export default function App() { return <LanguageRuntime><ThemeRuntime><Switch><Route path="/" component={Home} /><Route path="/admin" component={AdminLogin} /><Route path="/admin/dashboard" component={AdminDashboardPage} /><Route path="/departments/employment" component={EmploymentSection} /><Route path="/departments/real-estate" component={RealEstateSection} /><Route path="/departments/e-marketing" component={EMarketingSection} /><Route path="/departments/software" component={SoftwareDeptSection} /><Route path="/departments/listings" component={DepartmentListings} /><Route component={NotFound} /></Switch></ThemeRuntime></LanguageRuntime>; }
