@@ -24,8 +24,7 @@ export default function AdminDashboard() {
     }
   }, [setLocation]);
 
-  const handleLogout = async () => {
-    await fetch("/api/admin/logout", { method: "POST" });
+  const handleLogout = () => {
     localStorage.removeItem("admin_user");
     setLocation("/admin");
   };
