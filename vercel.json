@@ -1,18 +1,6 @@
 {
-  "installCommand": "cd website && npm install --legacy-peer-deps",
+  "framework": "vite",
   "buildCommand": "cd website && npm run build",
   "outputDirectory": "website/dist/public",
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "X-XSS-Protection", "value": "1; mode=block" }
-      ]
-    }
-  ],
-  "rewrites": [
-    { "source": "/((?!assets|images|releases|favicon.ico|manifest.json|robots.txt|sitemap.xml).*)", "destination": "/index.html" }
-  ]
+  "installCommand": "cd website && npm install --legacy-peer-deps"
 }
