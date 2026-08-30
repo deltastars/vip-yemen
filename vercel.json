@@ -1,8 +1,10 @@
 {
-  "buildCommand": "cd website && bun run build",
+  "version": 2,
+  "name": "vip-yemen",
+  "buildCommand": "cd website && npm install && npm run build",
   "outputDirectory": "website/dist/public",
   "framework": "vite",
-  "installCommand": "cd website && bun install",
+  "installCommand": "npm install",
   "regions": ["iad1"],
   "headers": [
     {
