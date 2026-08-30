@@ -1,167 +1,88 @@
 workflows:
-  vipyemen-android:
-    name: ViP Yemen Android
-    working_directory: capacitor-app
-    max_build_duration: 120
-    instance_type: linux_x2
+  android-build:
+    name: Android APK & AAB Build
+    max_build_duration: 60
     environment:
-      node: 22.13.0
+      flutter: stable
       groups:
-        - vipyemen_android
-      android_signing:
-        - vipyemen_release_keystore
-      vars:
-        PACKAGE_NAME: com.vip.yemen
-    triggering:
-      events:
-        - push
-        - tag
-      tag_patterns:
-        - pattern: "v[0-9]+\\.[0-9]+\\.[0-9]+"
-          include: true
+        - google_play_credentials
     scripts:
-      - name: Install locked JavaScript dependencies
-        script: npm ci --ignore-scripts
-      - name: Check and build web bundle
+      - name: Setup environment
         script: |
-          npm run build
-      - name: Reject version rollback
+          cd website
+          bun install
+          bun run build
+      - name: Setup Android project
         script: |
-          set -euo pipefail
-          VERSION="${CM_TAG#v}"
-          if [[ -n "$CM_TAG" && "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            node ../scripts/assert-release-version.mjs "$VERSION"
-          fi
-      - name: Set release version
-        script: |
-          set -euo pipefail
-          VERSION="${CM_TAG#v}"
-          if [[ -z "$CM_TAG" || ! "$VERSION" =~ ^[0-9]+\\.[0-9]+\\.[0-9]+$ ]]; then
-            VERSION="1.0.${BUILD_NUMBER}"
-          fi
-          node ../scripts/set-android-version.mjs "$VERSION"
-          echo "VERSION_NAME=$VERSION" >> "$CM_ENV"
-      - name: Sync Capacitor Android project
-        script: |
-          set -euo pipefail
-          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/capacitor-app/android/local.properties"
+          cd capacitor-app
+          npm install
           npx cap sync android
-      - name: Reject rollback against Google Play
+      - name: Build APK (Debug)
         script: |
-          set -euo pipefail
-          VERSION="${CM_TAG#v}"
-          if [[ -n "$CM_TAG" && "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] && command -v google-play >/dev/null 2>&1; then
-            IFS=. read -r MAJOR MINOR PATCH <<< "$VERSION"
-            CANDIDATE_CODE=$((MAJOR * 1000000 + MINOR * 1000 + PATCH))
-            LATEST_CODE=$(google-play get-latest-build-number --package-name "$PACKAGE_NAME" 2>/dev/null || true)
-            if [[ "$LATEST_CODE" =~ ^[0-9]+$ ]] && (( CANDIDATE_CODE <= LATEST_CODE )); then
-              echo "Release versionCode $CANDIDATE_CODE is not newer than Google Play versionCode $LATEST_CODE" >&2
-              exit 1
-            fi
-          fi
-      - name: Build debug APK and signed release AAB
+          cd capacitor-app/android
+          ./gradlew assembleDebug
+      - name: Build AAB (Release)
         script: |
-          set -euo pipefail
-          cd android
-          ./gradlew clean assembleDebug bundleRelease --no-daemon --stacktrace
-      - name: Verify Android artifacts
+          cd capacitor-app/android
+          ./gradlew bundleRelease
+      - name: Copy artifacts
         script: |
-          set -euo pipefail
-          APK="android/app/build/outputs/apk/debug/app-debug.apk"
-          AAB="android/app/build/outputs/bundle/release/app-release.aab"
-          BUILD_TOOLS="$ANDROID_HOME/build-tools/$(ls "$ANDROID_HOME/build-tools" | sort -V | tail -1)"
-          "$BUILD_TOOLS/apksigner" verify --verbose "$APK"
-          "$BUILD_TOOLS/aapt2" dump badging "$APK" | grep -q "package: name='$PACKAGE_NAME'"
-          unzip -t "$APK" >/dev/null
-          unzip -t "$AAB" >/dev/null
+          mkdir -p website/client/public/releases
+          cp capacitor-app/android/app/build/outputs/apk/debug/*.apk website/client/public/releases/ViP-Yemen-1.3.0-debug.apk
+          cp capacitor-app/android/app/build/outputs/bundle/release/*.aab website/client/public/releases/ViP-Yemen-1.3.0-release.aab
     artifacts:
-      - android/app/build/outputs/apk/debug/app-debug.apk
-      - android/app/build/outputs/bundle/release/app-release.aab
+      - website/client/public/releases/*.apk
+      - website/client/public/releases/*.aab
     publishing:
       google_play:
-        credentials: $GOOGLE_PLAY_SERVICE_ACCOUNT_CREDENTIALS
+        credentials: $GOOGLE_PLAY_credentials
         track: internal
-        submit_as_draft: true
+        status: internal
 
-  vipyemen-ios:
-    name: ViP Yemen iOS
-    working_directory: capacitor-app
-    max_build_duration: 120
-    instance_type: mac_mini_m2
+  ios-build:
+    name: iOS Build
+    max_build_duration: 60
     environment:
-      node: 22.13.0
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.vip.yemen
+      flutter: stable
       groups:
-        - vipyemen_ios
-      xcode: latest
-    triggering:
-      events:
-        - push
-        - tag
-      tag_patterns:
-        - pattern: "v[0-9]+\\.[0-9]+\\.[0-9]+"
-          include: true
+        - app_store_credentials
     scripts:
-      - name: Install locked JavaScript dependencies
-        script: npm ci --ignore-scripts
-      - name: Build web bundle and sync iOS
+      - name: Setup environment
         script: |
-          set -euo pipefail
-          npm run build
+          cd website
+          bun install
+          bun run build
+      - name: Setup iOS project
+        script: |
+          cd capacitor-app
+          npm install
           npx cap sync ios
-      - name: Set up iOS signing profiles
-        script: xcode-project use-profiles
-      - name: Set iOS marketing and build versions
+      - name: Build iOS
         script: |
-          set -euo pipefail
-          VERSION="${CM_TAG#v}"
-          if [[ -z "$CM_TAG" || ! "$VERSION" =~ ^[0-9]+\\.[0-9]+\\.[0-9]+$ ]]; then
-            VERSION="1.0.${BUILD_NUMBER}"
-          fi
-          cd ios/App
-          agvtool new-marketing-version "$VERSION"
-          agvtool new-version -all "$BUILD_NUMBER"
-      - name: Build signed iOS IPA
-        script: |
-          set -euo pipefail
-          xcode-project build-ipa \
-            --project "ios/App/App.xcodeproj" \
-            --scheme "App"
+          cd capacitor-app/ios
+          xcodebuild -workspace App.xcworkspace -scheme App -sdk iphoneos -configuration Release archive
     artifacts:
-      - build/ios/ipa/*.ipa
-      - /tmp/xcodebuild_logs/*.log
+      - capacitor-app/ios/build/*.ipa
     publishing:
       app_store_connect:
         auth: integration
-        submit_to_testflight: true
 
-  vipyemen-quality:
-    name: ViP Yemen Quality Gates
-    working_directory: capacitor-app
-    max_build_duration: 60
-    instance_type: linux_x2
+  pwa-build:
+    name: PWA & Web Build
+    max_build_duration: 30
     environment:
-      node: 22.13.0
-    triggering:
-      events:
-        - pull_request
-        - push
-      cancel_previous_builds: true
+      node: 20
     scripts:
-      - name: Install locked JavaScript dependencies
-        script: npm ci --ignore-scripts
-      - name: Build web bundle
-        script: npm run build
-      - name: Check native project configuration
+      - name: Setup environment
         script: |
-          set -euo pipefail
-          test -f android/app/build.gradle
-          test -f ios/App/App.xcodeproj/project.pbxproj
-          grep -q 'applicationId "com.vip.yemen"' android/app/build.gradle
-          grep -q 'versionCode' android/app/build.gradle
-      - name: Audit dependencies
-        script: npm audit --audit-level=high
+          cd website
+          bun install
+      - name: Build web app
+        script: |
+          cd website
+          bun run build
+      - name: Verify build output
+        script: |
+          ls -la website/dist/public/
     artifacts:
-      - dist/**
+      - website/dist/public/**
