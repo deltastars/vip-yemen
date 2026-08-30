@@ -1630,27 +1630,27 @@ label small {
     font-size: 11px;
   }
   
-  /* Accessibility tools - smaller on mobile */
+  /* Accessibility tools - top-right, compact on mobile */
   .accessibility-tools {
-    bottom: 10px;
-    left: 10px;
-    padding: 6px;
-    gap: 4px;
+    top: 72px;
+    inset-inline-end: 8px;
+    padding: 4px;
+    gap: 2px;
   }
   
   .accessibility-tools button {
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
   }
   
   .accessibility-tools button svg {
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
   }
   
   .accessibility-tools span {
-    font-size: 11px;
-    min-width: 36px;
+    font-size: 10px;
+    min-width: 30px;
   }
   
   /* Calendar bar */
