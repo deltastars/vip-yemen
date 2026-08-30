@@ -1118,52 +1118,7 @@ label small {
    ACCESSIBILITY TOOLS
    ═══════════════════════════════════════════════════ */
 
-.accessibility-tools {
-  position: fixed;
-  z-index: 40;
-  inset-inline-end: 12px;
-  top: 120px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 6px;
-  border: 1px solid rgba(8,31,52,.14);
-  border-radius: 12px;
-  background: rgba(255,255,255,.92);
-  box-shadow: 0 4px 12px rgba(8,31,52,.12);
-  color: var(--navy);
-  backdrop-filter: blur(12px);
-}
-
-.accessibility-tools button {
-  display: grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-  border: none;
-  border-radius: 6px;
-  background: transparent;
-  color: var(--navy);
-  cursor: pointer;
-  transition: background .2s;
-}
-
-.accessibility-tools button svg {
-  width: 16px;
-  height: 16px;
-}
-
-.accessibility-tools button:hover {
-  background: rgba(243,183,27,.2);
-}
-
-.accessibility-tools span {
-  font-size: 10px;
-  font-weight: 600;
-  min-width: 32px;
-  text-align: center;
-}
+/* Accessibility tools removed - using pinch-to-zoom instead */
 
 /* ═══════════════════════════════════════════════════
    CALENDAR BAR
@@ -1631,27 +1586,7 @@ label small {
   }
   
   /* Accessibility tools - top-right, compact on mobile */
-  .accessibility-tools {
-    top: 72px;
-    inset-inline-end: 8px;
-    padding: 4px;
-    gap: 2px;
-  }
-  
-  .accessibility-tools button {
-    width: 24px;
-    height: 24px;
-  }
-  
-  .accessibility-tools button svg {
-    width: 12px;
-    height: 12px;
-  }
-  
-  .accessibility-tools span {
-    font-size: 10px;
-    min-width: 30px;
-  }
+  /* Accessibility tools removed */
   
   /* Calendar bar */
   .calendar-bar {
