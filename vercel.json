@@ -1,6 +1,32 @@
 {
   "installCommand": "cd website && npm install --legacy-peer-deps",
-  "buildCommand": "cd website && npm run build",
+  "buildCommand": "cd website && npx vite build --config vite.config.ts",
   "outputDirectory": "website/dist/public",
-  "framework": "vite"
+  "rewrites": [
+    { "source": "/((?:assets|images|releases)/.*)", "destination": "/$1" },
+    { "source": "/((?!assets|images|releases|__manus__).*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "X-XSS-Protection", "value": "1; mode=block" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "source": "/images/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
+      ]
+    }
+  ]
 }

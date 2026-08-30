@@ -7,6 +7,10 @@ import {
   Camera, Edit3, Trash2, Archive, RefreshCw, Download, Upload,
   Bell, Lock, UserCheck, AlertCircle, Search, Filter
 } from "lucide-react";
+import { 
+  registerBiometric, isBiometricSupported, isBiometricRegistered, removeBiometric,
+  logSecurityEvent, getAuditLogs, destroySession
+} from "../lib/security";
 
 type Tab = "overview" | "employment" | "realestate" | "emarketing" | "software" | "ads" | "offers" | "settings";
 type SubmissionStatus = "pending" | "reviewing" | "approved" | "rejected" | "archived" | "sold";
@@ -62,69 +66,6 @@ function saveData<T>(key: string, data: T) {
   localStorage.setItem(key, JSON.stringify(data));
 }
 
-// Biometric Authentication
-async function isBiometricSupported(): Promise<boolean> {
-  if (!window.PublicKeyCredential) return false;
-  try {
-    const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-    return available;
-  } catch {
-    return false;
-  }
-}
-
-async function registerBiometric(userId: string): Promise<boolean> {
-  try {
-    const challenge = new Uint8Array(32);
-    crypto.getRandomValues(challenge);
-    
-    const credential = await navigator.credentials.create({
-      publicKey: {
-        challenge,
-        rp: { name: "ViP Yemen Admin", id: window.location.hostname },
-        user: {
-          id: new TextEncoder().encode(userId),
-          name: userId,
-          displayName: "Admin"
-        },
-        pubKeyCredParams: [{ alg: -7, type: "public-key" }],
-        authenticatorSelection: {
-          authenticatorAttachment: "platform",
-          userVerification: "required"
-        },
-        timeout: 60000
-      }
-    });
-    
-    if (credential) {
-      localStorage.setItem("biometric_registered", "true");
-      return true;
-    }
-    return false;
-  } catch {
-    return false;
-  }
-}
-
-async function authenticateWithBiometric(): Promise<boolean> {
-  try {
-    const challenge = new Uint8Array(32);
-    crypto.getRandomValues(challenge);
-    
-    const assertion = await navigator.credentials.get({
-      publicKey: {
-        challenge,
-        timeout: 60000,
-        userVerification: "required"
-      }
-    });
-    
-    return !!assertion;
-  } catch {
-    return false;
-  }
-}
-
 export default function AdminDashboard() {
   const [, setLocation] = useLocation();
   const [user, setUser] = useState<any>(null);
@@ -148,19 +89,32 @@ export default function AdminDashboard() {
   }, [setLocation]);
 
   const handleLogout = () => {
+    logSecurityEvent("LOGOUT", `User: ${user?.email}`);
+    destroySession();
     localStorage.removeItem("admin_user");
     setLocation("/admin");
   };
 
   const handleRegisterBiometric = async () => {
     if (user?.email) {
-      const success = await registerBiometric(user.email);
-      if (success) {
+      const result = await registerBiometric(user.email);
+      if (result.success) {
         setBiometricRegistered(true);
-        alert("تم تسجيل البصمة بنجاح!");
+        logSecurityEvent("BIOMETRIC_REGISTERED", `User: ${user.email}`);
+        alert("تم تسجيل البصمة بنجاح! يمكنك الآن استخدامها لتسجيل الدخول.");
       } else {
-        alert("فشل تسجيل البصمة. تأكد من أن جهازك يدعم البصمة.");
+        logSecurityEvent("BIOMETRIC_REGISTRATION_FAILED", result.error || "Unknown error");
+        alert(result.error || "فشل تسجيل البصمة. تأكد من أن جهازك يدعم البصمة.");
       }
+    }
+  };
+
+  const handleRemoveBiometric = () => {
+    if (user?.email && confirm("هل أنت متأكد من حذف البصمة؟")) {
+      removeBiometric(user.email);
+      setBiometricRegistered(false);
+      logSecurityEvent("BIOMETRIC_REMOVED", `User: ${user.email}`);
+      alert("تم حذف البصمة بنجاح");
     }
   };
 
