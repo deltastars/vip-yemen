@@ -16,8 +16,8 @@ android {
         applicationId "com.vip.yemen"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1004000
-        versionName "1.4.0"
+        versionCode 1061000
+        versionName "1.6.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         
         aaptOptions {
@@ -47,7 +47,6 @@ android {
     buildTypes {
         debug {
             // NO suffix - same package name as release for auto-update
-            versionCode 1010001
             debuggable true
             // Use same signing as release for consistency
             if (hasCodemagicSigning || keystorePropertiesFile.exists()) {
