@@ -922,6 +922,44 @@ label small {
   font-weight: 600;
 }
 
+.footer-quick-actions {
+  padding: 24px 0;
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+
+.quick-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.quick-action-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: rgba(243,183,27,.12);
+  border: 1px solid rgba(243,183,27,.2);
+  border-radius: 8px;
+  color: var(--yellow);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all .2s;
+  white-space: nowrap;
+}
+
+.quick-action-item:hover {
+  background: var(--yellow);
+  color: var(--navy);
+  transform: translateY(-2px);
+}
+
+.quick-action-item svg {
+  flex-shrink: 0;
+}
+
 .footer-bottom {
   display: flex;
   justify-content: space-between;
@@ -1083,16 +1121,17 @@ label small {
 .accessibility-tools {
   position: fixed;
   z-index: 40;
-  inset-inline-start: 14px;
-  bottom: 14px;
+  inset-inline-end: 12px;
+  top: 120px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 8px;
+  gap: 4px;
+  padding: 6px;
   border: 1px solid rgba(8,31,52,.14);
-  border-radius: 999px;
-  background: rgba(255,255,255,.9);
-  box-shadow: 0 10px 24px rgba(8,31,52,.14);
+  border-radius: 12px;
+  background: rgba(255,255,255,.92);
+  box-shadow: 0 4px 12px rgba(8,31,52,.12);
   color: var(--navy);
   backdrop-filter: blur(12px);
 }
@@ -1100,14 +1139,19 @@ label small {
 .accessibility-tools button {
   display: grid;
   place-items: center;
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   border: none;
-  border-radius: 50%;
+  border-radius: 6px;
   background: transparent;
   color: var(--navy);
   cursor: pointer;
   transition: background .2s;
+}
+
+.accessibility-tools button svg {
+  width: 16px;
+  height: 16px;
 }
 
 .accessibility-tools button:hover {
@@ -1115,9 +1159,9 @@ label small {
 }
 
 .accessibility-tools span {
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 600;
-  min-width: 40px;
+  min-width: 32px;
   text-align: center;
 }
 
@@ -1704,6 +1748,20 @@ label small {
   .financial-qr-img {
     width: 140px;
     height: 140px;
+  }
+  
+  .quick-actions-row {
+    gap: 8px;
+  }
+  
+  .quick-action-item {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+  
+  .quick-action-item svg {
+    width: 14px;
+    height: 14px;
   }
   
   /* Department sections */
