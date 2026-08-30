@@ -65,7 +65,7 @@ export function EmploymentSection() {
         <div className="dept-hero">
           <div className="dept-hero-copy">
             <div className="eyebrow"><span className="eyebrow-dot" /> <BriefcaseBusiness size={14} /> قسم التوظيف</div>
-            <h2>اربط مهاراتك<br /><span>بالفرصة المناسبة.</span></h2>
+            <h2 className="section-heading-with-brand"><img src="/images/vip-logo.svg" alt="VIP" style={{width:32,height:32}} /> اربط مهاراتك<br /><span>بالفرصة المناسبة.</span></h2>
             <p>سواء كنت تبحث عن وظيفة أو تبحث عن كفاءات لمؤسستك، وصل طلبك أولًا إلى إدارة المنصة للمراجعة والتدقيق قبل النشر.</p>
             <div className="privacy-note"><ShieldCheck size={19} /><span>يصل طلبك إلى الإدارة بشكل خاص وسري للمراجعة قبل الاعتماد.</span></div>
           </div>
@@ -166,7 +166,7 @@ export function RealEstateSection() {
         <div className="dept-hero">
           <div className="dept-hero-copy">
             <div className="eyebrow"><span className="eyebrow-dot" /> <Building2 size={14} /> قسم التسويق العقاري</div>
-            <h2>اعرض عقارك<br /><span>واكتشف الفرص.</span></h2>
+            <h2 className="section-heading-with-brand"><img src="/images/vip-logo.svg" alt="VIP" style={{width:32,height:32}} /> اعرض عقارك<br /><span>واكتشف الفرص.</span></h2>
             <p>سواء كنت مالكًا لعقار أو بحاجة لشراء، سجّل بياناتك وتفاصيل العقار. يصل طلبك أولًا للإدارة بشكل خاص وسري، ثم يُنشر بعد الاعتماد.</p>
             <a className="button button-primary" href="https://wa.me/967711780999" target="_blank" rel="noreferrer">
               <MessageCircle size={16} /> واتساب الأعمال: 00967711780999
@@ -287,7 +287,7 @@ export function EMarketingSection() {
         <div className="dept-hero">
           <div className="dept-hero-copy">
             <div className="eyebrow"><span className="eyebrow-dot" /> <Globe2 size={14} /> قسم التسويق الإلكتروني</div>
-            <h2>اعرض منتجك<br /><span>واكتشف المنتجات.</span></h2>
+            <h2 className="section-heading-with-brand"><img src="/images/vip-logo.svg" alt="VIP" style={{width:32,height:32}} /> اعرض منتجك<br /><span>واكتشف المنتجات.</span></h2>
             <p>سوق إلكتروني شامل: عرض المنتجات والسلع والأجهزة بأي نوع، أو البحث عن ما تحتاجه. يتم التحقق من رقم الهاتف الحقيقي وربطه مع واتساب المنصة.</p>
             <a className="button button-primary" href="https://wa.me/967711780999" target="_blank" rel="noreferrer">
               <MessageCircle size={16} /> واتساب المنصة: 00967711780999
@@ -393,7 +393,7 @@ export function SoftwareDeptSection() {
         <div className="dept-hero dept-hero-dark">
           <div className="dept-hero-copy">
             <div className="eyebrow"><span className="eyebrow-dot" /> <Code2 size={14} /> قسم البرمجيات وتطوير التطبيقات</div>
-            <h2>نبني الفكرة.<br /><span>ونمنحها حياة.</span></h2>
+            <h2 className="section-heading-with-brand"><img src="/images/vip-logo.svg" alt="VIP" style={{width:32,height:32}} /> نبني الفكرة.<br /><span>ونمنحها حياة.</span></h2>
             <p>حلول رقمية متكاملة: تطبيقات الهواتف، منصات الويب، أنظمة إدارة البيانات، والتكاملات السحابية. اطلب مشروعك وسنتواصل معك.</p>
           </div>
           <div className="dept-hero-visual">
@@ -450,7 +450,7 @@ export function OffersSection() {
       <div className="container">
         <div className="offers-header">
           <div className="eyebrow"><span className="eyebrow-dot" /> <Tag size={14} /> العروض والتخفيضات</div>
-          <h2>عروض حصرية <span>من المنصة.</span></h2>
+          <h2 className="section-heading-with-brand"><img src="/images/vip-logo.svg" alt="VIP" style={{width:32,height:32}} /> عروض حصرية <span>من المنصة.</span></h2>
           <p>عروض وتخفيضات يتم نشرها من قبل الإدارة بشكل احترافي ودقيق. تابع أحدث العروض والمميزات.</p>
         </div>
 
@@ -543,7 +543,7 @@ export function DepartmentListings() {
       <div className="container">
         <div className="listings-header">
           <div className="eyebrow"><span className="eyebrow-dot" /> إعلانات المنصة</div>
-          <h2>العروض والطلبات <span>المنشور.</span></h2>
+          <h2 className="section-heading-with-brand"><img src="/images/vip-logo.svg" alt="VIP" style={{width:32,height:32}} /> العروض والطلبات <span>المنشور.</span></h2>
           <p>العروض والطلبات التي تمت الموافقة عليها من الإدارة ونشرت على المنصة.</p>
         </div>
 
