@@ -1,0 +1,36 @@
+{
+  "name": "vip-yemen",
+  "version": "1.4.0",
+  "build": {
+    "command": "cd website && npm install && npm run build",
+    "output": "website/dist/public",
+    "environment": {
+      "NODE_VERSION": "20"
+    }
+  },
+  "routes": [
+    {
+      "source": "/admin/(.*)",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/departments/(.*)",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html",
+      "condition": {
+        "type": "file_not_exists",
+        "value": "/$1"
+      }
+    }
+  ],
+  "headers": {
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    "X-XSS-Protection": "1; mode=block",
+    "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+    "Referrer-Policy": "strict-origin-when-cross-origin"
+  }
+}
