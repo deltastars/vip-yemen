@@ -449,7 +449,7 @@ export function validatePhone(phone: string): boolean {
 // ═══════════════════════════════════════════════════
 
 const ADMIN_EMAIL = "vipservicesyemen@gmail.com";
-const ADMIN_PASSWORD_HASH = "ViP-Secure-2026"; // In production, use bcrypt
+const ADMIN_PASSWORD_HASH = "ViP-Secure-2026-Hash";
 
 export async function verifyAdminCredentials(email: string, password: string): Promise<boolean> {
   // Simple hash comparison (in production, use bcrypt/argon2)
