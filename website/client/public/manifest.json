@@ -1,29 +1,44 @@
 {
   "name": "ViP Yemen - للتوظيف والتسويق والخدمات العامة",
   "short_name": "ViP Yemen",
-  "description": "منصة يمنية للتوظيف والتسويق الإلكتروني والعقاري والبرمجيات والخدمات العامة",
+  "description": "منصة يمنية شاملة للتوظيف والتسويق الإلكتروني والعقاري والبرمجيات والخدمات العامة",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#102A43",
-  "theme_color": "#102A43",
+  "theme_color": "#F3B71B",
   "orientation": "any",
+  "scope": "/",
+  "lang": "ar",
+  "dir": "rtl",
+  "categories": ["business", "lifestyle", "social", "productivity"],
+  "prefer_related_applications": false,
   "icons": [
     {
-      "src": "/manus-storage/official-mark_82d4d013.webp",
-      "sizes": "192x192",
-      "type": "image/webp",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/manus-storage/official-mark_82d4d013.webp",
-      "sizes": "512x512",
-      "type": "image/webp",
+      "src": "/images/vip-logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
       "purpose": "any maskable"
     }
   ],
-  "categories": ["business", "lifestyle", "social"],
-  "lang": "ar",
-  "dir": "rtl",
-  "scope": "/",
-  "prefer_related_applications": false
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "التوظيف",
+      "short_name": "التوظيف",
+      "url": "/#employment",
+      "icons": [{"src": "/images/vip-logo.svg", "sizes": "any"}]
+    },
+    {
+      "name": "العقارات",
+      "short_name": "العقارات",
+      "url": "/#real-estate",
+      "icons": [{"src": "/images/vip-logo.svg", "sizes": "any"}]
+    },
+    {
+      "name": "لوحة التحكم",
+      "short_name": "الإدارة",
+      "url": "/admin",
+      "icons": [{"src": "/images/vip-logo.svg", "sizes": "any"}]
+    }
+  ]
 }
