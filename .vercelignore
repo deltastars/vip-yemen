@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output (will be built by Vercel)
+dist/
+build/
+
+# Mobile apps
+capacitor-app/
+android-native/
+mobile/
+artifacts/
+release/
+scripts/
+supabase/
+
+# Documentation
+docs/
+*.md
+
+# Environment files
+.env
+.env.*
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+.manus-logs/
+
+# Test files
+*.test.ts
+*.test.tsx
+coverage/

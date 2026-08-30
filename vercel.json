@@ -1,0 +1,36 @@
+{
+  "version": 2,
+  "name": "vip-yemen",
+  "builds": [
+    {
+      "src": "website/server/_core/index.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "website/dist/public/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "website/server/_core/index.ts"
+    },
+    {
+      "src": "/admin/(.*)",
+      "dest": "website/server/_core/index.ts"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "installCommand": "cd website && bun install",
+  "buildCommand": "cd website && bun run build",
+  "outputDirectory": "website/dist/public",
+  "framework": "vite",
+  "regions": ["iad1"],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
