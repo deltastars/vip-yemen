@@ -46,7 +46,8 @@ public class MainActivity extends BridgeActivity {
             // Enable database storage
             settings.setDatabaseEnabled(true);
             
-            // Cache mode: always try network first, use cache as fallback
+            // Cache mode: fetch from network first, ensuring auto-update works
+            // When new content is available on server, it replaces old content
             settings.setCacheMode(WebSettings.LOAD_DEFAULT);
             
             // Allow mixed content (HTTP/HTTPS)
@@ -96,8 +97,9 @@ public class MainActivity extends BridgeActivity {
             // Set up Chrome client for JavaScript dialogs
             webView.setWebChromeClient(new WebChromeClient());
             
-            // Clear cache periodically to ensure fresh content
-            webView.clearCache(false);
+            // Clear cache on startup to ensure fresh content for auto-update
+            webView.clearCache(true);
+            webView.clearHistory();
         }
     }
 }

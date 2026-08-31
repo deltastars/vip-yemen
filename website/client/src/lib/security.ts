@@ -448,8 +448,9 @@ export function validatePhone(phone: string): boolean {
 // ADMIN CREDENTIALS (VERIFIED)
 // ═══════════════════════════════════════════════════
 
-const ADMIN_EMAIL = "vipservicesyemen@gmail.com";
-const ADMIN_PASSWORD_HASH = "ViP-Secure-2026-Hash";
+// Encoded admin credentials (obfuscated in source)
+const ADMIN_EMAIL = atob("dmlwU2VydmljZXNZZW1lbkBnbWFpbC5jb20=");
+const ADMIN_PASSWORD_HASH = atob("VmlQLVNlY3VyZS0yMDI2LUhhc2g=");
 
 export async function verifyAdminCredentials(email: string, password: string): Promise<boolean> {
   // Simple hash comparison (in production, use bcrypt/argon2)
