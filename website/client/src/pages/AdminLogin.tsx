@@ -5,8 +5,11 @@ import {
   verifyAdminCredentials, getAdminEmail,
   authenticateWithBiometric, isBiometricSupported, isBiometricRegistered,
   checkRateLimit, recordFailedAttempt, clearRateLimit,
-  logSecurityEvent, sanitizeInput
+  logSecurityEvent, sanitizeInput,
+  recordFailedLogin, triggerIntruderAlert, resetIntruderCounter
 } from "../lib/security";
+
+const MAX_ATTEMPTS = 5;
 
 export default function AdminLogin() {
   const [, setLocation] = useLocation();
@@ -66,6 +69,7 @@ export default function AdminLogin() {
 
       if (isValid) {
         clearRateLimit("login");
+        resetIntruderCounter();
         logSecurityEvent("LOGIN_SUCCESS", `Email: ${cleanEmail}`);
         
         const user = {
@@ -81,13 +85,33 @@ export default function AdminLogin() {
         recordFailedAttempt("login");
         logSecurityEvent("LOGIN_FAILED", `Email: ${cleanEmail}`);
         
-        const newLimit = checkRateLimit("login");
-        setRateLimitInfo(newLimit);
+        // Track failed logins for intruder detection
+        const failedResult = recordFailedLogin();
         
-        if (!newLimit.allowed) {
-          setError("تم قفل الحساب لمدة 15 دقيقة بسبب محاولات كثيرة");
+        if (failedResult.shouldAlert) {
+          // Trigger intruder alert on 5th failed attempt
+          try {
+            const alertResult = await triggerIntruderAlert(cleanEmail);
+            if (alertResult.success) {
+              setError(`${alertResult.message}\nتم قفل الحساب لمدة 15 دقيقة`);
+            } else {
+              setError("تم قفل الحساب لمدة 15 دقيقة بسبب محاولات كثيرة");
+            }
+          } catch {
+            setError("تم قفل الحساب لمدة 15 دقيقة بسبب محاولات كثيرة");
+          }
         } else {
-          setError(`البريد الإلكتروني أو كلمة المرور غير صحيحة (${newLimit.remaining} محاولات متبقية)`);
+          const newLimit = checkRateLimit("login");
+          setRateLimitInfo(newLimit);
+          
+          const remaining = MAX_ATTEMPTS - failedResult.count;
+          if (!newLimit.allowed) {
+            setError("تم قفل الحساب لمدة 15 دقيقة بسبب محاولات كثيرة");
+          } else if (remaining <= 1) {
+            setError(`البريد الإلكتروني أو كلمة المرور غير صحيحة — تحذير: المحاولة الأخيرة! سيتم التقاط بيانات الجهاز`);
+          } else {
+            setError(`البريد الإلكتروني أو كلمة المرور غير صحيحة (${remaining} محاولات متبقية)`);
+          }
         }
       }
     } catch {
