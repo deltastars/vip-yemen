@@ -292,7 +292,7 @@ export default function AdminLogin() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              placeholder="vipservicesyemen@gmail.com"
+              placeholder="admin@example.com"
               disabled={loading}
               style={{
                 width: "100%",
