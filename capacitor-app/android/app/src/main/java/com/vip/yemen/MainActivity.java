@@ -52,9 +52,9 @@ public class MainActivity extends BridgeActivity {
             // Allow mixed content (HTTP/HTTPS)
             settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
             
-            // Enable zoom controls
-            settings.setSupportZoom(true);
-            settings.setBuiltInZoomControls(true);
+            // Disable zoom controls completely
+            settings.setSupportZoom(false);
+            settings.setBuiltInZoomControls(false);
             settings.setDisplayZoomControls(false);
             
             // Set text encoding

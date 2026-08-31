@@ -964,9 +964,14 @@ label small {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 0;
+  padding: 20px 0 80px;
   color: rgba(255,255,255,.5);
   font-size: 13px;
+  flex-wrap: wrap;
+  gap: 8px;
+  line-height: 1.8;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .developer-credit {
@@ -2447,7 +2452,7 @@ body {
 
 .vip-chatbot {
   position: fixed;
-  bottom: 20px;
+  bottom: 80px;
   left: 20px;
   z-index: 999;
 }
