@@ -5,14 +5,19 @@ import {
   Building2, Globe2, Code2, Megaphone, Tag, Eye, Check, X,
   Settings, FileText, TrendingUp, Clock, ChevronDown, Fingerprint,
   Camera, Edit3, Trash2, Archive, RefreshCw, Download, Upload,
-  Bell, Lock, UserCheck, AlertCircle, Search, Filter
+  Bell, Lock, UserCheck, AlertCircle, Search, Filter,
+  BookOpen, FileSignature, Zap
 } from "lucide-react";
+import { AccountingSystem } from "../components/AccountingSystem";
+import { EContractsSystem } from "../components/EContracts";
+import { ArchiveSystem } from "../components/ArchiveSystem";
+import { AutomationSystem } from "../components/AutomationSystem";
 import { 
   registerBiometric, isBiometricSupported, isBiometricRegistered, removeBiometric,
   logSecurityEvent, getAuditLogs, destroySession
 } from "../lib/security";
 
-type Tab = "overview" | "employment" | "realestate" | "emarketing" | "software" | "ads" | "offers" | "settings";
+type Tab = "overview" | "employment" | "realestate" | "emarketing" | "software" | "ads" | "offers" | "accounting" | "contracts" | "archive" | "automation" | "settings";
 type SubmissionStatus = "pending" | "reviewing" | "approved" | "rejected" | "archived" | "sold";
 
 interface Submission {
@@ -129,6 +134,10 @@ export default function AdminDashboard() {
     { key: "software", label: "البرمجيات", icon: Code2 },
     { key: "ads", label: "الإعلانات", icon: Megaphone },
     { key: "offers", label: "العروض", icon: Tag },
+    { key: "accounting", label: "المحاسبة", icon: BookOpen },
+    { key: "contracts", label: "العقود", icon: FileSignature },
+    { key: "archive", label: "الأرشيف", icon: Archive },
+    { key: "automation", label: "الأتمتة", icon: Zap },
     { key: "settings", label: "الإعدادات", icon: Settings },
   ] as const;
 
@@ -180,6 +189,10 @@ export default function AdminDashboard() {
         {activeTab === "software" && <DepartmentTab category="software" title="قسم البرمجيات" icon={Code2} />}
         {activeTab === "ads" && <AdsTab />}
         {activeTab === "offers" && <OffersTab />}
+        {activeTab === "accounting" && <AccountingSystem language="ar" />}
+        {activeTab === "contracts" && <EContractsSystem language="ar" />}
+        {activeTab === "archive" && <ArchiveSystem language="ar" />}
+        {activeTab === "automation" && <AutomationSystem language="ar" />}
         {activeTab === "settings" && <SettingsTab user={user} />}
       </main>
     </div>
