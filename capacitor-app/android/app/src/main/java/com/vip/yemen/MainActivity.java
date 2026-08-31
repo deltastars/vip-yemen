@@ -23,7 +23,7 @@ import com.getcapacitor.BridgeActivity;
  */
 public class MainActivity extends BridgeActivity {
     
-    private static final String BASE_URL = "https://vip-yemen-140.vercel.app";
+    private static final String PRODUCTION_URL = "https://vip-yemen-140.vercel.app";
     private int retryCount = 0;
     private static final int MAX_RETRIES = 3;
     
