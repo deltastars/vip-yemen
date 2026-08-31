@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, Component, type ReactNode } from "react";
 import { Route, Switch, Link } from "wouter";
 import { ArrowLeft, ArrowUpLeft, BriefcaseBusiness, Building2, CalendarDays, Check, Code2, Database, Facebook, Globe2, Instagram, Languages, Linkedin, Mail, MapPin, Menu, MessageCircle, Phone, Send, ShieldCheck, Smartphone, Sparkles, Twitter, X, Youtube, Megaphone, Clock3, Users, MessageSquare, ChevronRight } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -163,5 +163,56 @@ function DeveloperControls() {
 
 function VipChatbot() { const [open, setOpen] = useState(false); const { language } = useLanguage(); return <div className="vip-chatbot"><button className="vip-chatbot-btn" onClick={() => setOpen(!open)} aria-label="مساعد VIP الذكي"><img src="/images/vip-logo.svg" alt="VIP" className="vip-chatbot-logo" /></button>{open ? <div className="vip-chatbot-panel"><div className="vip-chatbot-header"><img src="/images/vip-logo.svg" alt="VIP" style={{width:20,height:20}} /><span>{language === "ar" ? "مساعد VIP الذكي" : "VIP Smart Assistant"}</span><button onClick={() => setOpen(false)} aria-label="إغلاق"><X size={16} /></button></div><div className="vip-chatbot-body"><div className="vip-chatbot-msg bot"><img src="/images/vip-logo.svg" alt="VIP" style={{width:16,height:16}} /><span>{language === "ar" ? "مرحبًا! أنا مساعد VIP الذكي. كيف يمكنني مساعدتك اليوم؟" : "Hello! I'm the VIP Smart Assistant. How can I help you today?"}</span></div><div className="vip-chatbot-options"><a href="https://wa.me/967711780999" target="_blank" rel="noreferrer" className="vip-chatbot-option"><MessageCircle size={14} /> {language === "ar" ? "تواصل عبر واتساب" : "WhatsApp"}</a><a href="#submit" onClick={() => setOpen(false)} className="vip-chatbot-option"><Send size={14} /> {language === "ar" ? "أرسل طلب" : "Send request"}</a><a href="#services" onClick={() => setOpen(false)} className="vip-chatbot-option"><Globe2 size={14} /> {language === "ar" ? "استكشف الخدمات" : "Explore services"}</a></div></div></div> : null}</div>; }
 
+class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean; error: string }> {
+  constructor(props: { children: ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: "" };
+  }
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error: error.message };
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#0B2034", color: "white", fontFamily: "IBM Plex Sans Arabic, sans-serif", padding: "20px", textAlign: "center" }}>
+          <div style={{ maxWidth: 480 }}>
+            <img src="/images/vip-logo.svg" alt="ViP" style={{ width: 60, height: 60, marginBottom: 20 }} />
+            <h2 style={{ marginBottom: 12 }}>حدث خطأ غير متوقع</h2>
+            <p style={{ color: "rgba(255,255,255,.7)", marginBottom: 24 }}>يمكنك المحاولة مرة أخرى أو العودة للصفحة الرئيسية</p>
+            <button onClick={() => { this.setState({ hasError: false, error: "" }); window.location.href = "/"; }} style={{ background: "#F3B71B", color: "#0B2034", border: "none", padding: "12px 24px", borderRadius: 8, fontWeight: 700, cursor: "pointer", fontSize: 14 }}>العودة للرئيسية</button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+function AutoUpdateChecker() {
+  useEffect(() => {
+    let lastVersion = localStorage.getItem("vipyemen-version") || "1.7.0";
+    const checkUpdate = async () => {
+      try {
+        const response = await fetch("/manifest.json", { cache: "no-cache" });
+        if (response.ok) {
+          const manifest = await response.json();
+          const currentVersion = manifest.version || "1.7.0";
+          if (currentVersion !== lastVersion) {
+            localStorage.setItem("vipyemen-version", currentVersion);
+            lastVersion = currentVersion;
+          }
+        }
+      } catch {
+        // Silently fail - updates will load on next page refresh
+      }
+    };
+    // Check every 5 minutes
+    const interval = window.setInterval(checkUpdate, 5 * 60 * 1000);
+    checkUpdate();
+    return () => window.clearInterval(interval);
+  }, []);
+  return null;
+}
+
 function NotFound() { return <div className="not-found"><h1>الصفحة غير موجودة</h1><Link href="/">العودة للرئيسية</Link></div>; }
-export default function App() { return <LanguageRuntime><ThemeRuntime><Switch><Route path="/" component={Home} /><Route path="/admin" component={AdminLogin} /><Route path="/admin/dashboard" component={AdminDashboardPage} /><Route path="/departments/employment" component={EmploymentSection} /><Route path="/departments/real-estate" component={RealEstateSection} /><Route path="/departments/e-marketing" component={EMarketingSection} /><Route path="/departments/software" component={SoftwareDeptSection} /><Route path="/departments/listings" component={DepartmentListings} /><Route component={NotFound} /></Switch><VipChatbot /></ThemeRuntime></LanguageRuntime>; }
+export default function App() { return <ErrorBoundary><LanguageRuntime><ThemeRuntime><AutoUpdateChecker /><Switch><Route path="/" component={Home} /><Route path="/admin" component={AdminLogin} /><Route path="/admin/dashboard" component={AdminDashboardPage} /><Route path="/departments/employment" component={EmploymentSection} /><Route path="/departments/real-estate" component={RealEstateSection} /><Route path="/departments/e-marketing" component={EMarketingSection} /><Route path="/departments/software" component={SoftwareDeptSection} /><Route path="/departments/listings" component={DepartmentListings} /><Route component={NotFound} /></Switch><VipChatbot /></ThemeRuntime></LanguageRuntime></ErrorBoundary>; }
