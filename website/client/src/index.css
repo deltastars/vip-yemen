@@ -1914,6 +1914,51 @@ body {
   margin: 0 auto;
 }
 
+/* Smooth page transitions */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Tab content transition */
+.admin-content > * {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Back button in admin */
+.admin-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  color: #6B7280;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.admin-back-btn:hover {
+  background: #F3F4F6;
+  color: #102A43;
+  border-color: #D1D5DB;
+}
+
+/* Smooth department nav */
+.dept-nav a {
+  transition: all .2s ease;
+}
+
+.dept-nav a:hover {
+  transform: translateY(-1px);
+}
+
 /* Stats Grid */
 .stats-grid {
   display: grid;

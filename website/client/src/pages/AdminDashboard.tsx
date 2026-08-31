@@ -6,7 +6,7 @@ import {
   Settings, FileText, TrendingUp, Clock, ChevronDown, Fingerprint,
   Camera, Edit3, Trash2, Archive, RefreshCw, Download, Upload,
   Bell, Lock, UserCheck, AlertCircle, Search, Filter,
-  BookOpen, FileSignature, Zap
+  BookOpen, FileSignature, Zap, ArrowLeft
 } from "lucide-react";
 import { AccountingSystem } from "../components/AccountingSystem";
 import { EContractsSystem } from "../components/EContracts";
@@ -145,6 +145,10 @@ export default function AdminDashboard() {
     <div className="admin-dashboard">
       <header className="admin-header">
         <div className="admin-header-right">
+          <a href="/" className="admin-back-btn" aria-label="العودة للرئيسية">
+            <ArrowLeft size={16} />
+            <span>الرئيسية</span>
+          </a>
           <ShieldCheck size={24} />
           <div>
             <h1>لوحة التحكم الرئيسية</h1>
