@@ -420,25 +420,6 @@ export default function AdminLogin() {
               الدخول بالبصمة
             </button>
           )}
-        </div>          <div style={{ 
-          marginTop: "24px", 
-          padding: "16px", 
-          background: "#F0F9FF", 
-          borderRadius: "8px",
-          fontSize: "13px",
-          color: "#0369A1"
-        }}>
-          <strong>🔐 الأمان:</strong>
-          <br />
-          • الحماية من Brute Force (5 محاولات ثم قفل 15 دقيقة)
-          <br />
-          • تسجيل جميع محاولات الدخول
-          <br />
-          • البصمة موثقة ومحمية بـ WebAuthn
-          <br />
-          • جلسات آمنة لمدة 24 ساعة
-          <br />
-          • تشفير AES-256-GCM
         </div>
       </div>
     </div>
