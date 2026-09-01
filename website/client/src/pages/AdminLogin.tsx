@@ -282,10 +282,11 @@ export default function AdminLogin() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} autoComplete="off">
-          {/* Hidden dummy fields to prevent browser autofill */}
-          <input type="text" name="fakeuser" autoComplete="username" style={{ position: "absolute", opacity: 0, height: 0, width: 0, padding: 0, border: 0, pointerEvents: "none" }} tabIndex={-1} />
-          <input type="password" name="fakepass" autoComplete="current-password" style={{ position: "absolute", opacity: 0, height: 0, width: 0, padding: 0, border: 0, pointerEvents: "none" }} tabIndex={-1} />
+        <form onSubmit={handleSubmit} autoComplete="off" data-form-type="other" data-lpignore="true">
+          {/* Aggressive anti-autofill: hidden decoy fields with random names */}
+          <input type="text" name="_viewport_n6x9q" autoComplete="off" style={{ position: "absolute", left: "-9999px", opacity: 0, height: 0, width: 0, padding: 0, border: 0, overflow: "hidden" }} tabIndex={-1} aria-hidden="true" />
+          <input type="password" name="_viewport_m3k8p" autoComplete="off" style={{ position: "absolute", left: "-9999px", opacity: 0, height: 0, width: 0, padding: 0, border: 0, overflow: "hidden" }} tabIndex={-1} aria-hidden="true" />
+          <input type="text" name="_session_r2w7y" autoComplete="off" style={{ position: "absolute", left: "-9999px", opacity: 0, height: 0, width: 0, padding: 0, border: 0, overflow: "hidden" }} tabIndex={-1} aria-hidden="true" />
 
           <label style={{ display: "block", marginBottom: "16px" }}>
             <span style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px", fontWeight: 600, color: "#102A43" }}>
@@ -293,11 +294,11 @@ export default function AdminLogin() {
             </span>
             <input
               type="email"
-              name="vipe_admin_email"
+              name="vip_auth_identifier"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              autoComplete="new-email"
+              autoComplete="off"
               placeholder="أدخل بريدك الإلكتروني"
               disabled={loading}
               style={{
@@ -318,11 +319,11 @@ export default function AdminLogin() {
             <div style={{ position: "relative" }}>
               <input
                 type={showPassword ? "text" : "password"}
-                name="vipe_admin_pass"
+                name="vip_auth_credential"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                autoComplete="new-password"
+                autoComplete="off"
                 placeholder="••••••••"
                 disabled={loading}
                 style={{

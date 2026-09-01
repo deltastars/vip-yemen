@@ -3031,3 +3031,73 @@ p, span, div, label, li {
 .map-section .container {
   max-width: 800px;
 }
+
+/* === v2.7.0 SECURITY AND UX FIXES === */
+
+/* Samsung Internet / Browser password manager panel suppression */
+input[name^="_viewport_"],
+input[name^="_session_"] {
+  position: absolute !important;
+  left: -9999px !important;
+  top: -9999px !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+  display: block !important;
+  z-index: -9999 !important;
+}
+
+/* Stronger viewport zoom prevention */
+@viewport {
+  zoom: 1;
+  min-zoom: 1;
+  max-zoom: 1;
+}
+
+html {
+  touch-action: manipulation !important;
+  -ms-touch-action: manipulation !important;
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  -webkit-text-size-adjust: 100% !important;
+  -ms-text-size-adjust: 100% !important;
+  overscroll-behavior: none !important;
+}
+
+body {
+  touch-action: manipulation !important;
+  -ms-touch-action: manipulation !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior: none !important;
+}
+
+/* Samsung Internet specific: hide zoom toolbar */
+@supports (-webkit-touch-callout: none) {
+  html, body {
+    touch-action: manipulation !important;
+    -ms-touch-action: manipulation !important;
+  }
+}
+
+/* Admin login specific */
+.admin-login-page input {
+  -webkit-autofill: none !important;
+  -webkit-box-shadow: 0 0 0 100px white inset !important;
+  transition: background-color 5000s ease-in-out 0s !important;
+}
+
+/* Remove any credential display panel */
+.admin-login-card .credential-hint,
+.admin-login-card [class*="hint"],
+.admin-login-card [class*="credential"] {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
