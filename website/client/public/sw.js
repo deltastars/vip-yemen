@@ -1,6 +1,6 @@
 // ViP Yemen Service Worker - Enhanced for Offline & Auto-Update
-const CACHE_NAME = "vipyemen-v2.3.0";
-const CACHE_VERSION = "2.3.0";
+const CACHE_NAME = "vipyemen-v2.7.0";
+const CACHE_VERSION = "2.7.0";
 
 // Assets to cache on install
 const PRECACHE_ASSETS = [
