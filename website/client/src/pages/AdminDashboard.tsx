@@ -16,6 +16,7 @@ import {
   registerBiometric, isBiometricSupported, isBiometricRegistered, removeBiometric,
   logSecurityEvent, getAuditLogs, destroySession
 } from "../lib/security";
+import { trpc } from "@/lib/trpc";
 
 type Tab = "overview" | "employment" | "realestate" | "emarketing" | "software" | "ads" | "offers" | "accounting" | "contracts" | "archive" | "automation" | "settings";
 type SubmissionStatus = "pending" | "reviewing" | "approved" | "rejected" | "archived" | "sold";
@@ -204,9 +205,9 @@ export default function AdminDashboard() {
 }
 
 function OverviewTab() {
-  const submissions = loadData<Submission[]>("admin_submissions", []);
-  const ads = loadData<Ad[]>("admin_ads", []);
-  const offers = loadData<Offer[]>("admin_offers", []);
+  const { data: submissions = [] } = trpc.submissions.adminList.useQuery(undefined, { refetchInterval: 10000 });
+  const { data: ads = [] } = trpc.advertisements.adminList.useQuery(undefined, { refetchInterval: 10000 });
+  const { data: offers = [] } = trpc.offers.adminList.useQuery(undefined, { refetchInterval: 10000 });
 
   const stats = [
     { label: "إجمالي الطلبات", value: submissions.length.toString(), icon: FileText, color: "#3B82F6" },
@@ -284,33 +285,25 @@ function OverviewTab() {
 }
 
 function DepartmentTab({ category, title, icon: Icon }: { category: string; title: string; icon: any }) {
-  const [submissions, setSubmissions] = useState<Submission[]>(() => 
-    loadData<Submission[]>("admin_submissions", []).filter(s => 
-      s.category === category || s.category.includes(category)
-    )
-  );
+  const { data: allSubmissions = [], refetch } = trpc.submissions.adminList.useQuery(undefined, { refetchInterval: 10000 });
+  const updateStatusMutation = trpc.submissions.updateStatus.useMutation({ onSuccess: () => refetch() });
+  const submissions = allSubmissions.filter((s: any) => s.category === category || (typeof s.category === 'string' && s.category.includes(category)));
   const [filter, setFilter] = useState<SubmissionStatus | "all">("all");
   const [search, setSearch] = useState("");
-  const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null);
+  const [selectedSubmission, setSelectedSubmission] = useState<any | null>(null);
 
-  const filteredSubmissions = submissions.filter(s => {
+  const filteredSubmissions = submissions.filter((s: any) => {
     const matchesFilter = filter === "all" || s.status === filter;
-    const matchesSearch = s.title.includes(search) || s.fullName.includes(search) || s.phone.includes(search);
+    const matchesSearch = (s.title || '').includes(search) || (s.fullName || '').includes(search) || (s.phone || '').includes(search);
     return matchesFilter && matchesSearch;
   });
 
-  const updateStatus = (id: string, status: SubmissionStatus) => {
-    const allSubmissions = loadData<Submission[]>("admin_submissions", []);
-    const updated = allSubmissions.map(s => s.id === id ? { ...s, status } : s);
-    saveData("admin_submissions", updated);
-    setSubmissions(updated.filter(s => s.category === category || s.category.includes(category)));
+  const updateStatus = (id: number, status: string) => {
+    updateStatusMutation.mutate({ id, status: status as any });
   };
 
-  const addNote = (id: string, note: string) => {
-    const allSubmissions = loadData<Submission[]>("admin_submissions", []);
-    const updated = allSubmissions.map(s => s.id === id ? { ...s, notes: note } : s);
-    saveData("admin_submissions", updated);
-    setSubmissions(updated.filter(s => s.category === category || s.category.includes(category)));
+  const addNote = (id: number, note: string) => {
+    updateStatusMutation.mutate({ id, status: 'inReview' as any, internalNotes: note });
   };
 
   return (
@@ -335,7 +328,7 @@ function DepartmentTab({ category, title, icon: Icon }: { category: string; titl
           <select value={filter} onChange={(e) => setFilter(e.target.value as any)}>
             <option value="all">الكل ({submissions.length})</option>
             <option value="pending">قيد المراجعة ({submissions.filter(s => s.status === "pending").length})</option>
-            <option value="reviewing">قيد المراجعة ({submissions.filter(s => s.status === "reviewing").length})</option>
+            <option value="inReview">قيد المراجعة ({submissions.filter(s => s.status === "inReview").length})</option>
             <option value="approved">تمت الموافقة ({submissions.filter(s => s.status === "approved").length})</option>
             <option value="rejected">مرفوض ({submissions.filter(s => s.status === "rejected").length})</option>
             <option value="archived">مؤرشفة ({submissions.filter(s => s.status === "archived").length})</option>
@@ -416,46 +409,35 @@ function DepartmentTab({ category, title, icon: Icon }: { category: string; titl
 }
 
 function AdsTab() {
-  const [ads, setAds] = useState<Ad[]>(() => loadData<Ad[]>("admin_ads", []));
+  const { data: ads = [], refetch } = trpc.advertisements.adminList.useQuery(undefined, { refetchInterval: 10000 });
+  const createAd = trpc.advertisements.create.useMutation({ onSuccess: () => { refetch(); setShowForm(false); } });
+  const updateAd = trpc.advertisements.update.useMutation({ onSuccess: () => refetch() });
+  const deleteAdMutation = trpc.advertisements.remove.useMutation({ onSuccess: () => refetch() });
   const [showForm, setShowForm] = useState(false);
-  const [editingAd, setEditingAd] = useState<Ad | null>(null);
+  const [editingAd, setEditingAd] = useState<any | null>(null);
   const [form, setForm] = useState({ title: "", message: "", linkUrl: "", priority: "0", startsAt: "", endsAt: "" });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const newAd: Ad = {
-      id: Date.now().toString(),
-      title: form.title,
-      message: form.message,
-      linkUrl: form.linkUrl || undefined,
-      status: "draft",
-      startsAt: form.startsAt || new Date().toISOString(),
-      endsAt: form.endsAt || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-      priority: parseInt(form.priority) || 0
-    };
-    
-    const updated = editingAd 
-      ? ads.map(a => a.id === editingAd.id ? { ...newAd, id: editingAd.id, status: editingAd.status } : a)
-      : [...ads, newAd];
-    
-    setAds(updated);
-    saveData("admin_ads", updated);
-    setShowForm(false);
+    if (editingAd) {
+      updateAd.mutate({ id: editingAd.id, title: form.title, message: form.message, linkUrl: form.linkUrl || undefined, priority: parseInt(form.priority) || 0, startsAt: new Date(form.startsAt), endsAt: new Date(form.endsAt) });
+    } else {
+      createAd.mutate({ title: form.title, message: form.message, linkUrl: form.linkUrl || undefined, priority: parseInt(form.priority) || 0, startsAt: new Date(form.startsAt || Date.now()), endsAt: new Date(form.endsAt || Date.now() + 7 * 24 * 60 * 60 * 1000) });
+    }
     setEditingAd(null);
     setForm({ title: "", message: "", linkUrl: "", priority: "0", startsAt: "", endsAt: "" });
   };
 
-  const togglePublish = (id: string) => {
-    const updated = ads.map(a => a.id === id ? { ...a, status: (a.status === "published" ? "draft" : "published") as Ad["status"] } : a);
-    setAds(updated);
-    saveData("admin_ads", updated);
+  const togglePublish = (id: number, currentStatus: string) => {
+    const ad = ads.find((a: any) => a.id === id);
+    if (ad) {
+      updateAd.mutate({ id, status: currentStatus === "published" ? "paused" : "published" });
+    }
   };
 
-  const deleteAd = (id: string) => {
+  const deleteAd = (id: number) => {
     if (confirm("هل أنت متأكد من حذف هذا الإعلان؟")) {
-      const updated = ads.filter(a => a.id !== id);
-      setAds(updated);
-      saveData("admin_ads", updated);
+      deleteAdMutation.mutate({ id });
     }
   };
 
@@ -536,13 +518,13 @@ function AdsTab() {
                 </div>
               </div>
               <div className="ad-actions">
-                <button onClick={() => togglePublish(ad.id)} className={`btn ${ad.status === "published" ? "btn-warning" : "btn-success"}`}>
+                <button onClick={() => togglePublish(ad.id, ad.status)} className={`btn ${ad.status === "published" ? "btn-warning" : "btn-success"}`}>
                   {ad.status === "published" ? "إيقاف" : "نشر"}
                 </button>
-                <button onClick={() => { setEditingAd(ad); setForm({ title: ad.title, message: ad.message, linkUrl: ad.linkUrl || "", priority: ad.priority.toString(), startsAt: ad.startsAt.slice(0, 16), endsAt: ad.endsAt.slice(0, 16) }); setShowForm(true); }} className="btn btn-secondary">
+                <button onClick={() => { setEditingAd(ad); setForm({ title: ad.title, message: ad.message, linkUrl: ad.linkUrl || "", priority: ad.priority.toString(), startsAt: new Date(ad.startsAt).toISOString().slice(0, 16), endsAt: new Date(ad.endsAt).toISOString().slice(0, 16) }); setShowForm(true); }} className="btn btn-secondary">
                   <Edit3 size={14} />
                 </button>
-                <button onClick={() => deleteAd(ad.id)} className="btn btn-danger">
+                <button onClick={() => deleteAdMutation.mutate({ id: ad.id })} className="btn btn-danger">
                   <Trash2 size={14} />
                 </button>
               </div>
@@ -555,46 +537,32 @@ function AdsTab() {
 }
 
 function OffersTab() {
-  const [offers, setOffers] = useState<Offer[]>(() => loadData<Offer[]>("admin_offers", []));
+  const { data: offers = [], refetch } = trpc.offers.adminList.useQuery(undefined, { refetchInterval: 10000 });
+  const createOffer = trpc.offers.create.useMutation({ onSuccess: () => { refetch(); setShowForm(false); } });
+  const updateOffer = trpc.offers.update.useMutation({ onSuccess: () => refetch() });
+  const deleteOfferMutation = trpc.offers.remove.useMutation({ onSuccess: () => refetch() });
   const [showForm, setShowForm] = useState(false);
-  const [editingOffer, setEditingOffer] = useState<Offer | null>(null);
+  const [editingOffer, setEditingOffer] = useState<any | null>(null);
   const [form, setForm] = useState({ title: "", description: "", discountPercent: "", isFeatured: false, startsAt: "", endsAt: "" });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const newOffer: Offer = {
-      id: Date.now().toString(),
-      title: form.title,
-      description: form.description,
-      discountPercent: form.discountPercent ? parseInt(form.discountPercent) : undefined,
-      isFeatured: form.isFeatured,
-      status: "draft",
-      startsAt: form.startsAt || new Date().toISOString(),
-      endsAt: form.endsAt || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-    };
-    
-    const updated = editingOffer
-      ? offers.map(o => o.id === editingOffer.id ? { ...newOffer, id: editingOffer.id, status: editingOffer.status } : o)
-      : [...offers, newOffer];
-    
-    setOffers(updated);
-    saveData("admin_offers", updated);
-    setShowForm(false);
+    if (editingOffer) {
+      updateOffer.mutate({ id: editingOffer.id, title: form.title, description: form.description, discountPercent: form.discountPercent ? parseInt(form.discountPercent) : undefined, isFeatured: form.isFeatured });
+    } else {
+      createOffer.mutate({ title: form.title, description: form.description, discountPercent: form.discountPercent ? parseInt(form.discountPercent) : undefined, isFeatured: form.isFeatured, startsAt: form.startsAt ? new Date(form.startsAt) : undefined, endsAt: form.endsAt ? new Date(form.endsAt) : undefined });
+    }
     setEditingOffer(null);
     setForm({ title: "", description: "", discountPercent: "", isFeatured: false, startsAt: "", endsAt: "" });
   };
 
-  const togglePublish = (id: string) => {
-    const updated = offers.map(o => o.id === id ? { ...o, status: (o.status === "published" ? "draft" : "published") as Offer["status"] } : o);
-    setOffers(updated);
-    saveData("admin_offers", updated);
+  const togglePublish = (id: number, currentStatus: string) => {
+    updateOffer.mutate({ id, status: currentStatus === "published" ? "draft" : "published" });
   };
 
-  const deleteOffer = (id: string) => {
+  const deleteOffer = (id: number) => {
     if (confirm("هل أنت متأكد من حذف هذا العرض؟")) {
-      const updated = offers.filter(o => o.id !== id);
-      setOffers(updated);
-      saveData("admin_offers", updated);
+      deleteOfferMutation.mutate({ id });
     }
   };
 
@@ -675,13 +643,13 @@ function OffersTab() {
                 </div>
               </div>
               <div className="offer-actions">
-                <button onClick={() => togglePublish(offer.id)} className={`btn ${offer.status === "published" ? "btn-warning" : "btn-success"}`}>
+                <button onClick={() => togglePublish(offer.id, offer.status)} className={`btn ${offer.status === "published" ? "btn-warning" : "btn-success"}`}>
                   {offer.status === "published" ? "إيقاف" : "نشر"}
                 </button>
-                <button onClick={() => { setEditingOffer(offer); setForm({ title: offer.title, description: offer.description, discountPercent: offer.discountPercent?.toString() || "", isFeatured: offer.isFeatured, startsAt: offer.startsAt.slice(0, 16), endsAt: offer.endsAt.slice(0, 16) }); setShowForm(true); }} className="btn btn-secondary">
+                <button onClick={() => { setEditingOffer(offer); setForm({ title: offer.title, description: offer.description, discountPercent: offer.discountPercent?.toString() || "", isFeatured: !!offer.isFeatured, startsAt: offer.startsAt ? new Date(offer.startsAt).toISOString().slice(0, 16) : "", endsAt: offer.endsAt ? new Date(offer.endsAt).toISOString().slice(0, 16) : "" }); setShowForm(true); }} className="btn btn-secondary">
                   <Edit3 size={14} />
                 </button>
-                <button onClick={() => deleteOffer(offer.id)} className="btn btn-danger">
+                <button onClick={() => deleteOfferMutation.mutate({ id: offer.id })} className="btn btn-danger">
                   <Trash2 size={14} />
                 </button>
               </div>
