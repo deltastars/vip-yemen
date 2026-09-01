@@ -368,9 +368,11 @@ input, textarea, select {
 
 .hero-copy h1 {
   font-size: 42px;
-  line-height: 1.2;
+  line-height: 1.4;
   margin: 20px 0;
   color: white;
+  letter-spacing: 0.01em;
+  word-spacing: 0.05em;
 }
 
 .hero-copy h1 em {
@@ -381,8 +383,10 @@ input, textarea, select {
 .hero-lead {
   color: rgba(255,255,255,.85);
   font-size: 16px;
-  line-height: 1.8;
+  line-height: 2;
   margin-bottom: 24px;
+  letter-spacing: 0.02em;
+  word-spacing: 0.03em;
 }
 
 .hero-proof {
@@ -2730,4 +2734,89 @@ html {
     left: 0;
     bottom: 58px;
   }
+}
+
+/* ═══════════════════════════════════════════════════
+   TEXT SPACING & OVERLAP FIXES v2.3
+   ═══════════════════════════════════════════════════ */
+
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: 0.01em;
+  word-spacing: 0.03em;
+}
+
+p, span, div, label, li {
+  letter-spacing: 0.015em;
+  word-spacing: 0.02em;
+  line-height: 1.8;
+}
+
+.service-copy h3 { letter-spacing: 0.01em; margin: 8px 0 12px; }
+.service-copy p { letter-spacing: 0.015em; line-height: 2; }
+.dept-hero-copy h2 { letter-spacing: 0.01em; line-height: 1.4; }
+.announcement-item { letter-spacing: 0.02em; }
+
+/* Admin back button enhanced */
+.admin-back-btn {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 10px;
+  color: white !important;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+.admin-back-btn:hover {
+  background: var(--yellow);
+  color: var(--navy) !important;
+  border-color: var(--yellow);
+  transform: translateY(-1px);
+}
+
+/* Empty section styling */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px;
+  text-align: center;
+  background: linear-gradient(135deg, rgba(243,183,27,.04), rgba(243,183,27,.01));
+  border: 2px dashed rgba(243,183,27,.25);
+  border-radius: 16px;
+  min-height: 200px;
+}
+.empty-state svg { color: var(--yellow); margin-bottom: 16px; opacity: 0.7; }
+.empty-state strong { color: var(--navy); font-size: 18px; margin-bottom: 8px; }
+.empty-state span { color: var(--muted); font-size: 14px; }
+
+/* Section backgrounds */
+.department-section:nth-child(even) { background: linear-gradient(180deg, #FAFAFA, #F5F5F0); }
+.department-section:nth-child(odd) { background: white; }
+.visual-placeholder:nth-child(1) { background: linear-gradient(135deg, rgba(243,183,27,.1), rgba(243,183,27,.05)); }
+.visual-placeholder:nth-child(2) { background: linear-gradient(135deg, rgba(16,42,67,.06), rgba(16,42,67,.02)); }
+.visual-placeholder:nth-child(3) { background: linear-gradient(135deg, rgba(225,139,104,.08), rgba(225,139,104,.03)); }
+
+@media (max-width: 640px) {
+  h1, h2, h3 { letter-spacing: 0; word-spacing: normal; }
+  p { letter-spacing: 0; word-spacing: normal; }
+  .dept-hero-copy h2 { font-size: 22px; }
+  .dept-hero-copy p { font-size: 14px; line-height: 1.9; }
+}
+
+/* GPU acceleration */
+.announcement-track, .marquee-inner, .service-card, .software-card, .offer-card {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  .announcement-track, .marquee-inner { animation: none !important; }
 }
