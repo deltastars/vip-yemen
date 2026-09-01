@@ -101,9 +101,6 @@
   "patchedDependencies": {
     "wouter@3.7.1": "patches/wouter@3.7.1.patch",
   },
-  "overrides": {
-    "tailwindcss>nanoid": "3.3.7",
-  },
   "packages": {
     "@antfu/install-pkg": ["@antfu/install-pkg@1.1.0", "", { "dependencies": { "package-manager-detector": "1.5.0", "tinyexec": "1.0.1" } }, "sha512-MGQsmw10ZyI+EJo45CdSER4zEb+p31LpDAFp2Z3gkSd1yqVZGi0Ebx++YTEMonJy4oChEMLsxZ64j8FH6sSqtQ=="],
 
