@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, Component, type ReactNo
 import { Route, Switch, Link } from "wouter";
 import { ArrowLeft, ArrowUpLeft, BriefcaseBusiness, Building2, CalendarDays, Check, Code2, Database, Facebook, Globe2, Instagram, Languages, Linkedin, Mail, MapPin, Menu, MessageCircle, Phone, Send, ShieldCheck, Smartphone, Twitter, X, Youtube, Megaphone, Clock3, Users, MessageSquare, ChevronRight } from "lucide-react";
 import { AutoUpdateBanner } from "@/components/AutoUpdateBanner";
+import { MapView } from "@/components/Map";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { startLogin } from "@/const";
 import { trpc } from "@/lib/trpc";
