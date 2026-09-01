@@ -2,7 +2,7 @@ import { useState } from "react";
 import {
   BriefcaseBusiness, Building2, Globe2, Code2, Send, Check,
   ArrowLeft, ShieldCheck, MessageCircle, Upload, Search, Tag,
-  Star, Clock, Percent,
+  Clock, Percent,
 } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 
@@ -457,7 +457,7 @@ export function OffersSection() {
         <div className="offers-grid">
           {offers.map((offer: any) => (
             <article className={`offer-card ${offer.isFeatured ? "offer-featured" : ""}`} key={offer.id}>
-              {offer.isFeatured ? <div className="offer-badge"><Star size={12} /> عرض مميز</div> : null}
+              {offer.isFeatured ? <div className="offer-badge"><ShieldCheck size={12} /> عرض مميز</div> : null}
               {offer.videoUrl ? (
                 <div className="offer-video">
                   <video src={offer.videoUrl} controls preload="metadata" poster={offer.imageUrl || undefined} />

@@ -37,3 +37,4 @@ capacitor-app/*.keystore
 
 # Credentials files (keep local only)
 CREDENTIALS-AND-SIGNING.md
+release-build/

@@ -1,6 +1,6 @@
-// ViP Yemen Service Worker
-const CACHE_NAME = "vipyemen-v2.1.1";
-const CACHE_VERSION = "2.1.1";
+// ViP Yemen Service Worker - Enhanced for Offline & Auto-Update
+const CACHE_NAME = "vipyemen-v2.3.0";
+const CACHE_VERSION = "2.3.0";
 
 // Assets to cache on install
 const PRECACHE_ASSETS = [
@@ -33,7 +33,15 @@ self.addEventListener("activate", (event) => {
             .map((name) => caches.delete(name))
         )
       )
-      .then(() => self.clients.claim())
+      .then(() => {
+        // Notify all clients that a new version is available
+        self.clients.matchAll().then((clients) => {
+          clients.forEach((client) => {
+            client.postMessage({ type: "SW_UPDATED", version: CACHE_VERSION });
+          });
+        });
+        return self.clients.claim();
+      })
   );
 });
 
@@ -42,32 +50,51 @@ self.addEventListener("fetch", (event) => {
   // Skip non-GET requests
   if (event.request.method !== "GET") return;
 
-  // Skip API calls
+  // Skip API calls and GitHub API
   if (event.request.url.includes("/api/")) return;
-
-  // Skip GitHub API
   if (event.request.url.includes("api.github.com")) return;
 
+  // For navigation requests (HTML pages), try network first
+  if (event.request.mode === "navigate") {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseClone);
+          });
+          return response;
+        })
+        .catch(() => {
+          return caches.match(event.request).then((cachedResponse) => {
+            return cachedResponse || caches.match("/");
+          });
+        })
+    );
+    return;
+  }
+
+  // For other requests (CSS, JS, images), use stale-while-revalidate
   event.respondWith(
-    fetch(event.request)
-      .then((response) => {
-        // Clone the response before caching
-        const responseClone = response.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseClone);
-        });
-        return response;
-      })
-      .catch(() => {
-        // Network failed, try cache
-        return caches.match(event.request).then((cachedResponse) => {
-          return cachedResponse || caches.match("/");
-        });
-      })
+    caches.match(event.request).then((cachedResponse) => {
+      const fetchPromise = fetch(event.request)
+        .then((response) => {
+          if (response && response.status === 200) {
+            const responseClone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseClone);
+            });
+          }
+          return response;
+        })
+        .catch(() => cachedResponse);
+
+      return cachedResponse || fetchPromise;
+    })
   );
 });
 
-// Message handler for skip waiting
+// Message handler
 self.addEventListener("message", (event) => {
   if (event.data && event.data.type === "SKIP_WAITING") {
     self.skipWaiting();
@@ -101,7 +128,6 @@ self.addEventListener("notificationclick", (event) => {
 
   event.waitUntil(
     clients.matchAll({ type: "window" }).then((windowClients) => {
-      // Focus existing window or open new one
       for (const client of windowClients) {
         if (client.url.includes(self.location.origin)) {
           client.focus();

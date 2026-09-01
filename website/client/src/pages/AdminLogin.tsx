@@ -282,17 +282,23 @@ export default function AdminLogin() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} autoComplete="off">
+          {/* Hidden dummy fields to prevent browser autofill */}
+          <input type="text" name="fakeuser" autoComplete="username" style={{ position: "absolute", opacity: 0, height: 0, width: 0, padding: 0, border: 0, pointerEvents: "none" }} tabIndex={-1} />
+          <input type="password" name="fakepass" autoComplete="current-password" style={{ position: "absolute", opacity: 0, height: 0, width: 0, padding: 0, border: 0, pointerEvents: "none" }} tabIndex={-1} />
+
           <label style={{ display: "block", marginBottom: "16px" }}>
             <span style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px", fontWeight: 600, color: "#102A43" }}>
               <Mail size={16} /> البريد الإلكتروني
             </span>
             <input
               type="email"
+              name="vipe_admin_email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              placeholder="admin@example.com"
+              autoComplete="new-email"
+              placeholder="أدخل بريدك الإلكتروني"
               disabled={loading}
               style={{
                 width: "100%",
@@ -312,9 +318,11 @@ export default function AdminLogin() {
             <div style={{ position: "relative" }}>
               <input
                 type={showPassword ? "text" : "password"}
+                name="vipe_admin_pass"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                autoComplete="new-password"
                 placeholder="••••••••"
                 disabled={loading}
                 style={{

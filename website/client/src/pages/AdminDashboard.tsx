@@ -663,7 +663,7 @@ function OffersTab() {
             <div key={offer.id} className={`offer-card-admin ${offer.status}`}>
               <div className="offer-info">
                 <h4>
-                  {offer.isFeatured && <span className="featured-badge">مميز ⭐</span>}
+                  {offer.isFeatured && <span className="featured-badge">مميز</span>}
                   {offer.title}
                 </h4>
                 <p>{offer.description}</p>
