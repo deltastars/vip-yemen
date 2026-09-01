@@ -720,15 +720,34 @@ input, textarea, select {
 .department-section {
   padding: 60px 0;
   background: white;
+  overflow: hidden;
 }
+
+/* Department-specific professional backgrounds */
+#employment { background: linear-gradient(180deg, #FFFEF8 0%, #FFF8E1 50%, #FFFEF8 100%); }
+#real-estate { background: linear-gradient(180deg, #F8FAFC 0%, #EFF6FF 50%, #F8FAFC 100%); }
+#e-marketing { background: linear-gradient(180deg, #FFFEF8 0%, #FFF0E6 50%, #FFFEF8 100%); }
+#software-dept { background: linear-gradient(135deg, #0A1929, #102A43, #0B2034); color: white; }
+#software-dept .dept-hero-copy h2, #software-dept .form-card-header h3 { color: white; }
+#software-dept .dept-hero-copy p, #software-dept .form-card-header p { color: rgba(255,255,255,.8); }
+#software-dept label { color: rgba(255,255,255,.9); }
+#software-dept .dept-form-card { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.12); }
+#software-dept .dept-icon-large { background: rgba(243,183,27,.15); }
+.dept-hero-dark { background: transparent !important; }
 
 .dept-hero {
   display: grid;
-  grid-template-columns: 1fr 200px;
+  grid-template-columns: 1fr 220px;
   gap: 40px;
   align-items: center;
   margin-bottom: 40px;
+  padding: 32px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(255,255,255,.8), rgba(255,255,255,.4));
+  border: 1px solid rgba(243,183,27,.15);
+  backdrop-filter: blur(10px);
 }
+#software-dept .dept-hero { background: linear-gradient(135deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); border-color: rgba(255,255,255,.1); }
 
 .dept-hero-copy h2 {
   font-size: 28px;
@@ -741,31 +760,60 @@ input, textarea, select {
 }
 
 .dept-icon-large {
-  width: 120px;
-  height: 120px;
-  border-radius: 24px;
-  background: rgba(243,183,27,.1);
+  width: 140px;
+  height: 140px;
+  border-radius: 28px;
+  background: linear-gradient(135deg, rgba(243,183,27,.12), rgba(243,183,27,.04));
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--yellow);
+  position: relative;
+  overflow: hidden;
 }
+.dept-icon-large::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 28px;
+  border: 2px solid rgba(243,183,27,.2);
+  pointer-events: none;
+}
+.dept-icon-dark { background: linear-gradient(135deg, rgba(243,183,27,.2), rgba(243,183,27,.05)); }
+.dept-icon-dark::after { border-color: rgba(243,183,27,.3); }
 
 .dept-content-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px;
+  gap: 28px;
+}
+
+.dept-single-form {
+  max-width: 640px;
+  margin: 0 auto;
 }
 
 .dept-form-card {
-  background: #FAFAFA;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 24px;
+  background: rgba(255,255,255,.9);
+  border: 1px solid rgba(16,42,67,.08);
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 4px 20px rgba(16,42,67,.04);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.dept-form-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(16,42,67,.08);
 }
 
 .form-card-header {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid rgba(243,183,27,.15);
+}
+.form-card-header svg {
+  color: var(--yellow);
+  margin-bottom: 4px;
 }
 
 .form-card-header h3 {
@@ -2819,4 +2867,167 @@ p, span, div, label, li {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   .announcement-track, .marquee-inner { animation: none !important; }
+}
+
+/* === DEPARTMENT SECTION PROFESSIONAL UPGRADES v2.6.0 === */
+
+/* Override the generic section backgrounds */
+.offers-section { background: linear-gradient(180deg, #FFFEF8, #FFF8E1, #FFFEF8) !important; }
+.listings-section { background: white !important; }
+
+/* Each department section gets its own professional gradient */
+#employment .department-section,
+#employment {
+  background: linear-gradient(180deg, #FFFEF8 0%, #FFF8E1 50%, #FFFEF8 100%) !important;
+}
+
+#real-estate {
+  background: linear-gradient(180deg, #F8FAFC 0%, #EFF6FF 50%, #F8FAFC 100%) !important;
+}
+
+#e-marketing {
+  background: linear-gradient(180deg, #FFFEF8 0%, #FFF0E6 50%, #FFFEF8 100%) !important;
+}
+
+/* Software dept dark theme */
+#software-dept {
+  background: linear-gradient(135deg, #0A1929, #102A43, #0B2034) !important;
+  color: white !important;
+}
+#software-dept .dept-hero-copy h2,
+#software-dept .form-card-header h3 { color: white !important; }
+#software-dept .dept-hero-copy p,
+#software-dept .form-card-header p { color: rgba(255,255,255,.8) !important; }
+#software-dept label { color: rgba(255,255,255,.9) !important; }
+#software-dept .dept-form-card {
+  background: rgba(255,255,255,.06) !important;
+  border-color: rgba(255,255,255,.12) !important;
+}
+#software-dept .dept-hero {
+  background: linear-gradient(135deg, rgba(255,255,255,.05), rgba(255,255,255,.02)) !important;
+  border-color: rgba(255,255,255,.1) !important;
+}
+
+/* Department-specific hero icon backgrounds */
+#employment .dept-icon-large {
+  background: linear-gradient(135deg, rgba(243,183,27,.15), rgba(243,183,27,.05)) !important;
+  color: #F3B71B !important;
+}
+#real-estate .dept-icon-large {
+  background: linear-gradient(135deg, rgba(37,99,235,.12), rgba(37,99,235,.04)) !important;
+  color: #2563EB !important;
+}
+#e-marketing .dept-icon-large {
+  background: linear-gradient(135deg, rgba(231,111,81,.12), rgba(231,111,81,.04)) !important;
+  color: #E76F51 !important;
+}
+#software-dept .dept-icon-large {
+  background: linear-gradient(135deg, rgba(243,183,27,.2), rgba(243,183,27,.05)) !important;
+  color: #F3B71B !important;
+}
+
+/* Form card professional styling */
+.dept-form-card {
+  background: rgba(255,255,255,.92) !important;
+  border: 1px solid rgba(16,42,67,.08) !important;
+  border-radius: 16px !important;
+  padding: 28px !important;
+  box-shadow: 0 4px 20px rgba(16,42,67,.04) !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+}
+.dept-form-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 32px rgba(16,42,67,.08) !important;
+}
+#software-dept .dept-form-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 32px rgba(243,183,27,.1) !important;
+}
+
+/* Form card header with bottom accent */
+.form-card-header {
+  margin-bottom: 24px !important;
+  padding-bottom: 16px !important;
+  border-bottom: 2px solid rgba(243,183,27,.15) !important;
+}
+.form-card-header svg {
+  color: var(--yellow) !important;
+  margin-bottom: 4px !important;
+}
+
+/* Department hero enhanced glass card */
+.dept-hero {
+  padding: 32px !important;
+  border-radius: 20px !important;
+  background: linear-gradient(135deg, rgba(255,255,255,.85), rgba(255,255,255,.5)) !important;
+  border: 1px solid rgba(243,183,27,.15) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.dept-hero-visual {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.dept-icon-large {
+  width: 140px !important;
+  height: 140px !important;
+  border-radius: 28px !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.dept-single-form {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+/* Mobile responsiveness for departments */
+@media (max-width: 640px) {
+  .dept-hero {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+    padding: 20px !important;
+  }
+  .dept-hero-visual {
+    display: flex !important;
+    justify-content: center !important;
+  }
+  .dept-content-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+  .dept-icon-large {
+    width: 100px !important;
+    height: 100px !important;
+    border-radius: 20px !important;
+  }
+  .dept-form-card {
+    padding: 20px !important;
+  }
+  .dept-single-form {
+    max-width: 100% !important;
+  }
+  .dept-hero-copy h2 {
+    font-size: 22px !important;
+  }
+  .dept-hero-copy p {
+    font-size: 14px !important;
+    line-height: 1.9 !important;
+  }
+  #software-dept .dept-hero-copy h2 { color: white !important; }
+  #software-dept .form-card-header h3 { color: white !important; }
+  #software-dept label { color: rgba(255,255,255,.9) !important; }
+  #software-dept .dept-form-card { background: rgba(255,255,255,.06) !important; }
+  #software-dept .dept-hero { background: linear-gradient(135deg, rgba(255,255,255,.05), rgba(255,255,255,.02)) !important; }
+}
+
+/* Map container styling */
+.map-section {
+  background: linear-gradient(180deg, #F8FAFC, #EFF6FF, #F8FAFC);
+  padding: 40px 0;
+}
+.map-section .container {
+  max-width: 800px;
 }
