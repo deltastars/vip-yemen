@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, Component, type ReactNode } from "react";
 import { Route, Switch, Link } from "wouter";
 import { ArrowLeft, ArrowUpLeft, BriefcaseBusiness, Building2, CalendarDays, Check, Code2, Database, Facebook, Globe2, Instagram, Languages, Linkedin, Mail, MapPin, Menu, MessageCircle, Phone, Send, ShieldCheck, Smartphone, Twitter, X, Youtube, Megaphone, Clock3, Users, MessageSquare, ChevronRight, Star } from "lucide-react";
+import { AutoUpdateBanner } from "@/components/AutoUpdateBanner";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { startLogin } from "@/const";
 import { trpc } from "@/lib/trpc";
@@ -194,30 +195,9 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
 }
 
 function AutoUpdateChecker() {
-  useEffect(() => {
-    let lastVersion = localStorage.getItem("vipyemen-version") || "1.7.0";
-    const checkUpdate = async () => {
-      try {
-        const response = await fetch("/manifest.json", { cache: "no-cache" });
-        if (response.ok) {
-          const manifest = await response.json();
-          const currentVersion = manifest.version || "1.7.0";
-          if (currentVersion !== lastVersion) {
-            localStorage.setItem("vipyemen-version", currentVersion);
-            lastVersion = currentVersion;
-          }
-        }
-      } catch {
-        // Silently fail - updates will load on next page refresh
-      }
-    };
-    // Check every 5 minutes
-    const interval = window.setInterval(checkUpdate, 5 * 60 * 1000);
-    checkUpdate();
-    return () => window.clearInterval(interval);
-  }, []);
+  // Legacy checker removed - now handled by AutoUpdateBanner component
   return null;
 }
 
 function NotFound() { return <div className="not-found"><h1>الصفحة غير موجودة</h1><Link href="/">العودة للرئيسية</Link></div>; }
-export default function App() { return <ErrorBoundary><LanguageRuntime><ThemeRuntime><AutoUpdateChecker /><Switch><Route path="/" component={Home} /><Route path="/admin" component={AdminLogin} /><Route path="/admin/dashboard" component={AdminDashboardPage} /><Route path="/departments/employment" component={EmploymentSection} /><Route path="/departments/real-estate" component={RealEstateSection} /><Route path="/departments/e-marketing" component={EMarketingSection} /><Route path="/departments/software" component={SoftwareDeptSection} /><Route path="/departments/listings" component={DepartmentListings} /><Route component={NotFound} /></Switch><VipChatbot /></ThemeRuntime></LanguageRuntime></ErrorBoundary>; }
+export default function App() { return <ErrorBoundary><LanguageRuntime><ThemeRuntime><AutoUpdateBanner /><AutoUpdateChecker /><Switch><Route path="/" component={Home} /><Route path="/admin" component={AdminLogin} /><Route path="/admin/dashboard" component={AdminDashboardPage} /><Route path="/departments/employment" component={EmploymentSection} /><Route path="/departments/real-estate" component={RealEstateSection} /><Route path="/departments/e-marketing" component={EMarketingSection} /><Route path="/departments/software" component={SoftwareDeptSection} /><Route path="/departments/listings" component={DepartmentListings} /><Route component={NotFound} /></Switch><VipChatbot /></ThemeRuntime></LanguageRuntime></ErrorBoundary>; }
