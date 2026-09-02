@@ -55,8 +55,7 @@ input:-webkit-autofill:active {
   -webkit-text-fill-color: #102A43 !important;
 }
 
-/* Samsung Internet password suggestion panel */
-[data Samsung],
+/* Prevent browser autofill overlay panels */
 [class*="autofill"],
 [class*="password-suggestion"],
 [class*="credential"],
@@ -66,6 +65,51 @@ input:-webkit-autofill:active {
   visibility: hidden !important;
   height: 0 !important;
   overflow: hidden !important;
+}
+
+/* Force disable pinch-to-zoom on all touch devices */
+html {
+  touch-action: manipulation;
+  -ms-touch-action: manipulation;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+}
+
+/* Override any browser zoom on Android WebView */
+body {
+  touch-action: manipulation;
+  -webkit-overflow-scrolling: touch;
+  overflow-x: hidden;
+}
+
+/* Ensure RTL content doesn't overflow */
+.hero-section,
+.container {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Mobile layout fixes */
+@media (max-width: 768px) {
+  .hero-section h1,
+  .hero-section h2 {
+    font-size: clamp(18px, 5vw, 28px);
+    line-height: 1.3;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  .hero-section p {
+    font-size: clamp(13px, 3.5vw, 16px);
+    line-height: 1.6;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  .container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
 }
 
 /* Prevent text selection on non-interactive elements */
