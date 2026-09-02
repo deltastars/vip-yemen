@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 
 // Current app version - must be updated with each release
-export const APP_VERSION = "2.9.0";
+export const APP_VERSION = "3.0.0";
 
 // GitHub API endpoint for releases
 const GITHUB_API_URL = "https://api.github.com/repos/deltastars/vip-yemen/releases/latest";
