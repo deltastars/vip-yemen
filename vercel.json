@@ -4,7 +4,7 @@
   "outputDirectory": "website/dist/public",
   "rewrites": [
     { "source": "/((?:assets|images|releases)/.*)", "destination": "/$1" },
-    { "source": "/((?!assets|images|releases|__manus__).*)", "destination": "/index.html" }
+    { "source": "/((?!assets|images|releases).*)", "destination": "/index.html" }
   ],
   "headers": [
     {
