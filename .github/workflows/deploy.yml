@@ -21,10 +21,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-      - run: bun install --frozen-lockfile || bun install
-      - run: bun tsc -b --noEmit
-      - run: bun run build
+          cache: 'npm'
+          cache-dependency-path: website/package-lock.json
+      - run: npm ci
+      - run: npx tsc -b --noEmit
+      - run: npm run build
