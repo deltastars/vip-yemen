@@ -16,6 +16,7 @@ export default function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<"login" | "forgot" | "reset" | "biometric">("login");
@@ -294,11 +295,11 @@ export default function AdminLogin() {
             </span>
             <input
               type="email"
-              name="vip_auth_identifier"
+              name={"e_" + Math.random().toString(36).slice(2,7)}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              autoComplete="off"
+              autoComplete="new-email"
               placeholder="أدخل بريدك الإلكتروني"
               disabled={loading}
               style={{
@@ -318,12 +319,14 @@ export default function AdminLogin() {
             </span>
             <div style={{ position: "relative" }}>
               <input
-                type={showPassword ? "text" : "password"}
-                name="vip_auth_credential"
+                type={showPassword || passwordFocused ? "text" : "password"}
+                name={"p_" + Math.random().toString(36).slice(2,7)}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onFocus={() => setPasswordFocused(true)}
+                onBlur={() => setPasswordFocused(false)}
                 required
-                autoComplete="off"
+                autoComplete="new-password"
                 placeholder="••••••••"
                 disabled={loading}
                 style={{

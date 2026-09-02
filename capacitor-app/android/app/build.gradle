@@ -16,8 +16,8 @@ android {
         applicationId "com.vip.yemen"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2007000
-        versionName "2.7.0"
+        versionCode 2009000
+        versionName "2.9.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         
         aaptOptions {
