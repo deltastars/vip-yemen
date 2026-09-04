@@ -15,12 +15,15 @@ function capacitorPathFixer(): Plugin {
     name: "capacitor-path-fixer",
     apply: "build",
     enforce: "post",
+    transformIndexHtml(html) {
+      // Remove crossorigin attributes that can cause issues in Capacitor WebView
+      return html.replace(/\s+crossorigin(="[^"]*")?/g, "");
+    },
     generateBundle(_options, bundle) {
       for (const fileName of Object.keys(bundle)) {
         const chunk = bundle[fileName];
         if (chunk.type === "asset" && typeof chunk.source === "string") {
           // Replace hardcoded absolute paths in HTML and JS assets
-          // Match: "(/images/ or "(/admin or "(/downloads etc but NOT "https:// or "./
           chunk.source = chunk.source
             .replace(/"\/images\//g, '"./images/')
             .replace(/"\/admin"/g, '"./admin"')

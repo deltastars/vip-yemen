@@ -109,6 +109,25 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // Global error catcher - shows errors on screen if React fails to render
+      window.addEventListener('error', function(e) {
+        setTimeout(function() {
+          var root = document.getElementById('root');
+          if (root && root.innerHTML.trim() === '') {
+            root.innerHTML = '<div style="direction:rtl;padding:20px;font-family:sans-serif;background:#fff;color:#333;min-height:100vh"><h2 style="color:#d32f2f">⚠️ خطأ في تحميل التطبيق</h2><p><b>الخطأ:</b> ' + (e.message || 'غير معروف') + '</p><p><b>الملف:</b> ' + (e.filename || 'غير معروف') + '</p><p><b>السطر:</b> ' + (e.lineno || '-') + '</p><hr><p style="color:#666">أرسل هذه الرسالة للمطور لإصلاح الخطأ</p></div>';
+          }
+        }, 3000);
+      });
+      window.addEventListener('unhandledrejection', function(e) {
+        setTimeout(function() {
+          var root = document.getElementById('root');
+          if (root && root.innerHTML.trim() === '') {
+            root.innerHTML = '<div style="direction:rtl;padding:20px;font-family:sans-serif;background:#fff;color:#333;min-height:100vh"><h2 style="color:#d32f2f">⚠️ خطأ في تحميل التطبيق</h2><p><b>الخطأ:</b> ' + (e.reason?.message || e.reason || 'غير معروف') + '</p><hr><p style="color:#666">أرسل هذه الرسالة للمطور لإصلاح الخطأ</p></div>';
+          }
+        }, 3000);
+      });
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
