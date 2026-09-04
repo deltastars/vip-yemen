@@ -1,62 +1,53 @@
 name: ViP Yemen Release
 
 on:
+  push:
+    branches: [main, master]
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version (e.g., 4.3.0)'
-        required: true
-        default: '4.3.0'
+        description: 'Version (e.g., 5.0.0)'
+        required: false
 
 env:
   PACKAGE_NAME: com.vip.yemen
 
 jobs:
   build-web:
-    name: Build Web Assets
+    name: Build Website
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-      - name: Install website dependencies
+          cache: 'npm'
+          cache-dependency-path: website/package-lock.json
+      - name: Install dependencies
         working-directory: website
-        run: bun install --frozen-lockfile || bun install
+        run: npm ci --legacy-peer-deps
+      - name: TypeScript check
+        working-directory: website
+        run: npx tsc -b --noEmit
       - name: Build website
         working-directory: website
-        run: bun run build
-      - name: Fix absolute paths for Capacitor
+        run: npm run build
+      - name: Verify Capacitor-compatible paths
         run: |
-          # Replace /images/ with ./images/ in compiled JS
-          find website/dist/public -name "*.js" -exec sed -i 's|"/images/|"./images/|g' {} +
-          find website/dist/public -name "*.js" -exec sed -i "s|'/images/|'./images/|g" {} +
-          # Replace /media/ with ./media/ in compiled JS
-          find website/dist/public -name "*.js" -exec sed -i 's|"/media/|"./media/|g' {} +
-          find website/dist/public -name "*.js" -exec sed -i "s|'/media/|'./media/|g" {} +
-          echo "Fixed absolute paths in built assets"
-      - name: Prepare dist for Capacitor
-        run: |
-          rm -rf web-dist
-          cp -r website/dist/public web-dist
-          cp capacitor-app/public/icon-192.png web-dist/ 2>/dev/null || true
-          cp capacitor-app/public/icon-512.png web-dist/ 2>/dev/null || true
-          cp capacitor-app/public/brand-logo.png web-dist/ 2>/dev/null || true
-          echo "dist prepared:"
-          ls web-dist/
+          if grep -q 'src="/assets/' website/dist/public/index.html; then
+            echo "❌ FAIL: Absolute /assets/ paths in index.html"
+            exit 1
+          fi
+          echo "✅ All asset paths are relative"
       - name: Upload web dist
         uses: actions/upload-artifact@v4
         with:
           name: web-dist
-          path: web-dist/
+          path: website/dist/public/
           retention-days: 1
 
   build-android:
-    name: Build Android (APK + AAB)
+    name: Build Android
     needs: build-web
     runs-on: ubuntu-latest
     steps:
@@ -68,10 +59,6 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
       - name: Install Capacitor dependencies
         working-directory: capacitor-app
         run: npm ci || npm install
@@ -80,54 +67,40 @@ jobs:
         with:
           name: web-dist
           path: capacitor-app/dist/
-      - name: Verify dist has correct paths
-        run: |
-          echo "Checking index.html paths:"
-          grep -E "src=|href=" capacitor-app/dist/index.html | head -10
-          echo "---"
-          # Verify no absolute /assets/ paths (would break in Capacitor)
-          if grep -q 'src="/assets/' capacitor-app/dist/index.html; then
-            echo "❌ FAIL: Found absolute /assets/ path in index.html"
-            exit 1
-          fi
-          echo "✅ All asset paths are relative"
-      - name: Sync Capacitor Android
+      - name: Sync Capacitor
         working-directory: capacitor-app
         run: npx cap sync android
       - name: Build debug APK
         working-directory: capacitor-app/android
         run: ./gradlew assembleDebug --no-daemon --stacktrace
-      - name: Build release APK
-        working-directory: capacitor-app/android
-        run: ./gradlew assembleRelease --no-daemon --stacktrace
       - name: Build release AAB
         working-directory: capacitor-app/android
         run: ./gradlew bundleRelease --no-daemon --stacktrace
-      - name: Rename builds
+      - name: Determine version
+        id: version
         run: |
-          VERSION="${{ github.event.inputs.version }}"
-          APK_DBG="capacitor-app/android/app/build/outputs/apk/debug"
-          APK_REL="capacitor-app/android/app/build/outputs/apk/release"
-          AAB="capacitor-app/android/app/build/outputs/bundle/release"
-          [ -f "$APK_DBG/app-debug.apk" ] && mv "$APK_DBG/app-debug.apk" "$APK_DBG/ViP-Yemen-${VERSION}-debug.apk"
-          [ -f "$APK_REL/app-release-unsigned.apk" ] && mv "$APK_REL/app-release-unsigned.apk" "$APK_REL/ViP-Yemen-${VERSION}-release.apk"
-          [ -f "$AAB/app-release.aab" ] && mv "$AAB/app-release.aab" "$AAB/ViP-Yemen-${VERSION}-release.aab"
-          echo "APK sizes:"
-          ls -lh $APK_DBG/*.apk 2>/dev/null
-          ls -lh $APK_REL/*.apk 2>/dev/null
-          ls -lh $AAB/*.aab 2>/dev/null
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            # Auto-increment from build.gradle
+            CURRENT=$(grep -o 'versionName "[^"]*"' capacitor-app/android/app/build.gradle | head -1 | cut -d'"' -f2)
+            MAJOR=$(echo $CURRENT | cut -d. -f1)
+            MINOR=$(echo $CURRENT | cut -d. -f2)
+            PATCH=$(echo $CURRENT | cut -d. -f3)
+            NEWPATCH=$((PATCH + 1))
+            echo "version=${MAJOR}.${MINOR}.${NEWPATCH}" >> $GITHUB_OUTPUT
+          fi
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: android-builds
           path: |
-            capacitor-app/android/app/build/outputs/apk/debug/*.apk
-            capacitor-app/android/app/build/outputs/apk/release/*.apk
-            capacitor-app/android/app/build/outputs/bundle/release/*.aab
+            capacitor-app/android/app/build/outputs/apk/debug/app-debug.apk
+            capacitor-app/android/app/build/outputs/bundle/release/app-release.aab
           retention-days: 90
 
   create-release:
-    name: Create GitHub Release
+    name: Create Release
     needs: build-android
     runs-on: ubuntu-latest
     permissions:
@@ -137,24 +110,22 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          name: android-builds
           path: release/
       - name: Create Source Archive
         run: |
-          zip -r ViP-Yemen-${{ github.event.inputs.version }}-source.zip . \
+          zip -r ViP-Yemen-${{ needs.build-android.outputs.version }}-source.zip . \
             -x '.git/*' 'node_modules/*' '*/node_modules/*' '*/build/*' '*/dist/*' '.github/*' '*.apk' '*.aab' '*.idsig' 2>/dev/null || true
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ github.event.inputs.version }}
-          name: ViP Yemen v${{ github.event.inputs.version }}
+          tag_name: v${{ needs.build-android.outputs.version }}
+          name: ViP Yemen v${{ needs.build-android.outputs.version }}
           body: |
-            ## ViP Yemen v${{ github.event.inputs.version }}
+            ## ViP Yemen v${{ needs.build-android.outputs.version }}
 
             ### 📱 Android Applications
-            - **debug.apk** - Direct install on Android
-            - **release.apk** - Release APK
-            - **release.aab** - For Google Play Store
+            - **app-debug.apk** - Direct install on Android
+            - **app-release.aab** - For Google Play Store
 
             ### 📦 Source Code
             - **source.zip** - Complete project source code
@@ -169,8 +140,7 @@ jobs:
             2. For Google Play: use the AAB file
             3. Install over existing version (no uninstall needed)
           files: |
-            release/*.apk
-            release/*.aab
+            release/android-builds/*
             ViP-Yemen-*-source.zip
           draft: false
           prerelease: false
