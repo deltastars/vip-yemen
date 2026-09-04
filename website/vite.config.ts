@@ -20,34 +20,33 @@ function capacitorPathFixer(): Plugin {
       return html.replace(/\s+crossorigin(="[^"]*")?/g, "");
     },
     generateBundle(_options, bundle) {
+      // Fix ALL hardcoded absolute paths in ALL output files
+      function fixPaths(str: string): string {
+        return str
+          .replace(/"\/images\//g, '"./images/')
+          .replace(/"\/admin"/g, '"./admin"')
+          .replace(/"\/admin\//g, '"./admin/')
+          .replace(/"\/downloads\.html"/g, '"./downloads.html"')
+          .replace(/"\/sw\.js"/g, '"./sw.js"')
+          .replace(/"\/manifest\.json"/g, '"./manifest.json"')
+          .replace(/"\/api\//g, '"./api/')
+          .replace(/"\/"/g, '"./"')
+          .replace(/'\/images\//g, "'./images/")
+          .replace(/'\/admin'/g, "'./admin'")
+          .replace(/'\/admin\//g, "'./admin/")
+          .replace(/'\/downloads\.html'/g, "'./downloads.html'")
+          .replace(/'\/sw\.js'/g, "'./sw.js'")
+          .replace(/'\/manifest\.json'/g, "'./manifest.json'")
+          .replace(/'\/api\//g, "'./api/")
+          .replace(/'\/'/g, "'./'");
+      }
       for (const fileName of Object.keys(bundle)) {
         const chunk = bundle[fileName];
         if (chunk.type === "asset" && typeof chunk.source === "string") {
-          // Replace hardcoded absolute paths in HTML and JS assets
-          chunk.source = chunk.source
-            .replace(/"\/images\//g, '"./images/')
-            .replace(/"\/admin"/g, '"./admin"')
-            .replace(/"\/admin\//g, '"./admin/')
-            .replace(/"\/downloads\.html"/g, '"./downloads.html"')
-            .replace(/"\/sw\.js"/g, '"./sw.js"')
-            .replace(/"\/manifest\.json"/g, '"./manifest.json"')
-            .replace(/'\/images\//g, "'./images/")
-            .replace(/'\/admin'/g, "'./admin'")
-            .replace(/'\/admin\//g, "'./admin/")
-            .replace(/'\/downloads\.html'/g, "'./downloads.html'");
+          chunk.source = fixPaths(chunk.source);
         }
         if (chunk.type === "chunk" && typeof chunk.code === "string") {
-          // Fix hardcoded paths in JS chunks
-          chunk.code = chunk.code
-            .replace(/"\/images\//g, '"./images/')
-            .replace(/"\/admin"/g, '"./admin"')
-            .replace(/"\/admin\//g, '"./admin/')
-            .replace(/"\/downloads\.html"/g, '"./downloads.html"')
-            .replace(/"\/sw\.js"/g, '"./sw.js"')
-            .replace(/'\/images\//g, "'./images/")
-            .replace(/'\/admin'/g, "'./admin'")
-            .replace(/'\/admin\//g, "'./admin/")
-            .replace(/'\/downloads\.html'/g, "'./downloads.html'");
+          chunk.code = fixPaths(chunk.code);
         }
       }
     },

@@ -108,25 +108,24 @@
     </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div style="direction:rtl;padding:40px;font-family:sans-serif;background:#102A43;color:white;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center">
+        <div><div style="font-size:48px;margin-bottom:20px">⏳</div><h2 style="margin:0 0 10px">جاري تحميل ViP Yemen...</h2><p style="opacity:0.7">يرجى الانتظار</p></div>
+      </div>
+    </div>
     <script>
-      // Global error catcher - shows errors on screen if React fails to render
-      window.addEventListener('error', function(e) {
-        setTimeout(function() {
-          var root = document.getElementById('root');
-          if (root && root.innerHTML.trim() === '') {
-            root.innerHTML = '<div style="direction:rtl;padding:20px;font-family:sans-serif;background:#fff;color:#333;min-height:100vh"><h2 style="color:#d32f2f">⚠️ خطأ في تحميل التطبيق</h2><p><b>الخطأ:</b> ' + (e.message || 'غير معروف') + '</p><p><b>الملف:</b> ' + (e.filename || 'غير معروف') + '</p><p><b>السطر:</b> ' + (e.lineno || '-') + '</p><hr><p style="color:#666">أرسل هذه الرسالة للمطور لإصلاح الخطأ</p></div>';
-          }
-        }, 3000);
-      });
-      window.addEventListener('unhandledrejection', function(e) {
-        setTimeout(function() {
-          var root = document.getElementById('root');
-          if (root && root.innerHTML.trim() === '') {
-            root.innerHTML = '<div style="direction:rtl;padding:20px;font-family:sans-serif;background:#fff;color:#333;min-height:100vh"><h2 style="color:#d32f2f">⚠️ خطأ في تحميل التطبيق</h2><p><b>الخطأ:</b> ' + (e.reason?.message || e.reason || 'غير معروف') + '</p><hr><p style="color:#666">أرسل هذه الرسالة للمطور لإصلاح الخطأ</p></div>';
-          }
-        }, 3000);
-      });
+      // IMMEDIATE error catcher - runs BEFORE any modules load
+      window.__errors = [];
+      window.onerror = function(msg, src, line, col, err) {
+        window.__errors.push({msg:msg,src:src,line:line,col:col,err:err});
+        var root = document.getElementById('root');
+        if(root) root.innerHTML = '<div style="direction:rtl;padding:20px;font-family:sans-serif;background:#fff;color:#333;min-height:100vh"><h2 style="color:#d32f2f">⚠️ خطأ في تحميل التطبيق</h2><p><b>الخطأ:</b> '+(msg||'غير معروف')+'</p><p><b>الملف:</b> '+(src||'غير معروف')+'</p><p><b>السطر:</b> '+(line||'-')+'</p></div>';
+      };
+      window.onunhandledrejection = function(e) {
+        window.__errors.push({msg:String(e.reason)});
+        var root = document.getElementById('root');
+        if(root) root.innerHTML = '<div style="direction:rtl;padding:20px;font-family:sans-serif;background:#fff;color:#333;min-height:100vh"><h2 style="color:#d32f2f">⚠️ خطأ في تحميل التطبيق</h2><p><b>الخطأ:</b> '+(e.reason?.message||e.reason||'غير معروف')+'</p></div>';
+      };
     </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
