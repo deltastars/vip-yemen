@@ -209,7 +209,7 @@ export function registerServiceWorker(): void {
 
   window.addEventListener("load", async () => {
     try {
-      const registration = await navigator.serviceWorker.register("/sw.js");
+      const registration = await navigator.serviceWorker.register(new URL("../sw.js", import.meta.url).href);
 
       // Check for updates every hour
       registration.addEventListener("updatefound", () => {

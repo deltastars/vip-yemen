@@ -23,18 +23,26 @@ const redirectToLoginIfUnauthorized = (error: unknown) => {
 };
 
 queryClient.getQueryCache().subscribe(event => {
-  if (event.type === "updated" && event.action.type === "error") {
-    const error = event.query.state.error;
-    redirectToLoginIfUnauthorized(error);
-    console.error("[API Query Error]", error);
+  try {
+    if (event.type === "updated" && event.action.type === "error") {
+      const error = event.query.state.error;
+      redirectToLoginIfUnauthorized(error);
+      console.error("[API Query Error]", error);
+    }
+  } catch (err) {
+    console.warn("[ViP Yemen] Query cache handler error:", err);
   }
 });
 
 queryClient.getMutationCache().subscribe(event => {
-  if (event.type === "updated" && event.action.type === "error") {
-    const error = event.mutation.state.error;
-    redirectToLoginIfUnauthorized(error);
-    console.error("[API Mutation Error]", error);
+  try {
+    if (event.type === "updated" && event.action.type === "error") {
+      const error = event.mutation.state.error;
+      redirectToLoginIfUnauthorized(error);
+      console.error("[API Mutation Error]", error);
+    }
+  } catch (err) {
+    console.warn("[ViP Yemen] Mutation cache handler error:", err);
   }
 });
 

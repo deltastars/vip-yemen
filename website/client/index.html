@@ -114,18 +114,38 @@
       </div>
     </div>
     <script>
-      // IMMEDIATE error catcher - runs BEFORE any modules load
-      window.__errors = [];
-      window.onerror = function(msg, src, line, col, err) {
-        window.__errors.push({msg:msg,src:src,line:line,col:col,err:err});
-        var root = document.getElementById('root');
-        if(root) root.innerHTML = '<div style="direction:rtl;padding:20px;font-family:sans-serif;background:#fff;color:#333;min-height:100vh"><h2 style="color:#d32f2f">⚠️ خطأ في تحميل التطبيق</h2><p><b>الخطأ:</b> '+(msg||'غير معروف')+'</p><p><b>الملف:</b> '+(src||'غير معروف')+'</p><p><b>السطر:</b> '+(line||'-')+'</p></div>';
-      };
-      window.onunhandledrejection = function(e) {
-        window.__errors.push({msg:String(e.reason)});
-        var root = document.getElementById('root');
-        if(root) root.innerHTML = '<div style="direction:rtl;padding:20px;font-family:sans-serif;background:#fff;color:#333;min-height:100vh"><h2 style="color:#d32f2f">⚠️ خطأ في تحميل التطبيق</h2><p><b>الخطأ:</b> '+(e.reason?.message||e.reason||'غير معروف')+'</p></div>';
-      };
+      // COMPREHENSIVE error catcher for Capacitor WebView
+      (function(){
+        window.__errors = [];
+        function showError(msg, src, line) {
+          var root = document.getElementById('root');
+          if(root) root.innerHTML = '<div style="direction:rtl;padding:20px;font-family:sans-serif;background:#102A43;color:white;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center"><div style="max-width:400px"><h2 style="color:#F3B71B;margin-bottom:12px">خطأ في تحميل التطبيق</h2><p style="color:rgba(255,255,255,.8)"><b>الخطأ:</b> '+(msg||'غير معروف')+'</p><p style="color:rgba(255,255,255,.6)"><b>الملف:</b> '+(src||'غير معروف')+'</p><p style="color:rgba(255,255,255,.6)"><b>السطر:</b> '+(line||'-')+'</p></div></div>';
+        }
+        // Catch classic script errors
+        window.onerror = function(msg, src, line, col, err) {
+          window.__errors.push({msg:msg,src:src,line:line,err:err});
+          showError(msg, src, line);
+        };
+        // Catch ES module errors (modules don't trigger window.onerror)
+        window.addEventListener('error', function(e) {
+          if (e.target && e.target.tagName === 'SCRIPT') {
+            var msg = e.message || 'Module load failed';
+            var src = e.target.src || e.filename || '';
+            var line = e.lineno || 0;
+            window.__errors.push({msg:msg,src:src,line:line,type:'module'});
+            showError(msg, src, line);
+          } else if (e.message && !window.__errors.length) {
+            window.__errors.push({msg:e.message,src:e.filename,line:e.lineno,type:'error-event'});
+            showError(e.message, e.filename, e.lineno);
+          }
+        }, true);
+        // Catch unhandled promise rejections
+        window.addEventListener('unhandledrejection', function(e) {
+          var msg = (e.reason && e.reason.message) ? e.reason.message : String(e.reason || 'Promise rejected');
+          window.__errors.push({msg:msg,type:'unhandledrejection'});
+          showError(msg, 'Promise', '-');
+        });
+      })();
     </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
