@@ -1,14 +1,17 @@
 // ViP Yemen Service Worker - Enhanced for Offline & Auto-Update
-const CACHE_NAME = "vipyemen-v2.7.0";
-const CACHE_VERSION = "3.1.0";
+const CACHE_NAME = "vipyemen-v4.2.0";
+const CACHE_VERSION = "4.2.0";
+
+// Resolve relative to the service worker's own location
+const BASE = self.registration.scope;
 
 // Assets to cache on install
 const PRECACHE_ASSETS = [
-  "/",
-  "/manifest.json",
-  "/images/vip-logo.svg",
-  "/privacy-policy.html",
-  "/downloads.html",
+  "./",
+  "./manifest.json",
+  "./images/vip-logo.svg",
+  "./privacy-policy.html",
+  "./downloads.html",
 ];
 
 // Install event - cache essential assets
@@ -34,7 +37,6 @@ self.addEventListener("activate", (event) => {
         )
       )
       .then(() => {
-        // Notify all clients that a new version is available
         self.clients.matchAll().then((clients) => {
           clients.forEach((client) => {
             client.postMessage({ type: "SW_UPDATED", version: CACHE_VERSION });
@@ -47,12 +49,14 @@ self.addEventListener("activate", (event) => {
 
 // Fetch event - network first, fallback to cache
 self.addEventListener("fetch", (event) => {
-  // Skip non-GET requests
   if (event.request.method !== "GET") return;
 
-  // Skip API calls and GitHub API
-  if (event.request.url.includes("/api/")) return;
-  if (event.request.url.includes("api.github.com")) return;
+  // Skip external requests
+  const url = new URL(event.request.url);
+  if (url.origin !== self.location.origin) return;
+
+  // Skip API calls
+  if (url.pathname.startsWith("/api/")) return;
 
   // For navigation requests (HTML pages), try network first
   if (event.request.mode === "navigate") {
@@ -67,7 +71,7 @@ self.addEventListener("fetch", (event) => {
         })
         .catch(() => {
           return caches.match(event.request).then((cachedResponse) => {
-            return cachedResponse || caches.match("/");
+            return cachedResponse || caches.match("./");
           });
         })
     );
@@ -107,13 +111,13 @@ self.addEventListener("push", (event) => {
   const title = data.title || "تحديث جديد - ViP Yemen";
   const options = {
     body: data.body || "إصدار جديد متاح للتحميل",
-    icon: "/images/vip-logo.svg",
-    badge: "/images/vip-logo.svg",
+    icon: "./images/vip-logo.svg",
+    badge: "./images/vip-logo.svg",
     vibrate: [100, 50, 100],
-    data: { url: data.url || "/downloads.html" },
+    data: { url: data.url || "./downloads.html" },
     actions: [
-      { action: "download", title: "تحميل", icon: "/images/vip-logo.svg" },
-      { action: "dismiss", title: "لاحقاً", icon: "/images/vip-logo.svg" },
+      { action: "download", title: "تحميل", icon: "./images/vip-logo.svg" },
+      { action: "dismiss", title: "لاحقاً", icon: "./images/vip-logo.svg" },
     ],
   };
 
@@ -129,13 +133,11 @@ self.addEventListener("notificationclick", (event) => {
   event.waitUntil(
     clients.matchAll({ type: "window" }).then((windowClients) => {
       for (const client of windowClients) {
-        if (client.url.includes(self.location.origin)) {
-          client.focus();
-          client.navigate(event.notification.data?.url || "/downloads.html");
-          return;
-        }
+        client.focus();
+        client.navigate(event.notification.data?.url || "./downloads.html");
+        return;
       }
-      clients.openWindow(event.notification.data?.url || "/downloads.html");
+      clients.openWindow(event.notification.data?.url || "./downloads.html");
     })
   );
 });

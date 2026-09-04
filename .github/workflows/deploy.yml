@@ -26,3 +26,11 @@ jobs:
       - run: npm ci --legacy-peer-deps
       - run: npx tsc -b --noEmit
       - run: npm run build
+      - name: Verify Capacitor-compatible paths
+        run: |
+          # Ensure no absolute /assets/ paths in built HTML
+          if grep -q 'src="/assets/' dist/public/index.html; then
+            echo "❌ FAIL: Absolute /assets/ paths found in index.html"
+            exit 1
+          fi
+          echo "✅ Built output has correct relative paths"
