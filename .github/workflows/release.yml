@@ -30,11 +30,18 @@ jobs:
       - name: Build website
         working-directory: website
         run: bun run build
+      - name: Copy web dist for Capacitor
+        run: |
+          rm -rf web-dist
+          cp -r website/dist/public web-dist
+          cp capacitor-app/public/icon-192.png web-dist/ 2>/dev/null || true
+          cp capacitor-app/public/icon-512.png web-dist/ 2>/dev/null || true
+          cp capacitor-app/public/brand-logo.png web-dist/ 2>/dev/null || true
       - name: Upload web dist
         uses: actions/upload-artifact@v4
         with:
           name: web-dist
-          path: website/dist/
+          path: web-dist/
           retention-days: 1
 
   build-android:
@@ -62,6 +69,11 @@ jobs:
         with:
           name: web-dist
           path: capacitor-app/dist/
+      - name: Verify dist contents
+        run: |
+          echo "Files in capacitor-app/dist/:"
+          ls -la capacitor-app/dist/
+          test -f capacitor-app/dist/index.html && echo "✅ index.html found at root" || echo "❌ index.html NOT at root"
       - name: Sync Capacitor Android
         working-directory: capacitor-app
         run: npx cap sync android
@@ -71,12 +83,17 @@ jobs:
       - name: Build release AAB
         working-directory: capacitor-app/android
         run: ./gradlew bundleRelease --no-daemon --stacktrace
+      - name: Build release APK
+        working-directory: capacitor-app/android
+        run: ./gradlew assembleRelease --no-daemon --stacktrace
       - name: Rename builds
         run: |
           VERSION="${{ github.event.inputs.version }}"
-          APK="capacitor-app/android/app/build/outputs/apk/debug"
+          APK_DEBUG="capacitor-app/android/app/build/outputs/apk/debug"
+          APK_REL="capacitor-app/android/app/build/outputs/apk/release"
           AAB="capacitor-app/android/app/build/outputs/bundle/release"
-          [ -f "$APK/app-debug.apk" ] && mv "$APK/app-debug.apk" "$APK/ViP-Yemen-${VERSION}-debug.apk"
+          [ -f "$APK_DEBUG/app-debug.apk" ] && mv "$APK_DEBUG/app-debug.apk" "$APK_DEBUG/ViP-Yemen-${VERSION}-debug.apk"
+          [ -f "$APK_REL/app-release-unsigned.apk" ] && mv "$APK_REL/app-release-unsigned.apk" "$APK_REL/ViP-Yemen-${VERSION}-release.apk"
           [ -f "$AAB/app-release.aab" ] && mv "$AAB/app-release.aab" "$AAB/ViP-Yemen-${VERSION}-release.aab"
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -84,6 +101,7 @@ jobs:
           name: android-builds
           path: |
             capacitor-app/android/app/build/outputs/apk/debug/*.apk
+            capacitor-app/android/app/build/outputs/apk/release/*.apk
             capacitor-app/android/app/build/outputs/bundle/release/*.aab
           retention-days: 90
 
@@ -100,6 +118,9 @@ jobs:
         with:
           name: android-builds
           path: release/
+      - name: Create Source Code Archive
+        run: |
+          zip -r ViP-Yemen-${{ github.event.inputs.version }}-source.zip . -x '.git/*' 'node_modules/*' '*/node_modules/*' '*/build/*' '*/dist/*' '.github/*' '*.apk' '*.aab' '*.idsig' 2>/dev/null || true
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
@@ -108,19 +129,27 @@ jobs:
           body: |
             ## ViP Yemen v${{ github.event.inputs.version }}
             
-            ### Android Downloads
-            - **APK**: Install directly on Android
-            - **AAB**: For Google Play Store
+            ### 📱 Android Applications
+            - **debug.apk**: Install directly on Android
+            - **release.apk**: Signed release APK
+            - **release.aab**: For Google Play Store
             
-            ### Package Info
+            ### 📦 Source Code
+            - **ViP-Yemen-*-source.zip**: Complete project source code
+            
+            ### 📋 Package Info
             - **Package**: `com.vip.yemen`
-            - **Min Android**: 7.0
+            - **Min Android**: 7.0 (SDK 24)
+            - **Target Android**: 14 (SDK 36)
+            - **Website**: https://deltastars.github.io/vip-yemen/
             
-            ### Auto-Update
-            - Same package name for all versions
-            - Install new APK over old version (no deletion needed)
+            ### 📥 Installation
+            1. Download the APK for direct install
+            2. For Google Play: use the AAB file
+            3. Install over existing version (no uninstall needed)
           files: |
             release/*.apk
             release/*.aab
+            ViP-Yemen-*-source.zip
           draft: false
           prerelease: false
