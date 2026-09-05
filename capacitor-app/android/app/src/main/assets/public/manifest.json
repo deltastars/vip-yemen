@@ -1,0 +1,136 @@
+{
+  "name": "vipyemen - منصة التسويق والخدمات",
+  "short_name": "vipyemen",
+  "description": "منصة متكاملة للتسويق الإلكتروني والخدمات العامة في اليمن - عقارات، توظيف، منتجات، خدمات",
+  "version": "1.0.0",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0f0f0f",
+  "theme_color": "#d4af37",
+  "lang": "ar",
+  "dir": "rtl",
+  "categories": ["business", "productivity", "social", "shopping", "lifestyle"],
+  "screenshots": [
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "الشاشة الرئيسية لتطبيق vipyemen"
+    }
+  ],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "التسويق الإلكتروني",
+      "short_name": "تسويق",
+      "description": "عرض وطلب المنتجات والخدمات",
+      "url": "/?section=digital-marketing",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "العقارات",
+      "short_name": "عقارات",
+      "description": "عرض وطلب العقارات",
+      "url": "/?section=real-estate",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "التوظيف",
+      "short_name": "وظائف",
+      "description": "البحث عن وظائف وتقديم طلبات",
+      "url": "/?section=jobs",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "الدفع",
+      "short_name": "دفع",
+      "description": "إدارة المدفوعات والتحويلات",
+      "url": "/?section=payment",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  "handle_links": "preferred",
+  "protocol_handlers": [
+    {
+      "protocol": "web+vipyemen",
+      "url": "/?handler=%s"
+    }
+  ],
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "files",
+          "accept": ["image/*", ".pdf", ".doc", ".docx"]
+        }
+      ]
+    }
+  }
+}
+

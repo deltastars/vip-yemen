@@ -1,0 +1,127 @@
+{
+  "name": "ViP Yemen - للتوظيف والتسويق والخدمات العامة",
+  "version": "4.8.0",
+  "short_name": "ViP Yemen",
+  "description": "منصة يمنية شاملة للتوظيف والتسويق الإلكتروني والعقاري والبرمجيات والخدمات العامة",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#102A43",
+  "theme_color": "#F3B71B",
+  "orientation": "any",
+  "scope": "/",
+  "lang": "ar",
+  "dir": "rtl",
+  "categories": ["business", "lifestyle", "social", "productivity"],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/images/vip-logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/vip-logo.svg",
+      "sizes": "48x48",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/vip-logo.svg",
+      "sizes": "72x72",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/vip-logo.svg",
+      "sizes": "96x96",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/vip-logo.svg",
+      "sizes": "128x128",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/vip-logo.svg",
+      "sizes": "144x144",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/vip-logo.svg",
+      "sizes": "152x152",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/vip-logo.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/vip-logo.svg",
+      "sizes": "384x384",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/vip-logo.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/images/vip-logo.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "form_factor": "wide",
+      "label": "ViP Yemen - المنصة الرئيسية"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "التوظيف والفرص",
+      "short_name": "التوظيف",
+      "url": "/#employment",
+      "icons": [{"src": "/images/vip-logo.svg", "sizes": "any"}],
+      "description": "تصفح فرص التوظيف المتاحة"
+    },
+    {
+      "name": "العقارات",
+      "short_name": "العقارات",
+      "url": "/#real-estate",
+      "icons": [{"src": "/images/vip-logo.svg", "sizes": "any"}],
+      "description": "تصفح عروض العقارات"
+    },
+    {
+      "name": "التسويق الإلكتروني",
+      "short_name": "التسويق",
+      "url": "/#e-marketing",
+      "icons": [{"src": "/images/vip-logo.svg", "sizes": "any"}],
+      "description": "تصفح المنتجات والسلع"
+    },
+    {
+      "name": "لوحة التحكم",
+      "short_name": "الإدارة",
+      "url": "/admin",
+      "icons": [{"src": "/images/vip-logo.svg", "sizes": "any"}],
+      "description": "الدخول إلى لوحة التحكم"
+    }
+  ],
+  "handle_links": "preferred",
+  "share_target": {
+    "action": "/",
+    "method": "GET",
+    "params": {
+      "title": "name",
+      "text": "description",
+      "url": "link"
+    }
+  }
+}

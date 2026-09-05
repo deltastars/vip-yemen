@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F3B71B"/>
+      <stop offset="50%" style="stop-color:#D4AF37"/>
+      <stop offset="100%" style="stop-color:#B8960F"/>
+    </linearGradient>
+    <linearGradient id="darkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0B1D32"/>
+      <stop offset="100%" style="stop-color:#102A43"/>
+    </linearGradient>
+  </defs>
+  <!-- Outer ring -->
+  <circle cx="100" cy="100" r="95" fill="url(#goldGrad)" stroke="#B8960F" stroke-width="2"/>
+  <circle cx="100" cy="100" r="82" fill="url(#darkGrad)"/>
+  <!-- Inner gold ring -->
+  <circle cx="100" cy="100" r="75" fill="none" stroke="url(#goldGrad)" stroke-width="2"/>
+  <!-- Eagle/wings simplified -->
+  <path d="M100 55 L70 80 L55 70 L60 90 L40 85 L55 100 L100 75 L145 100 L160 85 L140 90 L145 70 L130 80 Z" fill="url(#goldGrad)" opacity="0.9"/>
+  <!-- VIP text -->
+  <text x="100" y="118" text-anchor="middle" font-family="serif" font-size="22" font-weight="bold" fill="#F3B71B" letter-spacing="4">VIP</text>
+  <!-- Crown on top -->
+  <path d="M85 42 L90 35 L95 40 L100 30 L105 40 L110 35 L115 42 Z" fill="url(#goldGrad)" stroke="#B8960F" stroke-width="1"/>
+  <!-- Bottom text arc -->
+  <text x="100" y="145" text-anchor="middle" font-family="sans-serif" font-size="7" fill="#D4AF37" letter-spacing="1">YEMEN</text>
+</svg>

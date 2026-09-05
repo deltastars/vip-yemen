@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<browserconfig>
+  <msapplication>
+    <tile>
+      <square150x150logo src="/images/vip-logo.svg"/>
+      <wide310x150logo src="/images/vip-logo.svg"/>
+      <square310x310logo src="/images/vip-logo.svg"/>
+      <square70x70logo src="/images/vip-logo.svg"/>
+      <TileColor>#102A43</TileColor>
+      <TileImage src="/images/vip-logo.svg"></TileImage>
+    </tile>
+    <notification>
+      <polling-uri src="/images/vip-logo.svg"/>
+      <polling-uri2 src="/images/vip-logo.svg"/>
+      <polling-uri3 src="/images/vip-logo.svg"/>
+      <polling-uri4 src="/images/vip-logo.svg"/>
+      <polling-uri5 src="/images/vip-logo.svg"/>
+    </notification>
+  </msapplication>
+</browserconfig>

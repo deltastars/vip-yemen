@@ -1,0 +1,31 @@
+User-agent: *
+Allow: /
+Allow: /privacy-policy.html
+Allow: /terms-of-service.html
+Allow: /manifest.json
+Allow: /icon-192.png
+Allow: /icon-512.png
+
+Disallow: /admin
+Disallow: /api/
+Disallow: /src/
+Disallow: /node_modules/
+
+Sitemap: https://vipyemen.com/sitemap.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1
+
+# Specific rules for major search engines
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Slurp
+Allow: /
+Crawl-delay: 1
+
