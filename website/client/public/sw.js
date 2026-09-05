@@ -1,6 +1,6 @@
 // ViP Yemen Service Worker - Enhanced for Offline & Auto-Update
-const CACHE_NAME = "vipyemen-v4.9.0";
-const CACHE_VERSION = "4.9.0";
+const CACHE_NAME = "vipyemen-v4.10.0";
+const CACHE_VERSION = "4.10.0";
 
 // Resolve relative to the service worker's own location
 const BASE = self.registration.scope;

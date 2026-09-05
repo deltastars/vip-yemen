@@ -159,6 +159,7 @@ export default function AdminDashboard() {
             <span>الرئيسية</span>
           </a>
           <ShieldCheck size={24} />
+          <img src="/images/vip-logo.svg" alt="ViP Yemen" style={{ width: 34, height: 34 }} />
           <div>
             <h1>لوحة التحكم الرئيسية</h1>
             <p>مرحبًا {user.name} | {user.email}</p>
@@ -293,6 +294,25 @@ function OverviewTab() {
   );
 }
 
+function ShareLinks({ title, description }: { title: string; description?: string }) {
+  const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
+  const text = encodeURIComponent(`${title} — ${(description || "").slice(0, 120)}`);
+  const link = encodeURIComponent(baseUrl + "/#listings");
+  const items = [
+    { label: "واتساب", href: `https://wa.me/?text=${text}%0A${link}` },
+    { label: "فيسبوك", href: `https://www.facebook.com/sharer/sharer.php?u=${link}` },
+    { label: "تيليجرام", href: `https://t.me/share/url?url=${link}&text=${text}` },
+  ];
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", margin: "10px 0", padding: "10px 12px", background: "#F0FDF4", border: "1px solid #BBF7D0", borderRadius: 10 }}>
+      <span style={{ fontSize: 12.5, fontWeight: 700, color: "#166534" }}>📣 نشر عبر قنوات المنصة:</span>
+      {items.map(it => (
+        <a key={it.label} href={it.href} target="_blank" rel="noreferrer" style={{ fontSize: 12, fontWeight: 700, color: "#fff", background: "#10B981", padding: "6px 12px", borderRadius: 8, textDecoration: "none" }}>{it.label}</a>
+      ))}
+    </div>
+  );
+}
+
 function DepartmentTab({ category, title, icon: Icon }: { category: string; title: string; icon: any }) {
   const { data: allSubmissions = [], refetch } = trpc.submissions.adminList.useQuery(undefined, { refetchInterval: 10000 });
   const updateStatusMutation = trpc.submissions.updateStatus.useMutation({ onSuccess: () => refetch() });
@@ -397,6 +417,7 @@ function DepartmentTab({ category, title, icon: Icon }: { category: string; titl
               {selectedSubmission.address && <div className="detail-row"><label>العنوان:</label><span>{selectedSubmission.address}</span></div>}
               <div className="detail-row"><label>الوصف:</label><span>{selectedSubmission.description}</span></div>
               <div className="detail-row"><label>التاريخ:</label><span>{new Date(selectedSubmission.createdAt).toLocaleString("ar-YE")}</span></div>
+              {selectedSubmission.status === "approved" && <ShareLinks title={selectedSubmission.title} description={selectedSubmission.description} />}
               
               <div className="modal-actions">
                 <button onClick={() => updateStatus(selectedSubmission.id, "approved")} className="btn btn-success">
@@ -527,6 +548,7 @@ function AdsTab() {
                 </div>
               </div>
               <div className="ad-actions">
+                {ad.status === "published" && <ShareLinks title={ad.title} description={ad.message} />}
                 <button onClick={() => togglePublish(ad.id, ad.status)} className={`btn ${ad.status === "published" ? "btn-warning" : "btn-success"}`}>
                   {ad.status === "published" ? "إيقاف" : "نشر"}
                 </button>
@@ -552,17 +574,41 @@ function OffersTab() {
   const deleteOfferMutation = trpc.offers.remove.useMutation({ onSuccess: () => refetch() });
   const [showForm, setShowForm] = useState(false);
   const [editingOffer, setEditingOffer] = useState<any | null>(null);
-  const [form, setForm] = useState({ title: "", description: "", discountPercent: "", isFeatured: false, startsAt: "", endsAt: "" });
+  const [form, setForm] = useState({ title: "", description: "", discountPercent: "", isFeatured: false, startsAt: "", endsAt: "", category: "", originalPrice: "", offerPrice: "", contactPhone: "", imageDataUrl: "", videoDataUrl: "" });
+  const onImageFile = (file: File | undefined) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => setForm(f => ({ ...f, imageDataUrl: String(reader.result) }));
+    reader.readAsDataURL(file);
+  };
+  const onVideoFile = (file: File | undefined) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => setForm(f => ({ ...f, videoDataUrl: String(reader.result) }));
+    reader.readAsDataURL(file);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const base = {
+      title: form.title,
+      description: form.description,
+      category: form.category || undefined,
+      originalPrice: form.originalPrice || undefined,
+      offerPrice: form.offerPrice || undefined,
+      discountPercent: form.discountPercent ? parseInt(form.discountPercent) : undefined,
+      isFeatured: form.isFeatured,
+      contactPhone: form.contactPhone || undefined,
+      imageDataUrl: form.imageDataUrl || undefined,
+      videoDataUrl: form.videoDataUrl || undefined,
+    };
     if (editingOffer) {
-      updateOffer.mutate({ id: editingOffer.id, title: form.title, description: form.description, discountPercent: form.discountPercent ? parseInt(form.discountPercent) : undefined, isFeatured: form.isFeatured });
+      updateOffer.mutate({ id: editingOffer.id, ...base });
     } else {
-      createOffer.mutate({ title: form.title, description: form.description, discountPercent: form.discountPercent ? parseInt(form.discountPercent) : undefined, isFeatured: form.isFeatured, startsAt: form.startsAt ? new Date(form.startsAt) : undefined, endsAt: form.endsAt ? new Date(form.endsAt) : undefined });
+      createOffer.mutate({ ...base, startsAt: form.startsAt ? new Date(form.startsAt) : undefined, endsAt: form.endsAt ? new Date(form.endsAt) : undefined });
     }
     setEditingOffer(null);
-    setForm({ title: "", description: "", discountPercent: "", isFeatured: false, startsAt: "", endsAt: "" });
+    setForm({ title: "", description: "", discountPercent: "", isFeatured: false, startsAt: "", endsAt: "", category: "", originalPrice: "", offerPrice: "", contactPhone: "", imageDataUrl: "", videoDataUrl: "" });
   };
 
   const togglePublish = (id: number, currentStatus: string) => {
@@ -600,6 +646,42 @@ function OffersTab() {
                 وصف العرض *
                 <textarea value={form.description} onChange={(e) => setForm({...form, description: e.target.value})} required rows={3} />
               </label>
+              <div className="form-row">
+                <label>
+                  التصنيف
+                  <input type="text" value={form.category} onChange={(e) => setForm({...form, category: e.target.value})} placeholder="مثال: إلكترونيات، سيارات" />
+                </label>
+                <label>
+                  هاتف التواصل (واتساب)
+                  <input type="tel" dir="ltr" value={form.contactPhone} onChange={(e) => setForm({...form, contactPhone: e.target.value})} placeholder="00967711780999" />
+                </label>
+              </div>
+              <div className="form-row">
+                <label>
+                  السعر الأصلي
+                  <input type="text" value={form.originalPrice} onChange={(e) => setForm({...form, originalPrice: e.target.value})} placeholder="مثال: 50000" />
+                </label>
+                <label>
+                  سعر العرض
+                  <input type="text" value={form.offerPrice} onChange={(e) => setForm({...form, offerPrice: e.target.value})} placeholder="مثال: 40000" />
+                </label>
+              </div>
+              <label>
+                صورة العرض (حتى 8MB)
+                <input type="file" accept="image/jpeg,image/png,image/webp" onChange={(e) => onImageFile(e.target.files?.[0])} />
+              </label>
+              {form.imageDataUrl && (
+                <div style={{ margin: "6px 0" }}>
+                  <img src={form.imageDataUrl} alt="معاينة صورة العرض" style={{ width: "100%", maxHeight: 220, objectFit: "cover", borderRadius: 10 }} />
+                </div>
+              )}
+              <label>
+                فيديو قصير للعرض (MP4/WebM حتى 25MB)
+                <input type="file" accept="video/mp4,video/webm,video/quicktime" onChange={(e) => onVideoFile(e.target.files?.[0])} />
+              </label>
+              {form.videoDataUrl && (
+                <video src={form.videoDataUrl} controls preload="metadata" style={{ width: "100%", maxHeight: 240, borderRadius: 10, margin: "6px 0" }} />
+              )}
               <div className="form-row">
                 <label>
                   نسبة الخصم (%)
@@ -652,10 +734,11 @@ function OffersTab() {
                 </div>
               </div>
               <div className="offer-actions">
+                {offer.status === "published" && <ShareLinks title={offer.title} description={offer.description} />}
                 <button onClick={() => togglePublish(offer.id, offer.status)} className={`btn ${offer.status === "published" ? "btn-warning" : "btn-success"}`}>
                   {offer.status === "published" ? "إيقاف" : "نشر"}
                 </button>
-                <button onClick={() => { setEditingOffer(offer); setForm({ title: offer.title, description: offer.description, discountPercent: offer.discountPercent?.toString() || "", isFeatured: !!offer.isFeatured, startsAt: offer.startsAt ? new Date(offer.startsAt).toISOString().slice(0, 16) : "", endsAt: offer.endsAt ? new Date(offer.endsAt).toISOString().slice(0, 16) : "" }); setShowForm(true); }} className="btn btn-secondary">
+                <button onClick={() => { setEditingOffer(offer); setForm({ title: offer.title, description: offer.description, discountPercent: offer.discountPercent?.toString() || "", isFeatured: !!offer.isFeatured, startsAt: offer.startsAt ? new Date(offer.startsAt).toISOString().slice(0, 16) : "", endsAt: offer.endsAt ? new Date(offer.endsAt).toISOString().slice(0, 16) : "", category: offer.category || "", originalPrice: offer.originalPrice || "", offerPrice: offer.offerPrice || "", contactPhone: offer.contactPhone || "", imageDataUrl: "", videoDataUrl: "" }); setShowForm(true); }} className="btn btn-secondary">
                   <Edit3 size={14} />
                 </button>
                 <button onClick={() => deleteOfferMutation.mutate({ id: offer.id })} className="btn btn-danger">

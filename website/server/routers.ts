@@ -144,6 +144,8 @@ export const appRouter = router({
       description: z.string().trim().min(5).max(10000),
       imageUrl: z.string().max(1000).optional(),
       videoUrl: z.string().max(1000).optional(),
+      imageDataUrl: z.string().regex(/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/).optional(),
+      videoDataUrl: z.string().regex(/^data:video\/(mp4|webm|quicktime);base64,[A-Za-z0-9+/=]+$/).optional(),
       category: z.string().max(100).optional(),
       originalPrice: z.string().max(80).optional(),
       offerPrice: z.string().max(80).optional(),
@@ -155,11 +157,32 @@ export const appRouter = router({
       isFeatured: z.boolean().default(false),
       contactPhone: z.string().max(32).optional(),
     })).mutation(async ({ input, ctx }) => {
+      const { imageDataUrl, videoDataUrl, ...rest } = input;
+      let imageUrl = rest.imageUrl;
+      let videoUrl = rest.videoUrl;
+      if (imageDataUrl) {
+        const [header, encoded] = imageDataUrl.split(",", 2);
+        const mimeType = header?.match(/^data:(image\/(?:jpeg|png|webp));base64$/)?.[1];
+        const buffer = Buffer.from(encoded || "", "base64");
+        if (!mimeType || buffer.byteLength > 8 * 1024 * 1024) throw new TRPCError({ code: "BAD_REQUEST", message: "صورة العرض غير صالحة أو تتجاوز 8 ميغابايت" });
+        const uploaded = await storagePut(`offers/${Date.now()}-${rest.title.slice(0, 40)}-image`, buffer, mimeType);
+        imageUrl = uploaded.url;
+      }
+      if (videoDataUrl) {
+        const [header, encoded] = videoDataUrl.split(",", 2);
+        const mimeType = header?.match(/^data:(video\/(?:mp4|webm|quicktime));base64$/)?.[1];
+        const buffer = Buffer.from(encoded || "", "base64");
+        if (!mimeType || buffer.byteLength > 25 * 1024 * 1024) throw new TRPCError({ code: "BAD_REQUEST", message: "فيديو العرض غير صالح أو يتجاوز 25 ميغابايت" });
+        const uploaded = await storagePut(`offers/${Date.now()}-${rest.title.slice(0, 40)}-video`, buffer, mimeType);
+        videoUrl = uploaded.url;
+      }
       const id = await createOffer({
-        ...input,
-        isFeatured: input.isFeatured ? 1 : 0,
-        startsAt: input.startsAt || undefined,
-        endsAt: input.endsAt || undefined,
+        ...rest,
+        imageUrl,
+        videoUrl,
+        isFeatured: rest.isFeatured ? 1 : 0,
+        startsAt: rest.startsAt || undefined,
+        endsAt: rest.endsAt || undefined,
         createdBy: ctx.user.id,
       });
       return { id };
@@ -170,6 +193,8 @@ export const appRouter = router({
       description: z.string().trim().min(5).max(10000).optional(),
       imageUrl: z.string().max(1000).optional(),
       videoUrl: z.string().max(1000).optional(),
+      imageDataUrl: z.string().regex(/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/).optional(),
+      videoDataUrl: z.string().regex(/^data:video\/(mp4|webm|quicktime);base64,[A-Za-z0-9+/=]+$/).optional(),
       category: z.string().max(100).optional(),
       originalPrice: z.string().max(80).optional(),
       offerPrice: z.string().max(80).optional(),
@@ -181,9 +206,25 @@ export const appRouter = router({
       isFeatured: z.boolean().optional(),
       contactPhone: z.string().max(32).optional(),
     })).mutation(async ({ input }) => {
-      const { id, isFeatured, ...patch } = input;
+      const { id, isFeatured, imageDataUrl, videoDataUrl, ...patch } = input;
       const updateData: Record<string, unknown> = { ...patch };
       if (isFeatured !== undefined) updateData.isFeatured = isFeatured ? 1 : 0;
+      if (imageDataUrl) {
+        const [header, encoded] = imageDataUrl.split(",", 2);
+        const mimeType = header?.match(/^data:(image\/(?:jpeg|png|webp));base64$/)?.[1];
+        const buffer = Buffer.from(encoded || "", "base64");
+        if (!mimeType || buffer.byteLength > 8 * 1024 * 1024) throw new TRPCError({ code: "BAD_REQUEST", message: "صورة العرض غير صالحة أو تتجاوز 8 ميغابايت" });
+        const uploaded = await storagePut(`offers/${Date.now()}-${String(patch.title || "offer").slice(0, 40)}-image`, buffer, mimeType);
+        updateData.imageUrl = uploaded.url;
+      }
+      if (videoDataUrl) {
+        const [header, encoded] = videoDataUrl.split(",", 2);
+        const mimeType = header?.match(/^data:(video\/(?:mp4|webm|quicktime));base64$/)?.[1];
+        const buffer = Buffer.from(encoded || "", "base64");
+        if (!mimeType || buffer.byteLength > 25 * 1024 * 1024) throw new TRPCError({ code: "BAD_REQUEST", message: "فيديو العرض غير صالح أو يتجاوز 25 ميغابايت" });
+        const uploaded = await storagePut(`offers/${Date.now()}-${String(patch.title || "offer").slice(0, 40)}-video`, buffer, mimeType);
+        updateData.videoUrl = uploaded.url;
+      }
       await updateOffer(id, updateData as any);
       return { success: true } as const;
     }),

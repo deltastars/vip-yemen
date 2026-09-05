@@ -70,9 +70,11 @@ export async function createSubmissionAttachment(input: { submissionId: number; 
 export async function listPublicSubmissions(category?: InsertSubmission["category"]) {
   const db = await getDb();
   if (!db) return [];
+  // المنشورة والمباعة تظهران للجميع؛ «تم البيع» تُعرض كشارة على المنتج المباع
+  const statusFilter = inArray(submissions.status, ["approved", "sold"]);
   const conditions = category
-    ? and(eq(submissions.status, "approved"), eq(submissions.category, category))
-    : eq(submissions.status, "approved");
+    ? and(statusFilter, eq(submissions.category, category))
+    : statusFilter;
   return db.select({
     id: submissions.id,
     category: submissions.category,

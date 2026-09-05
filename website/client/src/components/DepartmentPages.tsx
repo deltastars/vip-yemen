@@ -604,6 +604,7 @@ export function DepartmentListings() {
                   {item.productType && <span className="listing-type">{item.productType}</span>}
                   {item.propertyType && <span className="listing-type">{item.propertyType}</span>}
                 </div>
+                {item.status === "sold" && <div className="listing-sold-badge">تم البيع ✓</div>}
                 <h3>{item.title}</h3>
                 <p>{item.description?.slice(0, 180)}...</p>
                 {item.price && <div className="listing-price">{item.price}</div>}
