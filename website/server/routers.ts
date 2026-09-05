@@ -68,7 +68,7 @@ const submissionInput = z.object({
   propertyType: z.string().trim().max(80).optional(),
   productType: z.string().trim().max(100).optional(),
   price: z.string().trim().max(80).optional(),
-  attachments: z.array(z.object({ name: z.string().trim().min(1).max(255), mimeType: z.enum(["image/jpeg", "image/png", "image/webp", "application/pdf"]), dataUrl: z.string().regex(/^data:(image\/(jpeg|png|webp)|application\/pdf);base64,[A-Za-z0-9+/=]+$/) })).max(5).optional(),
+  attachments: z.array(z.object({ name: z.string().trim().min(1).max(255), mimeType: z.enum(["image/jpeg", "image/png", "image/webp", "application/pdf", "video/mp4", "video/webm", "video/quicktime"]), dataUrl: z.string().regex(/^data:(image\/(jpeg|png|webp)|application\/pdf|video\/(mp4|webm|quicktime));base64,[A-Za-z0-9+/=]+$/) })).max(6).optional(),
 });
 
 export const appRouter = router({
@@ -199,7 +199,8 @@ export const appRouter = router({
       for (const attachment of attachments) {
         const encoded = attachment.dataUrl.split(",", 2)[1] ?? "";
         const buffer = Buffer.from(encoded, "base64");
-        if (buffer.byteLength > 8 * 1024 * 1024) throw new TRPCError({ code: "BAD_REQUEST", message: "حجم المرفق يتجاوز 8 ميغابايت" });
+        const maxBytes = attachment.mimeType.startsWith("video/") ? 25 * 1024 * 1024 : 8 * 1024 * 1024;
+        if (buffer.byteLength > maxBytes) throw new TRPCError({ code: "BAD_REQUEST", message: attachment.mimeType.startsWith("video/") ? "حجم الفيديو يتجاوز 25 ميغابايت" : "حجم المرفق يتجاوز 8 ميغابايت" });
         const uploaded = await storagePut(`submissions/${id}/${attachment.name}`, buffer, attachment.mimeType);
         await createSubmissionAttachment({ submissionId: id, storageKey: uploaded.key, storageUrl: uploaded.url, originalName: attachment.name, mimeType: attachment.mimeType, byteSize: buffer.byteLength });
       }

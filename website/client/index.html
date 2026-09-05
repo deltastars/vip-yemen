@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    
+
     <!-- Primary Meta Tags -->
     <title>ViP Yemen — فرصتك أقرب | منصة يمنية شاملة للتوظيف والتسويق</title>
     <meta name="title" content="ViP Yemen — فرصتك أقرب | منصة يمنية شاملة للتوظيف والتسويق" />
@@ -15,7 +15,7 @@
     <meta name="theme-color" content="#F3B71B" />
     <meta name="msapplication-TileColor" content="#102A43" />
     <meta name="application-name" content="ViP Yemen" />
-    
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://vip-yemen-140.vercel.app/" />
@@ -26,14 +26,14 @@
     <meta property="og:image:height" content="630" />
     <meta property="og:locale" content="ar_YE" />
     <meta property="og:site_name" content="ViP Yemen" />
-    
+
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content="https://vip-yemen-140.vercel.app/" />
     <meta name="twitter:title" content="ViP Yemen — فرصتك أقرب" />
     <meta name="twitter:description" content="منصة يمنية شاملة للتوظيف والتسويق العقاري والإلكتروني والبرمجيات والخدمات العامة." />
     <meta name="twitter:image" content="./images/vip-logo.svg" />
-    
+
     <!-- PWA & Mobile -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -41,34 +41,161 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="format-detection" content="telephone=no" />
     <meta name="msapplication-config" content="./browserconfig.xml" />
-    
+
     <!-- Security -->
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <meta http-equiv="X-Frame-Options" content="DENY" />
     <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()" />
-    
+
     <!-- Canonical -->
     <link rel="canonical" href="https://vip-yemen-140.vercel.app/" />
-    
+
     <!-- Favicons -->
     <link rel="icon" type="image/svg+xml" href="./images/vip-logo.svg" />
     <link rel="apple-touch-icon" href="./images/vip-logo.svg" />
     <link rel="icon" type="image/png" sizes="192x192" href="./images/vip-logo.svg" />
     <link rel="icon" type="image/png" sizes="512x512" href="./images/vip-logo.svg" />
-    
+
     <!-- PWA Manifest -->
     <link rel="manifest" href="./manifest.json" />
-    
+
     <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://api.qrserver.com" />
-    
+
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    
+
+    <!-- Admin path guard: any admin/dashboard/panel URL is never a dead end.
+         Runs before the React modules so no "الصفحة غير موجودة" flash happens. -->
+    <script>
+      (function () {
+        function vipAdminGuard() {
+          try {
+            var p = window.location.pathname || "";
+            var adminOk = /^\/(admin|admin\/dashboard)$/.test(p);
+            var deptOk = /^\/departments\/(employment|real-estate|e-marketing|software|listings)$/.test(p);
+            if (/^\/(admin|admin-panel|dashboard|panel)(\/|$)/i.test(p) && !adminOk) {
+              window.history.replaceState(null, "", "/admin");
+              if (typeof PopStateEvent === "function") window.dispatchEvent(new PopStateEvent("popstate"));
+            } else if (/^\/departments\//i.test(p) && !deptOk) {
+              window.history.replaceState(null, "", "/#listings");
+              if (typeof PopStateEvent === "function") window.dispatchEvent(new PopStateEvent("popstate"));
+            }
+          } catch (e) { /* ignore */ }
+        }
+        vipAdminGuard();
+        window.addEventListener("popstate", vipAdminGuard);
+      })();
+    </script>
+
+    <style>
+      /* ═══════ WhatsApp floating button ═══════ */
+      .whatsapp-float {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 998;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #25D366;
+        color: #ffffff;
+        text-decoration: none;
+        padding: 11px 18px;
+        border-radius: 999px;
+        font-size: 14px;
+        font-weight: 700;
+        font-family: "IBM Plex Sans Arabic", sans-serif;
+        box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+        transition: transform .2s ease, box-shadow .2s ease;
+      }
+      .whatsapp-float:hover { transform: translateY(-2px); box-shadow: 0 8px 26px rgba(37, 211, 102, 0.55); color: #ffffff; }
+      @media (max-width: 640px) {
+        .whatsapp-float { bottom: 12px; right: 12px; padding: 12px; border-radius: 50%; }
+        .whatsapp-float span { display: none; }
+      }
+
+      /* ═══════ Smart assistant knowledge search ═══════ */
+      .vip-chatbot-search {
+        display: flex; align-items: center; gap: 8px;
+        background: #f0f4f8; border: 1px solid #dbe4ee; border-radius: 10px;
+        padding: 8px 12px; margin-bottom: 12px;
+      }
+      .vip-chatbot-search svg { color: #64748b; flex-shrink: 0; }
+      .vip-chatbot-search input {
+        flex: 1; min-width: 0; border: none; background: transparent;
+        font-size: 13px; font-family: inherit; outline: none; color: #102A43;
+      }
+      .vip-chatbot-options .vip-chatbot-option {
+        justify-content: space-between; text-align: right;
+        background: #f0f4f8; color: #102A43;
+        border: 1px solid #e2e8f0; cursor: pointer; width: 100%;
+        font-family: inherit; font-size: 12.5px;
+      }
+      .vip-chatbot-options .vip-chatbot-option:hover { background: #e4ebf3; color: #102A43; }
+      .vip-chatbot-options .vip-chatbot-option svg { color: var(--yellow, #F3B71B); flex-shrink: 0; }
+      .vip-chatbot-answer {
+        background: #f0f4f8; border-radius: 12px; padding: 12px 14px; margin-bottom: 12px;
+        border-right: 3px solid var(--yellow, #F3B71B);
+      }
+      .vip-chatbot-answer strong { display: block; color: #102A43; font-size: 13.5px; margin-bottom: 6px; }
+      .vip-chatbot-answer p { color: #3d4c5c; font-size: 12.5px; line-height: 1.9; margin: 0; }
+      .vip-chatbot-back {
+        display: inline-flex; align-items: center; gap: 4px;
+        background: none; border: none; color: var(--yellow, #C99700);
+        font-size: 12px; font-weight: 700; cursor: pointer; padding: 0 0 8px;
+        font-family: inherit;
+      }
+      .vip-chatbot-quick {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px;
+        border-top: 1px solid #e2e8f0; padding-top: 12px;
+      }
+      .vip-chatbot-quick .vip-chatbot-option {
+        justify-content: center; text-align: center;
+        background: var(--navy); color: #ffffff; border: none;
+        font-size: 12px; cursor: pointer; font-family: inherit; text-decoration: none;
+      }
+      .vip-chatbot-quick .vip-chatbot-option:hover { background: #1a3a5c; color: #ffffff; }
+
+      /* ═══════ Attachment previews (images / PDF / short videos) ═══════ */
+      .attach-preview-list { display: flex; flex-direction: column; gap: 6px; margin: 8px 0 4px; }
+      .attach-preview {
+        display: flex; align-items: center; gap: 8px;
+        background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 8px 12px;
+      }
+      .attach-preview-icon {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 26px; height: 26px; border-radius: 8px;
+        background: rgba(16,42,67,.08); color: #102A43; flex-shrink: 0;
+      }
+      .attach-preview-name {
+        flex: 1; min-width: 0; font-size: 12.5px; font-weight: 600; color: #102A43;
+        overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        direction: ltr; text-align: right;
+      }
+      .attach-preview small { color: #64748b; font-size: 11px; flex-shrink: 0; }
+      .attach-preview-remove {
+        background: none; border: none; color: #b91c1c; cursor: pointer;
+        padding: 4px; flex-shrink: 0; display: inline-flex;
+      }
+
+      /* ═══════ NotFound page ═══════ */
+      .not-found p { color: #6b7c8d; font-size: 14px; margin: 8px 0 20px; }
+
+      /* ═══════ Per-section theme accents ═══════ */
+      #employment    { --dept-accent: #10B981; --dept-tint: rgba(16,185,129,.05); }
+      #real-estate   { --dept-accent: #3B82F6; --dept-tint: rgba(59,130,246,.05); }
+      #e-marketing   { --dept-accent: #F59E0B; --dept-tint: rgba(245,158,11,.05); }
+      #software-dept { --dept-accent: #8B5CF6; --dept-tint: rgba(139,92,246,.05); }
+      #offers        { --dept-accent: #EC4899; --dept-tint: rgba(236,72,153,.04); }
+      .department-section { background: var(--dept-tint, transparent); }
+      .department-section .dept-hero { box-shadow: inset 0 5px 0 0 var(--dept-accent, #F3B71B); }
+    </style>
+
     <!-- Structured Data -->
     <script type="application/ld+json">
     {
@@ -177,6 +304,10 @@
         });
       })();
     </script>
+    <a class="whatsapp-float" href="https://wa.me/967711780999" target="_blank" rel="noreferrer" aria-label="تواصل مباشر عبر واتساب">
+      <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/></svg>
+      <span>واتساب</span>
+    </a>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

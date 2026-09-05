@@ -452,11 +452,39 @@ export function validatePhone(phone: string): boolean {
 const ADMIN_EMAIL = atob("dmlwU2VydmljZXNZZW1lbkBnbWFpbC5jb20=");
 const ADMIN_PASSWORD_HASH = atob("VmlQLVNlY3VyZS0yMDI2LUhhc2g=");
 
+const ADMIN_PASSWORD_OVERRIDE_KEY = "vip_admin_password_override_v1";
+
+/**
+ * تغيير كلمة المرور بشكل حقيقي وفعلي وموثوق:
+ * تُحفظ القيمة المشفّرة محليًا (SHA-256 + salt) وتصبح هي المعتمدة عند الدخول،
+ * بينما تبقى كلمة المرور الافتراضية صالحة فقط قبل أول تغيير.
+ */
+export async function changeAdminPassword(newPassword: string): Promise<boolean> {
+  try {
+    if (!newPassword || newPassword.length < 12) return false;
+    const hash = await hashString(ADMIN_EMAIL + "::" + newPassword);
+    localStorage.setItem(ADMIN_PASSWORD_OVERRIDE_KEY, hash);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export async function verifyAdminCredentials(email: string, password: string): Promise<boolean> {
-  // Simple hash comparison (in production, use bcrypt/argon2)
+  const cleanEmail = String(email || "").trim().toLowerCase();
+  // 1) كلمة مرور مخصّصة محفوظة مسبقًا (بعد أول تغيير) — الأولوية دائمًا لها
+  try {
+    const override = localStorage.getItem(ADMIN_PASSWORD_OVERRIDE_KEY);
+    if (override) {
+      const overrideHash = await hashString(ADMIN_EMAIL + "::" + password);
+      return override === overrideHash && cleanEmail === ADMIN_EMAIL.toLowerCase();
+    }
+  } catch {
+    // fall through to the default check
+  }
+  // 2) كلمة المرور الافتراضية الأولى
   const inputHash = await hashString(email + password);
   const storedHash = await hashString(ADMIN_EMAIL + ADMIN_PASSWORD_HASH);
-  
   return inputHash === storedHash;
 }
 

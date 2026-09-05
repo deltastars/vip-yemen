@@ -14,7 +14,7 @@ import { ArchiveSystem } from "../components/ArchiveSystem";
 import { AutomationSystem } from "../components/AutomationSystem";
 import { 
   registerBiometric, isBiometricSupported, isBiometricRegistered, removeBiometric,
-  logSecurityEvent, getAuditLogs, destroySession
+  logSecurityEvent, getAuditLogs, destroySession, changeAdminPassword
 } from "../lib/security";
 import { trpc } from "@/lib/trpc";
 import { getAppLinks, saveAppLinks, sanitizeStoreUrl } from "@/lib/appSettings";
@@ -678,17 +678,27 @@ function SettingsTab({ user }: { user: any }) {
   const [links, setLinks] = useState(() => getAppLinks());
   const [linksMessage, setLinksMessage] = useState("");
 
-  const handleChangePassword = (e: React.FormEvent) => {
+  const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
       setMessage("كلمتا المرور غير متطابقتين");
       return;
     }
-    if (newPassword.length < 8) {
-      setMessage("كلمة المرور يجب أن تكون 8 أحرف على الأقل");
+    if (newPassword.length < 12) {
+      setMessage("كلمة المرور يجب أن تكون 12 حرفًا على الأقل مع أرقام ورموز");
       return;
     }
-    setMessage("تم تغيير كلمة المرور بنجاح! (في وضع التطوير فقط)");
+    if (newPassword === password) {
+      setMessage("كلمة المرور الجديدة مطابقة للحالية — اختر كلمة مرور مختلفة");
+      return;
+    }
+    const saved = await changeAdminPassword(newPassword);
+    if (!saved) {
+      setMessage("تعذر حفظ كلمة المرور — تأكد من قوة كلمة المرور (12 حرفًا على الأقل)");
+      return;
+    }
+    logSecurityEvent("PASSWORD_CHANGED", "Password updated from settings");
+    setMessage("تم تغيير كلمة المرور بنجاح بشكل حقيقي وفعلي! استخدمها في الدخول القادم.");
     setPassword("");
     setNewPassword("");
     setConfirmPassword("");
@@ -784,7 +794,7 @@ function SettingsTab({ user }: { user: any }) {
           </label>
           <label>
             كلمة المرور الجديدة
-            <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required minLength={8} />
+            <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required minLength={12} />
           </label>
           <label>
             تأكيد كلمة المرور
@@ -807,7 +817,7 @@ function SettingsTab({ user }: { user: any }) {
       <div className="settings-section">
         <h3>الإصدار والمعلومات</h3>
         <div className="version-info">
-          <p>الإصدار: v1.4.1</p>
+          <p>الإصدار: v4.9.0</p>
           <p>آخر تحديث: {new Date().toLocaleDateString("ar-YE")}</p>
           <p>المطور: المهندس علي درهم الدحان</p>
         </div>

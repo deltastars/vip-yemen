@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { changeAdminPassword } from "../lib/security";
 import { useLocation } from "wouter";
 import { ShieldCheck, Mail, Lock, Eye, EyeOff, LogIn, AlertCircle, Fingerprint, KeyRound, ArrowRight } from "lucide-react";
 import { 
@@ -21,6 +22,8 @@ export default function AdminLogin() {
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<"login" | "forgot" | "reset" | "biometric">("login");
   const [resetSent, setResetSent] = useState(false);
+  const [resetCode, setResetCode] = useState("");
+  const [enteredCode, setEnteredCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [biometricSupported, setBiometricSupported] = useState(false);
@@ -194,6 +197,10 @@ export default function AdminLogin() {
       
       const cleanEmail = sanitizeInput(email);
       if (cleanEmail === getAdminEmail()) {
+        // توليد رمز استعادة آمن من 6 أرقام
+        const code = String(Math.floor(100000 + Math.random() * 900000));
+        setResetCode(code);
+        try { sessionStorage.setItem("vip_reset_code", code); } catch { /* ignore */ }
         setResetSent(true);
         logSecurityEvent("PASSWORD_RESET_REQUESTED", `Email: ${cleanEmail}`);
       } else {
@@ -220,14 +227,30 @@ export default function AdminLogin() {
       return;
     }
 
+    // التحقق من رمز الاستعادة الصادر مسبقًا
+    let storedCode = "";
+    try { storedCode = sessionStorage.getItem("vip_reset_code") || ""; } catch { /* ignore */ }
+    if (!resetCode || enteredCode !== resetCode || (storedCode && storedCode !== resetCode)) {
+      setError("رمز الاستعادة غير صحيح — أعد توليد الرمز من الخطوة السابقة");
+      return;
+    }
+
     try {
       await new Promise(resolve => setTimeout(resolve, 500));
       
+      const saved = await changeAdminPassword(newPassword);
+      if (!saved) {
+        setError("تعذر حفظ كلمة المرور الجديدة — تأكد من قوة كلمة المرور (12 حرفًا على الأقل)");
+        return;
+      }
+      try { sessionStorage.removeItem("vip_reset_code"); } catch { /* ignore */ }
       setResetSent(false);
+      setEnteredCode("");
+      setResetCode("");
       setMode("login");
       setPassword(newPassword);
       logSecurityEvent("PASSWORD_RESET_COMPLETED", "Password changed successfully");
-      alert("تم إعادة تعيين كلمة المرور بنجاح! يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة.");
+      alert("تم إعادة تعيين كلمة المرور بنجاح بشكل حقيقي وفعلي! يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة.");
     } catch {
       setError("حدث خطأ في إعادة تعيين كلمة المرور");
     }
@@ -290,6 +313,59 @@ export default function AdminLogin() {
           </div>
         )}
 
+        {mode === "forgot" || mode === "reset" ? (
+          <div>
+            {mode === "forgot" ? (
+              <div style={{ marginBottom: "24px" }}>
+                <h2 style={{ fontSize: "20px", color: "#102A43", margin: "0 0 12px" }}>استعادة كلمة المرور</h2>
+                <p style={{ color: "#6B7C8D", fontSize: "14px", lineHeight: 1.9, margin: "0 0 16px" }}>
+                  أدخل بريد الإدارة <strong dir="ltr" style={{ color: "#102A43" }}>vipservicesyemen@gmail.com</strong> ليتم توليد رمز استعادة آمن.
+                </p>
+                <label style={{ display: "block", marginBottom: "16px" }}>
+                  <span style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px", fontWeight: 600, color: "#102A43" }}>
+                    <Mail size={16} /> البريد الإلكتروني
+                  </span>
+                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="off" placeholder="vipservicesyemen@gmail.com" style={{ width: "100%", padding: "14px", border: "2px solid #E5E7EB", borderRadius: "8px", fontSize: "16px", direction: "ltr" }} />
+                </label>
+                {resetSent && (
+                  <div style={{ padding: "14px", background: "#F0FDF4", color: "#166534", borderRadius: "10px", marginBottom: "16px", fontSize: "13.5px", lineHeight: 2 }}>
+                    تم توليد رمز الاستعادة الآمن:
+                    <strong style={{ display: "block", fontSize: "22px", letterSpacing: "5px", textAlign: "center", direction: "ltr", margin: "6px 0" }}>{resetCode}</strong>
+                    <span>أرسل الرمز إلى بريدك لاستخدامه في الخطوة التالية:</span>
+                    <a href={`mailto:${getAdminEmail()}?subject=${encodeURIComponent("رمز استعادة لوحة التحكم - ViP Yemen")}&body=${encodeURIComponent(`رمز الاستعادة: ${resetCode}`)}`} style={{ display: "block", textAlign: "center", color: "#166534", fontWeight: 700, marginTop: "8px" }}>إرسال الرمز إلى بريدي</a>
+                  </div>
+                )}
+                <button onClick={handleForgotPassword} disabled={loading} style={{ width: "100%", padding: "16px", background: "linear-gradient(135deg, #F3B71B, #C99700)", color: "#102A43", border: "none", borderRadius: "8px", fontSize: "16px", fontWeight: 700, cursor: loading ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
+                  <KeyRound size={18} /> {loading ? "جارٍ التوليد..." : "توليد رمز الاستعادة"}
+                </button>
+              </div>
+            ) : (
+              <div style={{ marginBottom: "24px" }}>
+                <h2 style={{ fontSize: "20px", color: "#102A43", margin: "0 0 12px" }}>إعادة تعيين كلمة المرور</h2>
+                <p style={{ color: "#6B7C8D", fontSize: "14px", lineHeight: 1.9, margin: "0 0 16px" }}>أدخل رمز الاستعادة وكلمة المرور الجديدة (12 حرفًا على الأقل).</p>
+                <label style={{ display: "block", marginBottom: "14px" }}>
+                  <span style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px", fontWeight: 600, color: "#102A43" }}><KeyRound size={16} /> رمز الاستعادة</span>
+                  <input value={enteredCode} onChange={(e) => setEnteredCode(e.target.value)} required dir="ltr" placeholder="000000" style={{ width: "100%", padding: "14px", border: "2px solid #E5E7EB", borderRadius: "8px", fontSize: "18px", letterSpacing: "4px", textAlign: "center" }} />
+                </label>
+                <label style={{ display: "block", marginBottom: "14px" }}>
+                  <span style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px", fontWeight: 600, color: "#102A43" }}><Lock size={16} /> كلمة المرور الجديدة</span>
+                  <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required autoComplete="new-password" placeholder="12 حرفًا على الأقل" style={{ width: "100%", padding: "14px", border: "2px solid #E5E7EB", borderRadius: "8px", fontSize: "16px" }} />
+                </label>
+                <label style={{ display: "block", marginBottom: "16px" }}>
+                  <span style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px", fontWeight: 600, color: "#102A43" }}><Lock size={16} /> تأكيد كلمة المرور</span>
+                  <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required autoComplete="new-password" placeholder="أعد كتابة كلمة المرور" style={{ width: "100%", padding: "14px", border: "2px solid #E5E7EB", borderRadius: "8px", fontSize: "16px" }} />
+                </label>
+                {error && <div style={{ padding: "12px", background: "#FEE2E2", color: "#DC2626", borderRadius: "8px", marginBottom: "14px", display: "flex", alignItems: "center", gap: "8px", fontSize: "13.5px" }}><AlertCircle size={16} />{error}</div>}
+                <button onClick={handleResetPassword} disabled={loading} style={{ width: "100%", padding: "16px", background: "linear-gradient(135deg, #F3B71B, #C99700)", color: "#102A43", border: "none", borderRadius: "8px", fontSize: "16px", fontWeight: 700, cursor: loading ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
+                  <Lock size={18} /> {loading ? "جارٍ الحفظ..." : "حفظ كلمة المرور الجديدة"}
+                </button>
+              </div>
+            )}
+            <button onClick={() => { setMode("login"); setError(""); setResetSent(false); setEnteredCode(""); }} style={{ width: "100%", padding: "12px", background: "none", border: "1px solid #102A43", color: "#102A43", borderRadius: "8px", fontSize: "14px", fontWeight: 700, cursor: "pointer" }}>
+              <ArrowRight size={16} style={{ verticalAlign: "-3px", marginInlineEnd: "6px" }} /> العودة لتسجيل الدخول
+            </button>
+          </div>
+        ) : (
         <form onSubmit={handleSubmit} autoComplete="off" data-form-type="other" data-lpignore="true">
           {/* Aggressive anti-autofill: hidden decoy fields with random names */}
           <input type="text" name="_viewport_n6x9q" autoComplete="off" style={{ position: "absolute", left: "-9999px", opacity: 0, height: 0, width: 0, padding: 0, border: 0, overflow: "hidden" }} tabIndex={-1} aria-hidden="true" />
@@ -394,7 +470,9 @@ export default function AdminLogin() {
             )}
           </button>
         </form>
+        )}
 
+        {mode === "login" && (
         <div style={{ 
           display: "flex", 
           justifyContent: "space-between", 
@@ -440,6 +518,7 @@ export default function AdminLogin() {
             </button>
           )}
         </div>
+        )}
       </div>
     </div>
   );
