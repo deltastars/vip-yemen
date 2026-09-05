@@ -17,6 +17,7 @@ import {
   logSecurityEvent, getAuditLogs, destroySession
 } from "../lib/security";
 import { trpc } from "@/lib/trpc";
+import { getAppLinks, saveAppLinks, sanitizeStoreUrl } from "@/lib/appSettings";
 
 type Tab = "overview" | "employment" | "realestate" | "emarketing" | "software" | "ads" | "offers" | "accounting" | "contracts" | "archive" | "automation" | "settings";
 type SubmissionStatus = "pending" | "reviewing" | "approved" | "rejected" | "archived" | "sold";
@@ -81,6 +82,13 @@ export default function AdminDashboard() {
   const [biometricRegistered, setBiometricRegistered] = useState(false);
 
   useEffect(() => {
+    // حماية من الفهرسة — لوحة التحكم لا تظهر في محركات البحث
+    const meta = document.createElement("meta");
+    meta.name = "robots";
+    meta.content = "noindex, nofollow, noarchive, nosnippet";
+    document.head.appendChild(meta);
+    document.title = "لوحة التحكم — ViP Yemen";
+
     const stored = localStorage.getItem("admin_user");
     if (stored) {
       setUser(JSON.parse(stored));
@@ -177,6 +185,7 @@ export default function AdminDashboard() {
         {tabs.map((tab) => (
           <button
             key={tab.key}
+            data-tab={tab.key}
             className={`admin-tab ${activeTab === tab.key ? "active" : ""}`}
             onClick={() => setActiveTab(tab.key)}
           >
@@ -273,9 +282,9 @@ function OverviewTab() {
               <Globe2 size={20} />
               <span>إدارة التسويق</span>
             </button>
-            <button className="quick-action-btn" onClick={() => window.location.href = "/downloads.html"}>
+            <button className="quick-action-btn" onClick={() => { const tab = document.querySelector('[data-tab="settings"]') as HTMLElement | null; if (tab) tab.click(); }}>
               <Download size={20} />
-              <span>صفحة التحميل</span>
+              <span>روابط المتجر</span>
             </button>
           </div>
         </div>
@@ -666,6 +675,8 @@ function SettingsTab({ user }: { user: any }) {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [links, setLinks] = useState(() => getAppLinks());
+  const [linksMessage, setLinksMessage] = useState("");
 
   const handleChangePassword = (e: React.FormEvent) => {
     e.preventDefault();
@@ -686,6 +697,73 @@ function SettingsTab({ user }: { user: any }) {
   return (
     <div className="admin-settings">
       <h2><Settings size={24} /> الإعدادات</h2>
+
+      <div className="settings-section">
+        <h3>روابط تطبيق المتجر</h3>
+        <p className="settings-hint">أضف رابط التطبيق المنشور في متجر التطبيقات (Google Play أو App Store). سيُفعَّل زر «تحميل التطبيق» تلقائيًا ويوجّه المستخدمين إلى المتجر مباشرة. اتركه فارغًا ليبقى الزر مخفيًا حتى الآن.</p>
+        <div className="settings-links-grid">
+          <label>
+            رابط Google Play
+            <input
+              type="url"
+              dir="ltr"
+              placeholder="https://play.google.com/store/apps/details?id=com.vip.yemen"
+              value={links.androidUrl}
+              onChange={(e) => setLinks({ ...links, androidUrl: e.target.value })}
+            />
+          </label>
+          <label>
+            رابط App Store
+            <input
+              type="url"
+              dir="ltr"
+              placeholder="https://apps.apple.com/app/id000000000"
+              value={links.iosUrl}
+              onChange={(e) => setLinks({ ...links, iosUrl: e.target.value })}
+            />
+          </label>
+          <label>
+            رابط تحميل مباشر (اختياري)
+            <input
+              type="url"
+              dir="ltr"
+              placeholder="https://example.com/vip-yemen.apk"
+              value={links.directApkUrl}
+              onChange={(e) => setLinks({ ...links, directApkUrl: e.target.value })}
+            />
+          </label>
+        </div>
+        <div className="settings-actions">
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => {
+              const sanitized = {
+                androidUrl: sanitizeStoreUrl(links.androidUrl),
+                iosUrl: sanitizeStoreUrl(links.iosUrl),
+                directApkUrl: sanitizeStoreUrl(links.directApkUrl),
+              };
+              if ((links.androidUrl && !sanitized.androidUrl) || (links.iosUrl && !sanitized.iosUrl) || (links.directApkUrl && !sanitized.directApkUrl)) {
+                setLinksMessage("يجب أن تكون الروابط بصيغة HTTPS صالحة (روابط مستودع GitHub للتطوير غير مسموح نشرها للزوار).");
+                return;
+              }
+              saveAppLinks(sanitized);
+              setLinks(sanitized);
+              setLinksMessage("تم حفظ روابط المتجر وتفعيل زر تحميل التطبيق.");
+            }}
+          >
+            حفظ الروابط
+          </button>
+          <button
+            type="button"
+            className="btn btn-outline"
+            onClick={() => { setLinks({ androidUrl: "", iosUrl: "", directApkUrl: "" }); saveAppLinks({ androidUrl: "", iosUrl: "", directApkUrl: "" }); setLinksMessage("تم إخفاء زر تحميل التطبيق (لا توجد روابط)."); }}
+          >
+            مسح وإخفاء الزر
+          </button>
+        </div>
+        {linksMessage && <div className="message success">{linksMessage}</div>}
+      </div>
 
       <div className="settings-section">
         <h3>معلومات الحساب</h3>

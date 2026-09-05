@@ -2,9 +2,30 @@ import { useState } from "react";
 import {
   BriefcaseBusiness, Building2, Globe2, Code2, Send, Check,
   ArrowLeft, ShieldCheck, MessageCircle, Upload, Search, Tag,
-  Clock, Percent,
+  Clock, Percent, ArrowRight, Home,
 } from "lucide-react";
 import { trpc } from "@/lib/trpc";
+
+/** شريط عودة موحد أعلى كل قسم — تنقّل سلس إلى الرئيسية أو للصفحة السابقة. */
+export function DeptBackBar({ title }: { title: string }) {
+  const goBack = () => {
+    if (window.history.length > 1) window.history.back();
+    else window.location.href = "./";
+  };
+  return (
+    <div className="dept-back-bar">
+      <div className="container dept-back-inner">
+        <button type="button" className="dept-back-btn" onClick={goBack} aria-label="رجوع">
+          <ArrowRight size={17} /> <span>رجوع</span>
+        </button>
+        <span className="dept-back-title">{title}</span>
+        <a className="dept-back-home" href="./" aria-label="الصفحة الرئيسية">
+          <Home size={16} /> <span>الرئيسية</span>
+        </a>
+      </div>
+    </div>
+  );
+}
 
 type SubmissionCategory = "employment" | "realEstateOffer" | "realEstateRequest" | "productOffer" | "productRequest" | "software";
 
@@ -62,6 +83,7 @@ export function EmploymentSection() {
   return (
     <section id="employment" className="department-section">
       <div className="container">
+        <DeptBackBar title="قسم التوظيف" />
         <div className="dept-hero">
           <div className="dept-hero-copy">
             <div className="eyebrow"><span className="eyebrow-dot" /> <BriefcaseBusiness size={14} /> قسم التوظيف</div>
@@ -163,6 +185,7 @@ export function RealEstateSection() {
   return (
     <section id="real-estate" className="department-section">
       <div className="container">
+        <DeptBackBar title="قسم التسويق العقاري" />
         <div className="dept-hero">
           <div className="dept-hero-copy">
             <div className="eyebrow"><span className="eyebrow-dot" /> <Building2 size={14} /> قسم التسويق العقاري</div>
@@ -284,6 +307,7 @@ export function EMarketingSection() {
   return (
     <section id="e-marketing" className="department-section">
       <div className="container">
+        <DeptBackBar title="قسم التسويق الإلكتروني" />
         <div className="dept-hero">
           <div className="dept-hero-copy">
             <div className="eyebrow"><span className="eyebrow-dot" /> <Globe2 size={14} /> قسم التسويق الإلكتروني</div>
@@ -390,6 +414,7 @@ export function SoftwareDeptSection() {
   return (
     <section id="software-dept" className="department-section">
       <div className="container">
+        <DeptBackBar title="قسم البرمجيات وتطوير التطبيقات" />
         <div className="dept-hero dept-hero-dark">
           <div className="dept-hero-copy">
             <div className="eyebrow"><span className="eyebrow-dot" /> <Code2 size={14} /> قسم البرمجيات وتطوير التطبيقات</div>

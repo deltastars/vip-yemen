@@ -3,10 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>تحميل التطبيقات - ViP Yemen</title>
+  <meta name="robots" content="index, follow" />
+  <title>تحميل التطبيق - ViP Yemen</title>
+  <meta name="description" content="حمّل تطبيق ViP Yemen من المتجر الرسمي. منصة يمنية شاملة للتوظيف والتسويق العقاري والإلكتروني والبرمجيات." />
+  <link rel="icon" type="image/svg+xml" href="./images/vip-logo.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-deep: #0B1929;
@@ -14,7 +17,6 @@
       --bg-card-hover: #1A3356;
       --gold: #F3B71B;
       --gold-light: #FFD45C;
-      --gold-dark: #C99700;
       --text-primary: #E6F1FF;
       --text-secondary: #8892B0;
       --accent-green: #64FFDA;
@@ -22,9 +24,7 @@
       --border: rgba(100, 255, 218, 0.08);
       --border-gold: rgba(243, 183, 27, 0.3);
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       font-family: 'IBM Plex Sans Arabic', sans-serif;
       background: var(--bg-deep);
@@ -32,39 +32,34 @@
       min-height: 100vh;
       overflow-x: hidden;
     }
-
-    /* Animated background */
     body::before {
       content: '';
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: 
+      background:
         radial-gradient(ellipse at 20% 50%, rgba(243, 183, 27, 0.03) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 20%, rgba(100, 255, 218, 0.02) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 80%, rgba(87, 203, 255, 0.02) 0%, transparent 50%);
+        radial-gradient(ellipse at 80% 20%, rgba(87, 203, 255, 0.02) 0%, transparent 50%);
       pointer-events: none;
       z-index: 0;
     }
-
-    .page-wrapper {
-      position: relative;
-      z-index: 1;
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 60px 24px 80px;
+    .page-wrapper { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 60px 24px 80px; }
+    .back-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--text-secondary); text-decoration: none;
+      font-size: 14px; margin-bottom: 28px; padding: 8px 14px;
+      border: 1px solid var(--border); border-radius: 10px;
+      transition: all .2s ease;
     }
-
-    /* Header */
+    .back-link:hover { color: var(--gold); border-color: var(--border-gold); }
     .hero {
       text-align: center;
-      margin-bottom: 60px;
+      margin-bottom: 50px;
       padding: 50px 30px;
       background: linear-gradient(135deg, rgba(17, 34, 64, 0.8), rgba(11, 25, 41, 0.9));
       border: 1px solid var(--border-gold);
       position: relative;
       overflow: hidden;
     }
-
     .hero::before {
       content: '';
       position: absolute;
@@ -72,567 +67,202 @@
       height: 3px;
       background: linear-gradient(90deg, transparent, var(--gold), transparent);
     }
-
-    .hero-badge {
-      display: inline-block;
-      padding: 6px 20px;
-      background: rgba(243, 183, 27, 0.1);
-      border: 1px solid var(--border-gold);
-      color: var(--gold);
-      font-size: 13px;
-      font-weight: 600;
-      border-radius: 30px;
-      margin-bottom: 24px;
-      letter-spacing: 0.5px;
-    }
-
-    .hero h1 {
-      font-family: 'Noto Kufi Arabic', sans-serif;
-      font-size: 40px;
-      font-weight: 800;
-      margin-bottom: 14px;
-      background: linear-gradient(135deg, var(--gold), var(--gold-light));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      line-height: 1.4;
-    }
-
-    .hero-subtitle {
-      color: var(--text-secondary);
-      font-size: 17px;
-      line-height: 1.7;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    /* App cards grid */
-    .apps-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 28px;
-      margin-bottom: 50px;
-    }
-
+    .hero-logo { width: 72px; height: 72px; margin-bottom: 18px; filter: drop-shadow(0 6px 18px rgba(243,183,27,.35)); }
+    .hero h1 { font-size: 32px; font-weight: 800; margin-bottom: 12px; }
+    .hero h1 em { color: var(--gold); font-style: normal; }
+    .hero-subtitle { color: var(--text-secondary); font-size: 15px; line-height: 1.9; max-width: 620px; margin: 0 auto; }
+    .apps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 50px; }
     .app-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
-      padding: 36px 28px;
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      position: relative;
-      overflow: hidden;
+      border-radius: 18px;
+      padding: 28px;
+      transition: transform .25s ease, border-color .25s ease;
     }
-
-    .app-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--gold), var(--accent-green));
-      transform: scaleX(0);
-      transition: transform 0.4s ease;
-    }
-
-    .app-card:hover {
-      background: var(--bg-card-hover);
-      border-color: var(--border-gold);
-      transform: translateY(-8px);
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 30px rgba(243, 183, 27, 0.05);
-    }
-
-    .app-card:hover::before {
-      transform: scaleX(1);
-    }
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 20px;
-    }
-
+    .app-card:hover { transform: translateY(-4px); border-color: var(--border-gold); }
+    .card-header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
     .app-icon {
-      width: 56px;
-      height: 56px;
-      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      font-weight: 900;
-      color: var(--bg-deep);
-      font-family: 'Noto Kufi Arabic', sans-serif;
-      flex-shrink: 0;
+      width: 58px; height: 58px; border-radius: 14px;
+      background: linear-gradient(135deg, var(--gold), #C99700);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; color: #0B1929; font-size: 15px; flex-shrink: 0;
     }
-
-    .card-title-group {
-      flex: 1;
-    }
-
-    .app-title {
-      font-family: 'Noto Kufi Arabic', sans-serif;
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: 4px;
-    }
-
-    .app-version {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 13px;
-      color: var(--text-secondary);
-    }
-
+    .app-icon.ios { background: linear-gradient(135deg, #57CBFF, #007AFF); color: #fff; }
+    .app-title { font-size: 19px; font-weight: 700; }
+    .app-version { color: var(--text-secondary); font-size: 13px; margin-top: 4px; }
     .version-badge {
-      display: inline-block;
-      padding: 2px 10px;
-      background: rgba(100, 255, 218, 0.1);
-      color: var(--accent-green);
-      font-size: 11px;
-      font-weight: 600;
-      border-radius: 20px;
-      border: 1px solid rgba(100, 255, 218, 0.15);
+      display: inline-block; padding: 2px 10px; margin-inline-end: 8px;
+      background: rgba(243, 183, 27, 0.12); color: var(--gold);
+      border: 1px solid var(--border-gold); border-radius: 999px; font-size: 11px; font-weight: 700;
     }
-
-    .app-description {
-      color: var(--text-secondary);
-      font-size: 14px;
-      line-height: 1.9;
-      margin-bottom: 24px;
-    }
-
+    .app-description { color: var(--text-secondary); font-size: 14px; line-height: 1.9; margin-bottom: 20px; }
     .download-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      width: 100%;
-      padding: 16px 28px;
-      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-      color: var(--bg-deep);
-      font-size: 16px;
-      font-weight: 700;
-      font-family: 'Noto Kufi Arabic', sans-serif;
-      text-decoration: none;
-      border: none;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; padding: 14px 20px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--gold), #C99700);
+      color: #0B1929; font-weight: 800; font-size: 15px;
+      text-decoration: none; border: none; cursor: pointer;
+      transition: transform .15s ease, box-shadow .2s ease;
+      box-shadow: 0 8px 24px rgba(243, 183, 27, 0.25);
     }
-
-    .download-btn:hover {
-      background: linear-gradient(135deg, var(--gold-light), var(--gold));
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(243, 183, 27, 0.3);
+    .download-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(243, 183, 27, 0.35); }
+    .download-btn.ios-btn { background: linear-gradient(135deg, #57CBFF, #007AFF); color: #fff; box-shadow: 0 8px 24px rgba(0, 122, 255, 0.25); }
+    .download-btn:disabled { opacity: .55; cursor: not-allowed; box-shadow: none; transform: none; }
+    .soon-note {
+      margin-top: 12px; text-align: center; color: var(--text-secondary);
+      font-size: 13px; line-height: 1.8;
+      padding: 12px; border: 1px dashed var(--border-gold); border-radius: 12px;
+      background: rgba(243, 183, 27, 0.04);
     }
-
-    .download-btn svg {
-      width: 20px;
-      height: 20px;
-      flex-shrink: 0;
-    }
-
-    .file-specs {
-      margin-top: 18px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-
-    .spec-item {
-      display: flex;
-      flex-direction: column;
-      padding: 10px 12px;
-      background: rgba(0, 0, 0, 0.2);
-      border: 1px solid rgba(255, 255, 255, 0.04);
-    }
-
-    .spec-label {
-      font-size: 11px;
-      color: var(--text-secondary);
-      margin-bottom: 2px;
-    }
-
-    .spec-value {
-      font-size: 13px;
-      color: var(--text-primary);
-      font-weight: 500;
-    }
-
-    /* Info sections */
+    .soon-note strong { color: var(--gold); }
     .info-section {
       background: var(--bg-card);
       border: 1px solid var(--border);
-      padding: 36px;
+      border-radius: 18px;
+      padding: 28px;
       margin-bottom: 24px;
     }
-
-    .info-section h2 {
-      font-family: 'Noto Kufi Arabic', sans-serif;
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 24px;
-      color: var(--gold);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .info-section h2 .icon {
-      width: 32px;
-      height: 32px;
-      background: rgba(243, 183, 27, 0.1);
-      border: 1px solid var(--border-gold);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 8px;
-      font-size: 16px;
-    }
-
-    /* Steps */
-    .steps-list {
-      list-style: none;
-      counter-reset: step-counter;
-    }
-
-    .steps-list li {
-      counter-increment: step-counter;
-      padding: 16px 16px 16px 60px;
-      position: relative;
-      color: rgba(255, 255, 255, 0.8);
-      line-height: 1.8;
-      font-size: 15px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .steps-list li:last-child {
-      border-bottom: none;
-    }
-
-    .steps-list li::before {
-      content: counter(step-counter);
-      position: absolute;
-      left: 12px;
-      top: 14px;
-      width: 30px;
-      height: 30px;
-      background: rgba(243, 183, 27, 0.1);
-      border: 1px solid var(--border-gold);
-      color: var(--gold);
-      font-size: 13px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-    }
-
-    /* Requirements table */
-    .req-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .req-table tr {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    }
-
-    .req-table tr:last-child {
-      border-bottom: none;
-    }
-
-    .req-table td {
-      padding: 14px 16px;
-      font-size: 14px;
-      vertical-align: middle;
-    }
-
-    .req-table td:first-child {
-      color: var(--gold);
-      font-weight: 600;
-      width: 40%;
-      font-family: 'Noto Kufi Arabic', sans-serif;
-    }
-
-    .req-table td:last-child {
-      color: rgba(255, 255, 255, 0.75);
-    }
-
-    /* Support */
-    .support-links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      margin-top: 16px;
-    }
-
+    .info-section h2 { font-size: 18px; font-weight: 700; margin-bottom: 16px; color: var(--gold); }
+    .support-links { display: flex; flex-wrap: wrap; gap: 12px; }
     .support-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 20px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      color: var(--text-primary);
-      text-decoration: none;
-      font-size: 14px;
-      transition: all 0.2s ease;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 18px; border-radius: 10px;
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      color: var(--text-primary); text-decoration: none; font-size: 14px;
+      transition: all .2s ease;
     }
-
-    .support-link:hover {
-      background: rgba(243, 183, 27, 0.08);
-      border-color: var(--border-gold);
-      color: var(--gold);
-    }
-
-    /* Footer */
-    .page-footer {
-      text-align: center;
-      margin-top: 60px;
-      padding-top: 30px;
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
-    }
-
-    .page-footer p {
-      color: var(--text-secondary);
-      font-size: 14px;
-      margin-bottom: 6px;
-    }
-
-    .page-footer .developer {
-      color: var(--gold);
-      font-weight: 600;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .page-wrapper { padding: 30px 16px 50px; }
-      .hero { padding: 30px 20px; }
-      .hero h1 { font-size: 28px; }
-      .hero-subtitle { font-size: 15px; }
-      .apps-grid { grid-template-columns: 1fr; gap: 20px; }
-      .info-section { padding: 24px 18px; }
-      .file-specs { grid-template-columns: 1fr; }
-      .support-links { flex-direction: column; }
-      .support-link { justify-content: center; }
+    .support-link:hover { border-color: var(--border-gold); color: var(--gold); }
+    .page-footer { text-align: center; padding: 30px 0 0; color: var(--text-secondary); font-size: 13px; line-height: 1.9; }
+    .page-footer .developer { color: var(--gold); font-weight: 700; }
+    @media (max-width: 640px) {
+      .hero h1 { font-size: 24px; }
+      .apps-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
   <div class="page-wrapper">
-    <!-- Hero -->
+    <a class="back-link" href="./">→ العودة إلى المنصة</a>
+
     <div class="hero">
-      <div class="hero-badge">📱 متاح للتحميل المباشر</div>
-      <h1>تحميل تطبيق ViP Yemen</h1>
+      <img class="hero-logo" src="./images/vip-logo.svg" alt="ViP Yemen" />
+      <h1>تحميل تطبيق <em>ViP Yemen</em></h1>
       <p class="hero-subtitle">
-        حمّل التطبيق وتثبّته مباشرة على جهازك. يتضمن جميع أقسام المنصة بواجهة احترافية ومتطورة.
+        تطبيق المنصة الرسمي — جميع الأقسام بواجهة احترافية: التوظيف، التسويق العقاري،
+        التسويق الإلكتروني، البرمجيات، والعروض الترويجية.
       </p>
     </div>
 
-    <!-- Download Cards -->
     <div class="apps-grid">
-      <!-- Android APK -->
       <div class="app-card">
         <div class="card-header">
-          <div class="app-icon">APK</div>
+          <div class="app-icon">Android</div>
           <div class="card-title-group">
-            <h3 class="app-title">تطبيق Android</h3>
-            <div class="app-version">
-              <span class="version-badge">الأحدث</span>
-              الإصدار 2.6.0
-            </div>
+            <h3 class="app-title">تطبيق أندرويد</h3>
+            <div class="app-version"><span class="version-badge">رسمي</span> Google Play</div>
           </div>
         </div>
         <p class="app-description">
-          تطبيق ViP Yemen للهواتف المحمولة مباشرة للتثبيت. يتضمن جميع أقسام المنصة: التوظيف، التسويق العقاري، التسويق الإلكتروني، البرمجيات، والعروض الترويجية.
+          حمّل التطبيق من متجر Google Play واستلم التحديثات تلقائيًا دون حذف النسخة القديمة.
         </p>
-        <a href="https://github.com/deltastars/vip-yemen/releases/download/v2.6.0/ViP-Yemen-v2.6.0-release.apk" class="download-btn" target="_blank" rel="noreferrer">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-            <polyline points="7 10 12 15 17 10"/>
-            <line x1="12" y1="15" x2="12" y2="3"/>
-          </svg>
-          تحميل APK — للتثبيت المباشر
+        <a id="android-btn" class="download-btn" href="#" target="_blank" rel="noreferrer" style="display:none">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          تحميل من Google Play
         </a>
-        <div class="file-specs">
-          <div class="spec-item">
-            <span class="spec-label">الملف</span>
-            <span class="spec-value">ViP-Yemen-v2.6.0-release.apk</span>
-          </div>
-          <div class="spec-item">
-            <span class="spec-label">الحد الأدنى</span>
-            <span class="spec-value">Android 7.0</span>
-          </div>
-          <div class="spec-item">
-            <span class="spec-label">الحزمة</span>
-            <span class="spec-value">com.vip.yemen</span>
-          </div>
+        <div id="android-soon" class="soon-note">
+          <strong>قريبًا على Google Play.</strong><br />
+          سيُفعَّل زر التحميل تلقائيًا فور نشر رابط التطبيق من إدارة المنصة.
         </div>
       </div>
 
-      <!-- Android AAB -->
       <div class="app-card">
         <div class="card-header">
-          <div class="app-icon">AAB</div>
+          <div class="app-icon ios">iOS</div>
           <div class="card-title-group">
-            <h3 class="app-title">حزمة Google Play</h3>
-            <div class="app-version">
-              <span class="version-badge">للنشر</span>
-              الإصدار 2.6.0
-            </div>
+            <h3 class="app-title">تطبيق آيفون</h3>
+            <div class="app-version"><span class="version-badge">رسمي</span> App Store</div>
           </div>
         </div>
         <p class="app-description">
-          حزمة AAB للنشر على متجر Google Play Store. مُعَدَّة للرفع مباشرة من Google Play Console مع جميع المتطلبات التقنية.
+          تطبيق ViP Yemen لأجهزة iPhone و iPad من App Store بكل المميزات والإشعارات.
         </p>
-        <a href="https://github.com/deltastars/vip-yemen/releases/download/v2.6.0/ViP-Yemen-v2.6.0-release.aab" class="download-btn" target="_blank" rel="noreferrer">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-            <polyline points="7 10 12 15 17 10"/>
-            <line x1="12" y1="15" x2="12" y2="3"/>
-          </svg>
-          تحميل AAB — لـ Google Play
+        <a id="ios-btn" class="download-btn ios-btn" href="#" target="_blank" rel="noreferrer" style="display:none">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          تحميل من App Store
         </a>
-        <div class="file-specs">
-          <div class="spec-item">
-            <span class="spec-label">الملف</span>
-            <span class="spec-value">ViP-Yemen-2.1.0-release.aab</span>
-          </div>
-          <div class="spec-item">
-            <span class="spec-label">الحجم</span>
-            <span class="spec-value">~4.6 MB</span>
-          </div>
-          <div class="spec-item">
-            <span class="spec-label">الاستخدام</span>
-            <span class="spec-value">Google Play Console</span>
-          </div>
-          <div class="spec-item">
-            <span class="spec-label">الحزمة</span>
-            <span class="spec-value">com.vip.yemen</span>
-          </div>
+        <div id="ios-soon" class="soon-note">
+          <strong>قريبًا على App Store.</strong><br />
+          سيُفعَّل زر التحميل تلقائيًا فور نشر رابط التطبيق من إدارة المنصة.
         </div>
       </div>
-    </div>
 
-    <!-- iOS Web App -->
-    <div class="app-card">
-      <div class="card-header">
-        <div class="app-icon" style="background: linear-gradient(135deg, #57CBFF, #007AFF);">iOS</div>
-        <div class="card-title-group">
-          <h3 class="app-title">تطبيق iPhone/iPad</h3>
-          <div class="app-version">
-            <span class="version-badge">PWA</span>
-            تطبيق ويب متقدم
+      <div class="app-card">
+        <div class="card-header">
+          <div class="app-icon">PWA</div>
+          <div class="card-title-group">
+            <h3 class="app-title">تثبيت سريع (PWA)</h3>
+            <div class="app-version"><span class="version-badge">فوري</span> بدون متجر</div>
           </div>
         </div>
-      </div>
-      <p class="app-description">
-        تطبيق ViP Yemen كتطبيق ويب متقدم (PWA) لأجهزة Apple. يُثبّت مباشرة من المتصفح وي_work كتطبيق أصلي مع جميع المميزات.
-      </p>
-      <div class="pwa-install-steps" style="margin: 16px 0; padding: 20px; background: rgba(87, 203, 255, 0.05); border: 1px solid rgba(87, 203, 255, 0.2); border-radius: 12px;">
-        <p style="color: var(--accent-blue); font-weight: 600; margin-bottom: 12px;">📱 طريقة التثبيت على iPhone/iPad:</p>
-        <ol style="color: var(--text-secondary); font-size: 14px; line-height: 2; padding-right: 20px;">
-          <li>افتح Safari وانتقل إلى: <strong style="color: var(--gold);">vip-yemen-140.vercel.app</strong></li>
-          <li>اضغط على زر <strong style="color: var(--accent-blue);">مشاركة</strong> (المربع بسهم لأعلى)</li>
-          <li>اختر <strong style="color: var(--accent-blue);">"إضافة إلى الشاشة الرئيسية"</strong></li>
-          <li>اضغط <strong style="color: var(--gold);">"إضافة"</strong> للتأكيد</li>
-          <li>سيظهر أيقونة التطبيق على الشاشة الرئيسية — افتحه واستمتع!</li>
+        <p class="app-description">
+          ثبّت المنصة مباشرة من متصفح هاتفك كتطبيق مستقل يعمل أيضًا دون اتصال.
+        </p>
+        <ol style="color: var(--text-secondary); font-size: 14px; line-height: 2.1; padding-right: 20px;">
+          <li>افتح الموقع في متصفح الجهاز</li>
+          <li>اضغط زر <strong style="color: var(--accent-blue);">مشاركة</strong></li>
+          <li>اختر <strong style="color: var(--gold);">«إضافة إلى الشاشة الرئيسية»</strong></li>
         </ol>
       </div>
-      <div class="file-specs">
-        <div class="spec-item">
-          <span class="spec-label">النوع</span>
-          <span class="spec-value">PWA (تطبيق ويب متقدم)</span>
-        </div>
-        <div class="spec-item">
-          <span class="spec-label">المتصفح</span>
-          <span class="spec-value">Safari (iPhone/iPad)</span>
-        </div>
-        <div class="spec-item">
-          <span class="spec-label">الحد الأدنى</span>
-          <span class="spec-value">iOS 15.0 أو أعلى</span>
-        </div>
-        <div class="spec-item">
-          <span class="spec-label">المميزات</span>
-          <span class="spec-value">إشعارات + وضع عدم الاتصال</span>
-        </div>
-      </div>
     </div>
 
-    <!-- Installation Instructions -->
     <div class="info-section">
-      <h2><span class="icon">📱</span> تعليمات التثبيت</h2>
-      <ol class="steps-list">
-        <li>حمّل ملف APK بالضغط على زر "تحميل APK" أعلاه</li>
-        <li>افتح إعدادات الجهاز → الأمان → فعّل "تثبيت من مصادر غير معروفة"</li>
-        <li>افتح الملف المحمل من مجلد التنزيلات (Downloads)</li>
-        <li>اضغط "تثبيت" وانتظر حتى يكتمل</li>
-        <li>افتح التطبيق واستمتع بجميع الخدمات</li>
-      </ol>
-      <p style="margin-top: 18px; color: var(--text-secondary); font-size: 13px; line-height: 1.7;">
-        <strong style="color: var(--gold);">ملاحظة أمنية:</strong> التطبيق آمن 100% ولا يحتاج أي أذونات غير ضرورية. جميع البيانات مشفرة ومؤمنة بأحدث تقنيات الحماية.
-      </p>
-    </div>
-
-    <!-- System Requirements -->
-    <div class="info-section">
-      <h2><span class="icon">⚙️</span> متطلبات النظام</h2>
-      <table class="req-table">
-        <tr>
-          <td>نظام التشغيل</td>
-          <td>Android 7.0 (API 24) أو أعلى</td>
-        </tr>
-        <tr>
-          <td>الذاكرة العشوائية</td>
-          <td>2 GB أو أكثر (موصى به 4 GB)</td>
-        </tr>
-        <tr>
-          <td>مساحة التخزين</td>
-          <td>50 MB متاحة على الأقل</td>
-        </tr>
-        <tr>
-          <td>الإنترنت</td>
-          <td>مطلوب عند الاستخدام الأولي</td>
-        </tr>
-        <tr>
-          <td>ال تحديث التلقائي</td>
-          <td>يدعم التحديث بدون حذف النسخة القديمة</td>
-        </tr>
-      </table>
-    </div>
-
-    <!-- Support -->
-    <div class="info-section">
-      <h2><span class="icon">🆘</span> الدعم الفني</h2>
-      <p style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 8px;">
-        إذا واجهت أي مشكلة في التثبيت أو الاستخدام، فريقنا جاهز لمساعدتك:
-      </p>
+      <h2>🆘 الدعم الفني</h2>
       <div class="support-links">
-        <a href="mailto:ViPservicesYemen@gmail.com" class="support-link">
-          📧 ViPservicesYemen@gmail.com
-        </a>
-        <a href="https://wa.me/967711780999" class="support-link" target="_blank">
-          📱 واتساب: 00967711780999
-        </a>
-        <a href="tel:+967773597404" class="support-link">
-          📞 773597404
-        </a>
+        <a href="mailto:ViPservicesYemen@gmail.com" class="support-link">📧 ViPservicesYemen@gmail.com</a>
+        <a href="https://wa.me/967711780999" class="support-link" target="_blank" rel="noreferrer">📱 واتساب: 00967711780999</a>
+        <a href="tel:+967773597404" class="support-link">📞 773597404</a>
       </div>
     </div>
 
-    <!-- Footer -->
     <div class="page-footer">
       <p>© 2026 ViP Yemen — جميع الحقوق محفوظة</p>
       <p class="developer">المهندس علي درهم الدحان</p>
-      <p style="margin-top: 10px; font-size: 12px; color: rgba(255,255,255,.3);">
-        الحزمة: com.vip.yemen | الإصدار: 1.8.5 | المُطور: ViP Services Yemen
-      </p>
     </div>
   </div>
+
+  <script>
+    // روابط المتجر تُدار من لوحة التحكم فقط — لا توجد أي روابط مستودع هنا.
+    (function () {
+      var KEY = "vipyemen-app-links-v1";
+      var links = { androidUrl: "", iosUrl: "", directApkUrl: "" };
+      try {
+        var raw = localStorage.getItem(KEY);
+        if (raw) {
+          var parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === "object") {
+            links.androidUrl = typeof parsed.androidUrl === "string" ? parsed.androidUrl : "";
+            links.iosUrl = typeof parsed.iosUrl === "string" ? parsed.iosUrl : "";
+            links.directApkUrl = typeof parsed.directApkUrl === "string" ? parsed.directApkUrl : "";
+          }
+        }
+      } catch (e) { /* stay empty */ }
+
+      function show(btnId, soonId, url, fallbackUrl) {
+        var btn = document.getElementById(btnId);
+        var soon = document.getElementById(soonId);
+        var target = url || fallbackUrl || "";
+        if (target && /^https:\/\//i.test(target) && !/github\.com\/.*releases/i.test(target)) {
+          btn.setAttribute("href", target);
+          btn.style.display = "flex";
+          if (soon) soon.style.display = "none";
+        } else if (btn) {
+          btn.style.display = "none";
+        }
+      }
+
+      show("android-btn", "android-soon", links.androidUrl, links.directApkUrl);
+      show("ios-btn", "ios-soon", links.iosUrl, null);
+    })();
+  </script>
 </body>
 </html>

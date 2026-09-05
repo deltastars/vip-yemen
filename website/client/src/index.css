@@ -3145,3 +3145,91 @@ body {
   height: 0 !important;
   overflow: hidden !important;
 }
+
+/* ═══════════ Notification Bell (jar) ═══════════ */
+.notification-bell-wrap { position: fixed; inset-inline-start: 14px; top: 64px; z-index: 1200; }
+.notification-bell-btn {
+  position: relative; display: inline-flex; align-items: center; justify-content: center;
+  width: 42px; height: 42px; border-radius: 50%;
+  background: #102A43; color: #F3B71B; border: 1px solid rgba(243,183,27,.35);
+  cursor: pointer; box-shadow: 0 6px 18px rgba(11,25,41,.35);
+  transition: transform .15s ease, box-shadow .2s ease;
+}
+.notification-bell-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(11,25,41,.45); }
+.notification-bell-dot {
+  position: absolute; top: -2px; inset-inline-end: -2px;
+  width: 11px; height: 11px; border-radius: 50%;
+  background: #22C55E; border: 2px solid #fff;
+}
+.notification-bell-panel {
+  position: absolute; top: 52px; inset-inline-start: 0;
+  width: min(92vw, 360px); max-height: 70vh; overflow-y: auto;
+  background: #102A43; color: #E2E8F0;
+  border: 1px solid rgba(243,183,27,.3); border-radius: 16px;
+  box-shadow: 0 18px 48px rgba(11,25,41,.5);
+  animation: bell-pop .18s ease-out;
+}
+@keyframes bell-pop { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+.notification-bell-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,.08);
+  font-weight: 700; font-size: 14px; color: #F3B71B;
+}
+.notification-bell-clear {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: none; border: none; color: #94A3B8; font-size: 12px; cursor: pointer;
+}
+.notification-bell-clear:hover { color: #E2E8F0; }
+.notification-bell-empty { padding: 28px 16px; text-align: center; color: #94A3B8; font-size: 13px; }
+.notification-bell-item { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,.06); }
+.notification-bell-item:last-child { border-bottom: none; }
+.notification-bell-item-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.notification-bell-item-head strong { font-size: 13.5px; line-height: 1.6; }
+.notification-bell-item.update .notification-bell-item-head strong { color: #F3B71B; }
+.notification-bell-dismiss { background: none; border: none; color: #64748B; cursor: pointer; padding: 2px; flex-shrink: 0; }
+.notification-bell-dismiss:hover { color: #E2E8F0; }
+.notification-bell-item p { margin: 6px 0 8px; font-size: 12.5px; color: #CBD5E1; line-height: 1.8; }
+.notification-bell-item-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.notification-bell-time { font-size: 11px; color: #64748B; }
+.notification-bell-actions { display: inline-flex; align-items: center; gap: 8px; }
+.notification-bell-actions button {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12);
+  color: #E2E8F0; font-size: 11.5px; padding: 5px 10px; border-radius: 8px; cursor: pointer;
+}
+.notification-bell-actions button:hover { border-color: rgba(243,183,27,.5); color: #F3B71B; }
+.notification-bell-actions .notification-bell-cta {
+  background: #F3B71B; color: #102A43; border-color: transparent; font-weight: 700;
+}
+
+/* ═══════════ Department Back Bar ═══════════ */
+.dept-back-bar { padding: 14px 0 4px; }
+.dept-back-inner {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  background: rgba(16,42,67,.05); border: 1px solid rgba(16,42,67,.1);
+  border-radius: 14px; padding: 8px 14px;
+}
+[dir="ltr"] .dept-back-inner { background: rgba(16,42,67,.05); }
+.dept-back-btn, .dept-back-home {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #102A43; color: #F3B71B;
+  border: none; border-radius: 10px; padding: 8px 14px;
+  font-size: 13px; font-weight: 700; cursor: pointer; text-decoration: none;
+  transition: transform .15s ease, opacity .2s ease;
+}
+.dept-back-btn:hover, .dept-back-home:hover { transform: translateY(-1px); opacity: .92; }
+.dept-back-title { font-size: 13.5px; font-weight: 700; color: #102A43; opacity: .85; text-align: center; flex: 1; }
+
+/* ═══════════ Download App Button (header/footer) ═══════════ */
+.download-app-btn { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.footer-download-item { display: inline-flex; align-items: center; gap: 8px; }
+.settings-hint { color: #6B7B8C; font-size: 13px; line-height: 1.8; margin: 6px 0 14px; }
+.settings-links-grid { display: grid; gap: 12px; margin-bottom: 14px; }
+.settings-links-grid label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 600; color: #102A43; }
+.settings-links-grid input {
+  padding: 10px 12px; border: 1px solid #D9E0E5; border-radius: 10px;
+  font-size: 13.5px; direction: ltr; text-align: left; background: #FFFDF8;
+}
+.settings-links-grid input:focus { outline: 2px solid rgba(243,183,27,.4); border-color: #F3B71B; }
+.settings-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn.btn-outline { background: transparent; border: 1px solid #102A43; color: #102A43; }

@@ -29,6 +29,13 @@ export default function AdminLogin() {
   const [lockoutTime, setLockoutTime] = useState<string | null>(null);
 
   useEffect(() => {
+    // حماية من الفهرسة — صفحة الدخول لا تظهر في محركات البحث
+    const meta = document.createElement("meta");
+    meta.name = "robots";
+    meta.content = "noindex, nofollow, noarchive, nosnippet";
+    document.head.appendChild(meta);
+    document.title = "لوحة التحكم — ViP Yemen";
+
     // Check existing session
     const user = localStorage.getItem("admin_user");
     if (user) {
