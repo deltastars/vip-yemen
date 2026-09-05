@@ -237,10 +237,21 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
   }
 }
 
-function AutoUpdateChecker() {
-  // Legacy checker removed - now handled by AutoUpdateBanner component
-  return null;
+function AutoUpdateChecker() { return null; }
+
+/* NAVIGATION FIX: Smart redirects instead of plain 'غير موجودة' */
+function NavigationNotFound({ setLocation }: { setLocation?: (to: string | URL, options?: any) => void }) {
+  const [, replace] = useLocation() as any; const p = window.location.pathname || "";
+  if (p.startsWith("/admin")) {
+    return <div className="not-found soft"><ShieldCheck size={28} /><h2>لوحة التحكم</h2><p>الصفحة غير متاحة مباشرة. يُرجى الدخول أولاً ثم اختيار القسم من القائمة.</p><Link href="/admin" className="button button-primary">الدخول إلى لوحة التحكم</Link></div>;
+  }
+  if (p.startsWith("/departments")) {
+    return <div className="not-found soft"><Globe2 size={28} /><h2>القسم المطلوب</h2><p>انتقل إلى قائمة الأقسام أسفله لمتابعة التصفح.</p><a href="#listings" className="button button-primary">أقسام المنصة</a></div>;
+  }
+  return <div className="not-found soft"><Globe2 size={28} /><h2>الصفحة غير متاحة</h2><p>الصفحة غير موجودة حاليًا.</p><Link href="/" className="button button-primary">العودة للرئيسية</Link></div>;
 }
 
+function NotFoundWrapper() { const [, setLocation] = useLocation(); return <NavigationNotFound setLocation={setLocation} />; }
+
 function NotFound() { return <div className="not-found"><h1>الصفحة غير موجودة</h1><Link href="/">العودة للرئيسية</Link></div>; }
-export default function App() { return <ErrorBoundary><LanguageRuntime><ThemeRuntime><Switch><Route path="/" component={Home} /><Route path="/admin" component={AdminLogin} /><Route path="/admin/dashboard" component={AdminDashboardPage} /><Route path="/departments/employment" component={EmploymentSection} /><Route path="/departments/real-estate" component={RealEstateSection} /><Route path="/departments/e-marketing" component={EMarketingSection} /><Route path="/departments/software" component={SoftwareDeptSection} /><Route path="/departments/listings" component={DepartmentListings} /><Route component={NotFound} /></Switch><VipChatbot /><NotificationBell /></ThemeRuntime></LanguageRuntime></ErrorBoundary>; }
+export default function App() { return <ErrorBoundary><LanguageRuntime><ThemeRuntime><Switch><Route path="/" component={Home} /><Route path="/admin" component={AdminLogin} /><Route path="/admin/dashboard" component={AdminDashboardPage} /><Route path="/departments/employment" component={EmploymentSection} /><Route path="/departments/real-estate" component={RealEstateSection} /><Route path="/departments/e-marketing" component={EMarketingSection} /><Route path="/departments/software" component={SoftwareDeptSection} /><Route path="/departments/listings" component={DepartmentListings} /><Route component={NotFoundWrapper} /></Switch><VipChatbot /><NotificationBell /></ThemeRuntime></LanguageRuntime></ErrorBoundary>; }

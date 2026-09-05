@@ -1,6 +1,39 @@
 import { useEffect, useMemo, useState } from 'react'
-import { BriefcaseBusiness, Building2, Check, ExternalLink, FileText, LoaderCircle, MapPin, MessageCircle, Pencil, Phone, Search, Settings, ShieldCheck, Store, Trash2, Users, X } from 'lucide-react'
+import { ArrowLeft, BriefcaseBusiness, Building2, Check, ExternalLink, FileText, LoaderCircle, MapPin, MessageCircle, Pencil, Phone, Search, Settings, ShieldCheck, Store, Trash2, Users, X, Globe2, MessageSquare, Send, ChevronRight } from 'lucide-react'
 import './App.css'
+
+// Smart redirect: unknown admin/departments paths never show 'غير موجودة'
+function NavigationNotFound({ replace }) {
+  const p = window.location.pathname || '';
+  if (p.startsWith('/admin') || p.startsWith('/dashboard')) {
+    return (
+      <div className="not-found soft">
+        <ShieldCheck size={28} />
+        <h2>لوحة التحكم</h2>
+        <p>الصفحة غير متاحة مباشرة. يُرجى الدخول أولاً ثم اختيار القسم من القائمة.</p>
+        <button className="button button-primary" onClick={() => replace('/admin')}>الدخول إلى لوحة التحكم</button>
+      </div>
+    );
+  }
+  if (p.startsWith('/departments')) {
+    return (
+      <div className="not-found soft">
+        <Globe2 size={28} />
+        <h2>القسم المطلوب</h2>
+        <p>انتقل إلى قائمة الأقسام أسفله لمتابعة التصفح.</p>
+        <a href="#listings" className="button button-primary">أقسام المنصة</a>
+      </div>
+    );
+  }
+  return (
+    <div className="not-found soft">
+      <Globe2 size={28} />
+      <h2>الصفحة غير متاحة</h2>
+      <p>الصفحة غير موجودة حاليًا.</p>
+      <button className="button button-primary" onClick={() => replace('/')}>العودة للرئيسية</button>
+    </div>
+  );
+}
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api'
 const SOCIAL_LINKS = [
@@ -55,7 +88,137 @@ function AdminPanel({ onClose }) {
   return <div className="admin-overlay"><div className="admin-panel"><div className="admin-head"><div><span className="eyebrow"><ShieldCheck size={15} /> لوحة الإدارة</span><h2>إدارة الإعلانات</h2></div><button className="icon-button" onClick={onClose} aria-label="إغلاق"><X /></button></div>{message && <div className="notice">{message}</div>}{loading ? <div className="state"><LoaderCircle className="spin" /> جاري التحميل...</div> : <div className="admin-list">{items.map(item => <div className="admin-item" key={item.id}><div><strong>{item.title}</strong><p>{item.description}</p></div><div className="admin-actions"><button onClick={() => setEditing(item)}><Pencil size={16} /> تعديل</button><button className="danger" onClick={() => remove(item.id)}><Trash2 size={16} /> حذف</button></div></div>)}{items.length === 0 && <div className="state">لا توجد إعلانات معلقة.</div>}</div>}{editing && <div className="edit-box"><h3>تعديل الإعلان</h3><input value={editing.title || ''} onChange={e => setEditing({ ...editing, title: e.target.value })} placeholder="العنوان" /><textarea value={editing.description || ''} onChange={e => setEditing({ ...editing, description: e.target.value })} placeholder="الوصف" /><div className="admin-actions"><button onClick={save}><Check size={16} /> حفظ</button><button onClick={() => setEditing(null)}>إلغاء</button></div></div>}</div></div>
 }
 
+const vipKnowledge = [
+  { q: "ما هي أقسام المنصة؟", a: "تضم المنصة أربعة أقسام رئيسية: التوظيف والفرص، التسويق العقاري، التسويق الإلكتروني، وقسم البرمجيات وتطوير التطبيقات، إضافة إلى العروض الترويجية والإعلانات." },
+  { q: "كيف أقدم طلبًا؟", a: "انتقل إلى نموذج «أرسل طلبك» أو اختر القسم المناسب، أدخل بياناتك وارفع الصور والفيديوهات القصيرة ثم أرسل. يصل الطلب إلى إدارة المنصة للمراجعة." },
+  { q: "متى يُنشر طلبي؟", a: "تُراجع الإدارة كل طلب أولًا للتدقيق والتحقق من البيانات، ثم تُنشره من لوحة التحكم في القسم المخصص فيعرض تلقائيًا على واجهة المنصة." },
+  { q: "هل بياناتي سرية؟", a: "نعم. بيانات التواصل والطلبات تصل إلى الإدارة بشكل خاص وسري، ولا تُنشر أي معلومة دون موافقة مسبقة." },
+  { q: "كيف أتواصل مع المنصة؟", a: "عبر واتساب: 00967711780999، أو البريد: ViPservicesYemen@gmail.com، أو أزرار التواصل أسفل الصفحة." },
+  { q: "هل يمكن رفع صور وفيديوهات؟", a: "نعم، النموذج يدعم حتى 6 مرفقات: صور (JPG/PNG/WebP) ومستندات PDF حتى 8MB، وفيديوهات قصيرة (MP4/WebM) حتى 25MB." },
+  { q: "كيف أعرف الإصدارات الجديدة؟", a: "تظهر إشعارات التحديثات داخل جرس الإشعارات، ويمكنك التحديث من رابط المتجر عند توفره." },
+  { q: "هل توفرون تطوير البرمجيات؟", a: "نعم، نطوّر تطبيقات Android وiOS ومنصات ويب ولوحات تحكم وأنظمة متكاملة بأحدث التقنيات." },
+  { q: "ما وسائل الدفع المتاحة؟", a: "الحسابات المالية الرسمية أسفل الصفحة: بنك الكريمي، محفظة جيب، ومحفظة جوالي — جميعها مرتبطة برقم 773597404." },
+  { q: "من مطور المنصة؟", a: "المهندس علي درهم الدحان — مؤسس ومدير منصة ViP Yemen، صنعاء، اليمن." },
+];
+
+function VipChatbot() {
+  const [open, setOpen] = useState(false);
+  const [view, setView] = useState('menu');
+  const [query, setQuery] = useState('');
+  const [active, setActive] = useState(null);
+  const results = vipKnowledge.filter(item => item.q.includes(query.trim()) || item.a.includes(query.trim()));
+  return (
+    <div className="vip-chatbot">
+      <button className="vip-chatbot-btn" onClick={() => { setOpen(o => !o); setView('menu'); setQuery(''); setActive(null); }} aria-label="مساعد VIP الذكي — افتحه عند الحاجة">
+        <MessageSquare size={20} />
+        <span className="vip-chatbot-label"> VIP»</span>
+      </button>
+      {open && (
+        <div className="vip-chatbot-panel" role="dialog" aria-label="مساعد VIP الذكي">
+          <div className="vip-chatbot-header">
+            <div className="vip-chatbot-header-inner">
+              <MessageSquare size={18} />
+              <span>مساعد VIP الذكي — بحث عن أي موضوع</span>
+            </div>
+            <button onClick={() => { setOpen(false); setView('menu'); setActive(null); }} aria-label="إغلاق المساعد"><X size={18} /></button>
+          </div>
+          <div className="vip-chatbot-body">
+            <div className="vip-chatbot-msg bot"><MessageSquare size={14} /><span>أنا مساعد المنصة. اكتب أي سؤال أو اختر من القائمة:</span></div>
+            <div className="vip-chatbot-search">
+              <Search size={13} />
+              <input value={query} onChange={(e) => { setQuery(e.target.value); setView('menu'); setActive(null); }} placeholder="ابحث: أقسام، طلبات، تواصل، أسعار..." autoFocus onKeyDown={(e) => e.key === 'Escape' && setOpen(false)} />
+            </div>
+            {view === 'answer' && active ? (
+              <div className="vip-chatbot-answer">
+                <button className="vip-chatbot-back" onClick={() => { setView('menu'); setActive(null); }}><ChevronRight size={13} /> رجوع للأسئلة</button>
+                <strong>{active.q}</strong>
+                <p>{active.a}</p>
+                <div className="vip-chatbot-followup">
+                  <a href="#submit" onClick={() => setOpen(false)} className="vip-chatbot-option"><Send size={13} /> أرسل طلبًا الآن</a>
+                  <a href="https://wa.me/967711780999" target="_blank" rel="noreferrer" className="vip-chatbot-option"><MessageCircle size={13} /> واتساب المنصة</a>
+                </div>
+              </div>
+            ) : (
+              <div className="vip-chatbot-options">
+                {(query.trim() ? results : vipKnowledge).slice(0, 8).map(item => (
+                  <button key={item.q} className="vip-chatbot-option" onClick={() => { setActive(item); setView('answer'); }}>
+                    <span>{item.q}</span>
+                    <ChevronRight size={13} />
+                  </button>
+                ))}
+              </div>
+            )}
+            <div className="vip-chatbot-quick">
+              <a href="https://wa.me/967711780999" target="_blank" rel="noreferrer" className="vip-chatbot-option"><MessageCircle size={13} /> واتساب المنصة 00967711780999</a>
+              <a href="#submit" onClick={() => setOpen(false)} className="vip-chatbot-option"><Send size={13} /> أرسل طلب</a>
+              <a href="#contact" onClick={() => setOpen(false)} className="vip-chatbot-option"><MessageCircle size={13} /> تواصل</a>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function App() {
-  const [active, setActive] = useState('digital-marketing'); const [admin, setAdmin] = useState(false)
-  return <div className="app-shell"><header className="site-header"><div className="brand"><div className="brand-mark"><img src="/brand-logo.png" alt="ViPservicesYemen" /></div><div><h1>vipyemen</h1><p>التوظيف والتسويق الإلكتروني والخدمات العامة</p></div></div><div className="header-actions"><a href="https://linktr.ee/vipservicesyemen" target="_blank" rel="noreferrer" className="outline-button">روابطنا</a><button className="outline-button" onClick={() => setAdmin(true)}><Settings size={17} /> لوحة الإدارة</button></div></header><main><section className="hero"><div><span className="eyebrow"><ShieldCheck size={15} /> منصة يمنية موثوقة</span><h2>خدمات وفرص وإعلانات<br /><em>في مكان واحد.</em></h2><p>منصة ViP Yemen لعرض المنتجات والخدمات والعقارات والوظائف والتواصل المباشر بسهولة.</p></div><div className="hero-card"><FileText size={28} /><strong>إعلاناتك محفوظة</strong><span>بتخزين مركزي قابل للتوسع</span></div></section><nav className="section-nav" aria-label="أقسام التطبيق">{sections.map(({ id, label, icon: Icon }) => <button className={active === id ? 'active' : ''} key={id} onClick={() => setActive(id)}><Icon size={18} />{label}</button>)}</nav><Listings section={active} /><SocialLinks /></main><footer>© 2026 vipyemen — صنعاء، اليمن</footer>{admin && <AdminPanel onClose={() => setAdmin(false)} />}</div>
+  const [active, setActive] = useState('digital-marketing');
+  const [admin, setAdmin] = useState(false);
+  const [notFoundPath, setNotFoundPath] = useState(null);
+  // Detect unknown routes and show smart redirect instead of plain 'غير موجودة'
+  useEffect(() => {
+    const path = window.location.pathname;
+    if (path !== '/' && !sections.some(s => s.id === path.slice(1)) && !path.startsWith('/admin') && !path.startsWith('/departments') && path !== '/contact' && path !== '/submit') {
+      setNotFoundPath(path);
+    } else {
+      setNotFoundPath(null);
+    }
+  }, []);
+  return (
+    <div className="app-shell">
+      <HeaderWithWhatsApp onOpenAdmin={() => setAdmin(true)} />
+      <main>
+        {notFoundPath ? (
+          <NavigationNotFound replace={(to) => { window.history.replaceState(null, '', to); setNotFoundPath(null); }} />
+        ) : (
+          <>
+            <section className="hero"><div><span className="eyebrow"><ShieldCheck size={15} /> منصة يمنية موثوقة</span><h2>خدمات وفرص وإعلانات<br /><em>في مكان واحد.</em></h2><p>منصة ViP Yemen لعرض المنتجات والخدمات والعقارات والوظائف والتواصل المباشر بسهولة.</p></div><div className="hero-card"><FileText size={28} /><strong>إعلاناتك محفوظة</strong><span>بتخزين مركزي قابل للتوسع</span></div></section>
+            <nav className="section-nav" aria-label="أقسام التطبيق">{sections.map(({ id, label, icon: Icon }) => <button className={active === id ? 'active' : ''} key={id} onClick={() => setActive(id)}><Icon size={18} />{label}</button>)}</nav>
+            <Listings section={active} />
+            <SocialLinks />
+          </>
+        )}
+      </main>
+      <FooterWithWhatsApp />
+      <VipChatbot />
+      {admin && <AdminPanel onClose={() => setAdmin(false)} />}
+    </div>
+  );
+}
+
+function HeaderWithWhatsApp({ onOpenAdmin }) {
+  return (
+    <header className="site-header">
+      <div className="brand">
+        <div className="brand-mark"><img src="/brand-logo.png" alt="ViPservicesYemen" /></div>
+        <div><h1>vipyemen</h1><p>التوظيف والتسويق الإلكتروني والخدمات العامة</p></div>
+      </div>
+      <div className="header-actions">
+        <a href="https://linktr.ee/vipservicesyemen" target="_blank" rel="noreferrer" className="outline-button">روابطنا</a>
+        <button className="outline-button" onClick={onOpenAdmin}><Settings size={17} /> لوحة الإدارة</button>
+      </div>
+    </header>
+  );
+}
+
+function FooterWithWhatsApp() {
+  return (
+    <footer className="site-footer">
+      <div style={{ padding: '18px 28px', background: 'rgba(0,0,0,.4)', textAlign: 'center' }}>
+        <a href="https://wa.me/967711780999" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '12px 20px', background: '#25D366', color: '#fff', borderRadius: 30, fontWeight: 700, fontSize: 15, textDecoration: 'none' }}>
+          <MessageCircle size={18} /> تواصل عبر واتساب: 00967711780999
+        </a>
+        <p style={{ margin: '12px 0 0', color: '#8e887c', fontSize: 12 }}>© 2026 vipyemen — صنعاء، اليمن</p>
+      </div>
+    </footer>
+  );
 }
