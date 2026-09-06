@@ -37,19 +37,21 @@ function NavigationNotFound({ replace }) {
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api'
 const SOCIAL_LINKS = [
-  ['الموقع الرسمي', 'https://vipservicesyemen.business.site/', ExternalLink],
+  ['الموقع الرسمي', 'https://vipyemen.com', ExternalLink],
+  ['كل القنوات الرقمية', 'https://allmylinks.com/vipservicesyemen', ExternalLink],
   ['الموقع على الخريطة', 'https://maps.app.goo.gl/or3xgsMgJWH4odGj7', MapPin],
-  ['تويتر / X', 'https://twitter.com/ViPservicesYeme?s=09', ExternalLink],
-  ['فيسبوك', 'https://www.facebook.com/ViPservicesYemen/', ExternalLink],
-  ['مجموعة فيسبوك', 'https://facebook.com/groups/346010664332427/?ref=share', Users],
-  ['واتساب 1', 'https://wa.me/qr/CF2G3HMH3SUFJ1', MessageCircle],
-  ['واتساب 2', 'https://wa.me/message/SNHH2JPXL7TZE1', MessageCircle],
+  ['فيسبوك', 'https://www.facebook.com/vipservicesyemen/', ExternalLink],
+  ['مجموعة فيسبوك', 'https://www.facebook.com/groups/vipservicesyemen', ExternalLink],
+  ['تيك توك', 'https://www.tiktok.com/@vipservicesyemen1', ExternalLink],
+  ['واتساب أعمال المنصة', 'https://wa.me/967711780999', MessageCircle],
+  ['قناة واتساب', 'https://chat.whatsapp.com/i5vycbmxwyykhctc8tsn9x', MessageCircle],
   ['لينكدإن', 'https://www.linkedin.com/in/ali-aldahan-57b5a2231', ExternalLink],
   ['يوتيوب', 'https://youtube.com/channel/UCJGfi4S63-Nm2rSXpBqzHtw', ExternalLink],
-  ['إنستغرام', 'https://www.instagram.com/vipservicesyemen?r=nametag', ExternalLink],
-  ['تيليجرام', 'https://t.me/VIPservices2', MessageCircle],
-  ['تيك توك', 'https://www.tiktok.com/@vipservicesyemen1', ExternalLink],
-  ['Threads', 'https://www.threads.net/@vipservicesyemen', ExternalLink],
+  ['إنستغرام', 'https://www.instagram.com/vipservicesyemen', ExternalLink],
+  ['تويتر / X', 'https://twitter.com/ViPservicesYeme', ExternalLink],
+  ['بيكونز', 'https://beacons.ai/vipservicesyemen', ExternalLink],
+  ['لينك فلاي', 'https://linkfly.to/vipservicesyemen', ExternalLink],
+  ['تاب لينك', 'https://taplink.cc/vipservicesyemen', ExternalLink],
   ['كل الروابط', 'https://linktr.ee/vipservicesyemen', ExternalLink],
 ]
 

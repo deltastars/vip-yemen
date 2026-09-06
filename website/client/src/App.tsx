@@ -210,7 +210,97 @@ function VipChatbot() {
   const [active, setActive] = useState<{ q: string; a: string } | null>(null);
   const { language } = useLanguage();
   const results = vipKnowledge.filter(item => item.q.includes(query.trim()) || item.a.includes(query.trim()));
-  return <div className="vip-chatbot"><button className="vip-chatbot-btn" onClick={() => { setOpen(o => !o); setView("menu"); setQuery(""); setActive(null); }} aria-label="مساعد VIP الذكي"><img src="/images/vip-logo.svg" alt="VIP" className="vip-chatbot-logo" /></button>{open ? <div className="vip-chatbot-panel"><div className="vip-chatbot-header"><img src="/images/vip-logo.svg" alt="VIP" style={{width:20,height:20}} /><span>{language === "ar" ? "مساعد VIP الذكي" : "VIP Smart Assistant"}</span><button onClick={() => setOpen(false)} aria-label="إغلاق"><X size={16} /></button></div><div className="vip-chatbot-body"><div className="vip-chatbot-msg bot"><img src="/images/vip-logo.svg" alt="VIP" style={{width:16,height:16}} /><span>{language === "ar" ? "مرحبًا! ابحث عن أي موضوع أو اختر سؤالًا شائعًا:" : "Hello! Search any topic or pick a common question:"}</span></div><div className="vip-chatbot-search"><Search size={14} /><input value={query} onChange={(e) => { setQuery(e.target.value); setView("menu"); }} placeholder={language === "ar" ? "ابحث: أقسام، طلبات، تواصل..." : "Search: sections, requests, contact..."} /></div>{view === "answer" && active ? <div className="vip-chatbot-answer"><button className="vip-chatbot-back" onClick={() => { setView("menu"); setActive(null); }}><ChevronRight size={13} /> {language === "ar" ? "رجوع للأسئلة" : "Back"}</button><strong>{active.q}</strong><p>{active.a}</p></div> : <div className="vip-chatbot-options">{(query.trim() ? results : vipKnowledge).slice(0, 6).map(item => <button key={item.q} className="vip-chatbot-option" onClick={() => { setActive(item); setView("answer"); }}><span>{item.q}</span><ChevronRight size={14} /></button>)}</div>}<div className="vip-chatbot-quick"><a href="https://wa.me/967711780999" target="_blank" rel="noreferrer" className="vip-chatbot-option"><MessageCircle size={14} /> {language === "ar" ? "واتساب" : "WhatsApp"}</a><a href="#submit" onClick={() => setOpen(false)} className="vip-chatbot-option"><Send size={14} /> {language === "ar" ? "أرسل طلب" : "Send request"}</a><a href="#services" onClick={() => setOpen(false)} className="vip-chatbot-option"><Globe2 size={14} /> {language === "ar" ? "الخدمات" : "Services"}</a><Link href="/admin" onClick={() => setOpen(false)} className="vip-chatbot-option"><ShieldCheck size={14} /> {language === "ar" ? "لوحة التحكم" : "Admin"}</Link></div></div></div> : null}</div>; }
+  return (
+    <div className="vip-chatbot" role="none">
+      <button
+        className="vip-chatbot-btn"
+        onClick={() => { setOpen(o => !o); setView("menu"); setQuery(""); setActive(null); }}
+        aria-label={language === "ar" ? "افتح مساعد VIP الذكي" : "Open VIP smart assistant"}
+        aria-expanded={open}
+      >
+        <MessageSquare size={18} />
+        <span className="vip-chatbot-label">{language === "ar" ? " VIP»" : " VIP"}</span>
+      </button>
+      {open && (
+        <div
+          className="vip-chatbot-panel"
+          role="dialog"
+          aria-modal="false"
+          aria-label={language === "ar" ? "مساعد VIP الذكي" : "VIP smart assistant"}
+        >
+          <div className="vip-chatbot-header">
+            <span className="vip-chatbot-header-text">{language === "ar" ? "مساعد VIP الذكي" : "VIP Smart Assistant"}</span>
+            <button
+              className="vip-chatbot-close"
+              onClick={() => { setOpen(false); setView("menu"); setActive(null); }}
+              aria-label={language === "ar" ? "إغلاق المساعد" : "Close assistant"}
+            >
+              <X size={16} />
+            </button>
+          </div>
+          <div className="vip-chatbot-body">
+            <div className="vip-chatbot-msg bot">
+              <span>{language === "ar" ? "مرحبًا! ابحث عن أي موضوع أو اختر سؤالًا شائعًا:" : "Hello! Search any topic or pick a common question:"}</span>
+            </div>
+            <div className="vip-chatbot-search">
+              <Search size={14} />
+              <input
+                value={query}
+                onChange={(e) => { setQuery(e.target.value); setView("menu"); setActive(null); }}
+                placeholder={language === "ar" ? "ابحث: أقسام، طلبات، تواصل..." : "Search: sections, requests, contact..."}
+                aria-label={language === "ar" ? "بحث داخل المساعد" : "Search inside assistant"}
+              />
+            </div>
+            {view === "answer" && active ? (
+              <div className="vip-chatbot-answer">
+                <button className="vip-chatbot-back" onClick={() => { setView("menu"); setActive(null); }}>
+                  <ChevronRight size={13} /> {language === "ar" ? "رجوع للأسئلة" : "Back"}
+                </button>
+                <strong>{active.q}</strong>
+                <p>{active.a}</p>
+              </div>
+            ) : (
+              <div className="vip-chatbot-options">
+                {(query.trim() ? results : vipKnowledge).slice(0, 8).map(item => (
+                  <button
+                    key={item.q}
+                    className="vip-chatbot-option"
+                    onClick={() => { setActive(item); setView("answer"); }}
+                  >
+                    <span>{item.q}</span>
+                    <ChevronRight size={14} />
+                  </button>
+                ))}
+              </div>
+            )}
+            <div className="vip-chatbot-quick">
+              <a href="https://wa.me/967711780999" target="_blank" rel="noreferrer" className="vip-chatbot-option">
+                <MessageCircle size={14} /> {language === "ar" ? "واتساب المنصة" : "Platform WhatsApp"}
+              </a>
+              <a href="#submit" onClick={() => setOpen(false)} className="vip-chatbot-option">
+                <Send size={14} /> {language === "ar" ? "أرسل طلب" : "Send request"}
+              </a>
+              <a href="#services" onClick={() => setOpen(false)} className="vip-chatbot-option">
+                <Globe2 size={14} /> {language === "ar" ? "الخدمات" : "Services"}
+              </a>
+              <Link href="/admin" onClick={() => setOpen(false)} className="vip-chatbot-option">
+                <ShieldCheck size={14} /> {language === "ar" ? "لوحة التحكم" : "Admin"}
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+      {open && (
+        <div
+          className="vip-chatbot-backdrop"
+          onClick={() => { setOpen(false); setView("menu"); setActive(null); }}
+          aria-hidden="true"
+        />
+      )}
+    </div>
+  );
+}
+
 
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean; error: string }> {
   constructor(props: { children: ReactNode }) {
